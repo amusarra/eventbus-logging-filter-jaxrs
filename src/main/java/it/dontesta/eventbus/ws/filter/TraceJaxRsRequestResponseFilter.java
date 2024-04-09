@@ -3,12 +3,12 @@ package it.dontesta.eventbus.ws.filter;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.ext.Provider;
 import java.util.List;
@@ -23,8 +23,7 @@ import org.jboss.logging.Logger;
  * <p>Gli extension point sono rappresentati dalle interfacce {@link ContainerRequestFilter} e
  * {@link ContainerResponseFilter} e questa classe implementa entrambe le interfacce.
  *
- * <p>Il filtro è annotato con {@link Provider} e {@link ApplicationScoped} per essere riconosciuto
- * come un componente CDI.
+ * <p>Il filtro è annotato con {@link Provider} per essere riconosciuto come un componente CDI.
  *
  * <p>La priorità del filtro è impostata a {@link Priorities#USER} per garantire che venga eseguito
  * dopo i filtri predefiniti (ad esempio, {@link Priorities#AUTHENTICATION}).
@@ -40,14 +39,13 @@ import org.jboss.logging.Logger;
  */
 @Provider
 @Priority(Priorities.USER)
-@ApplicationScoped
 public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
     ContainerResponseFilter {
 
   @Inject
   Logger log;
 
-  @Inject
+  @Context
   UriInfo uriInfo;
 
   @ConfigProperty(name = "app.filter.enabled", defaultValue = "false")
@@ -138,7 +136,7 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
    * @return true se la Request URI è tra quelle che devono essere filtrate, false altrimenti
    */
   private boolean requestUriIsFiltered(String requestUri) {
-    log.debug("La Request URI %s è tra quelle che devono essere filtrate".formatted(requestUri));
+    log.debugf("La Request URI %s è tra quelle che devono essere filtrate", requestUri);
 
     return uris.stream().anyMatch(item -> requestUri.startsWith(item));
   }
