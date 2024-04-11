@@ -2,9 +2,11 @@ package it.dontesta.eventbus.consumers.events.handlers;
 
 import io.quarkus.runtime.StartupEvent;
 import io.smallrye.mutiny.Uni;
+import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
+import it.dontesta.eventbus.consumers.http.HttpRequestConsumer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
@@ -70,9 +72,15 @@ public class Dispatcher {
 
     // Invia l'evento a tutti i target virtual addresses
     targetVirtualAddressesList.forEach(targetVirtualAddress -> {
+
+      // Creare le opzioni di consegna desiderate
+      DeliveryOptions options = new DeliveryOptions()
+          .addHeader(SOURCE_VIRTUAL_ADDRESS, sourceVirtualAddress)
+          .addHeader(SOURCE_COMPONENT, sourceComponent);
+
       log.debugf("Sending event message to target virtual address: %s", targetVirtualAddress);
 
-      Uni<String> response = eventBus.<String>request(targetVirtualAddress, message.body())
+      Uni<String> response = eventBus.<String>request(targetVirtualAddress, message.body(), options)
           .onItem().transform(Message::body);
 
       response.subscribe().with(
