@@ -1,6 +1,7 @@
 package it.dontesta.eventbus.consumers.http;
 
 import io.quarkus.runtime.StartupEvent;
+import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -42,7 +43,7 @@ public class HttpResponseConsumer {
   }
 
   // Method to handle the event
-  public void handleEvent(Message<String> message) {
+  public void handleEvent(Message<JsonObject> message) {
     log.debug("Received HTTP response message: " + message.body());
   }
 }
