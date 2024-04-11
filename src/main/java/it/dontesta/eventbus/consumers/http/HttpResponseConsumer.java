@@ -1,12 +1,14 @@
 package it.dontesta.eventbus.consumers.http;
 
 import io.quarkus.runtime.StartupEvent;
+import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
+import java.util.List;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
@@ -34,6 +36,18 @@ public class HttpResponseConsumer {
   @ConfigProperty(name = "app.eventbus.consumer.http.response.address")
   String httpResponseVirtualAddress;
 
+  @ConfigProperty(name = "app.eventbus.consumer.dispatcher.address")
+  String dispatcherVirtualAddress;
+
+  @ConfigProperty(name = "app.eventbus.consumer.event.handler.addresses")
+  List<String> eventHandlerVirtualAddresses;
+
+  public static final String SOURCE_VIRTUAL_ADDRESS = "source-virtual-address";
+
+  public static final String SOURCE_COMPONENT = "source-component";
+
+  public static final String TARGET_VIRTUAL_ADDRESSES = "target-virtual-addresses";
+
   void onStart(@Observes StartupEvent ev) {
     log.debugf(
         "Registering the consumers to the event bus for HTTP response at addresses: {%s}",
@@ -44,6 +58,12 @@ public class HttpResponseConsumer {
 
   // Method to handle the event
   public void handleEvent(Message<JsonObject> message) {
-    log.debug("Received HTTP response message: " + message.body());
+    // Creare le opzioni di consegna desiderate
+    DeliveryOptions options = new DeliveryOptions()
+        .addHeader(TARGET_VIRTUAL_ADDRESSES, String.join(",", eventHandlerVirtualAddresses))
+        .addHeader(SOURCE_VIRTUAL_ADDRESS, httpResponseVirtualAddress)
+        .addHeader(SOURCE_COMPONENT, HttpRequestConsumer.class.getName());
+
+    eventBus.publish(dispatcherVirtualAddress, message.body(), options);
   }
 }
