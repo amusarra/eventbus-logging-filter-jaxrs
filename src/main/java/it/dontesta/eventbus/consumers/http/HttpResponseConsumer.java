@@ -62,7 +62,7 @@ public class HttpResponseConsumer {
     DeliveryOptions options = new DeliveryOptions()
         .addHeader(TARGET_VIRTUAL_ADDRESSES, String.join(",", eventHandlerVirtualAddresses))
         .addHeader(SOURCE_VIRTUAL_ADDRESS, httpResponseVirtualAddress)
-        .addHeader(SOURCE_COMPONENT, HttpRequestConsumer.class.getName());
+        .addHeader(SOURCE_COMPONENT, HttpResponseConsumer.class.getName());
 
     eventBus.publish(dispatcherVirtualAddress, message.body(), options);
   }
