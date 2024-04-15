@@ -48,7 +48,7 @@ import org.jboss.logging.Logger;
  * <p>L'elenco delle URI da filtrare è definito nel parametro di configurazione
  * {@code app.filter.uris}.
  *
- * <p>Per ulteriori informazioni sui filtri JAX-RS, vedere la specifica Jakarta EE: https://jakarta.ee/specifications/restful-ws/3.1/jakarta-restful-ws-spec-3.1.html#filters
+ * <p>Per ulteriori informazioni sui filtri JAX-RS, vedere la specifica Jakarta EE: <a href="https://jakarta.ee/specifications/restful-ws/3.1/jakarta-restful-ws-spec-3.1.html#filters">JAX-RS Filter</a>
  *
  * @author Antonio Musarra
  */
@@ -193,7 +193,7 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
       StringBuilder valueBuilder = new StringBuilder();
       for (Object value : values) {
         if (value != null) {
-          if (valueBuilder.length() > 0) {
+          if (!valueBuilder.isEmpty()) {
             valueBuilder.append(", ");
           }
           valueBuilder.append(value);
