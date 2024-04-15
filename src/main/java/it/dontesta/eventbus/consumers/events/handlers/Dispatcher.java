@@ -83,15 +83,11 @@ public class Dispatcher {
           .onItem().transform(Message::body);
 
       response.subscribe().with(
-          result -> {
-            log.debugf("Received response from target virtual address: %s with result: %s",
-                targetVirtualAddress, result);
-          },
-          failure -> {
-            log.errorf(
-                "Failed to receive response from target virtual address: %s with failure: %s",
-                targetVirtualAddress, failure);
-          }
+          result -> log.debugf("Received response from target virtual address: %s with result: %s",
+              targetVirtualAddress, result),
+          failure -> log.errorf(
+              "Failed to receive response from target virtual address: %s with failure: %s",
+              targetVirtualAddress, failure)
       );
     });
   }

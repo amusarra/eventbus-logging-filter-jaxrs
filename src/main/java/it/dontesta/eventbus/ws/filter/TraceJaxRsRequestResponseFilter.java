@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -232,7 +233,7 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
     ByteArrayInputStream input = new ByteArrayInputStream(buffer.toByteArray());
     requestContext.setEntityStream(input);
 
-    return buffer.toString("UTF-8");
+    return buffer.toString(StandardCharsets.UTF_8);
   }
 
   /**
@@ -281,7 +282,7 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
    * @return JsonObject Il messaggio della risposta in formato JSON
    */
   private JsonObject prepareMessage(ContainerResponseContext responseContext) {
-    JsonObject jsonObject = new JsonObject()
+    return new JsonObject()
         .put(CORRELATION_ID_HEADER,
             responseContext.getHeaders().get(CORRELATION_ID_HEADER).getFirst())
         .put(LOCAL_DATE_TIME_OUT, LocalDateTime.now().toString())
@@ -290,8 +291,6 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
         .put("status-info-reason", responseContext.getStatusInfo().getReasonPhrase())
         .put("headers", getResponseHeaders(responseContext))
         .put("body", responseContext.getEntity().toString());
-
-    return jsonObject;
   }
 
   /**
@@ -318,12 +317,12 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
       NewCookie newTrackingCookie = new NewCookie(COOKIE_USER_TRACKING_NAME, trackingCode,
           "/",
           null,
-          NewCookie.DEFAULT_VERSION,
+          1,
           "Cookie di tracciamento dell'utente",
           (int) TimeUnit.DAYS.toSeconds(30),
           false);
 
-      responseContext.getHeaders().add("Set-Cookie", newTrackingCookie.toString());
+      responseContext.getHeaders().add("Set-Cookie", newTrackingCookie);
     }
   }
 }

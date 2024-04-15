@@ -73,7 +73,7 @@ public class MongoDbEventHandler {
     // Crea un documento MongoDB a partire dal messaggio dell'evento
     Document mongoDbDocument = getMongoDbDocument(sourceComponent, body);
 
-    if (mongoDbDocument == null) {
+    if (mongoDbDocument == null || mongoDbDocument.isEmpty()) {
       message.fail(1, "Could not create a MongoDB document from the event message.");
       return;
     }
@@ -116,7 +116,7 @@ public class MongoDbEventHandler {
       return Document.parse(jsonObject.encode());
     }
 
-    return null;
+    return new Document();
   }
 
 }
