@@ -56,7 +56,13 @@ public class AmqpEventHandler {
     eventBus.consumer(amqpEventHandlerVirtualAddress, this::handleEvent);
   }
 
-  // Method to handle the event
+  /**
+   * Metodo per gestire l'evento ricevuto dall'event bus.
+   *
+   * <p>Il metodo riceve il messaggio dell'evento e invia il messaggio alla coda AMQP
+   *
+   * @param message il messaggio dell'evento
+   */
   public void handleEvent(Message<JsonObject> message) {
     // Recupera il componente sorgente dagli header del messaggio
     String sourceComponent = message.headers().get(SOURCE_COMPONENT);

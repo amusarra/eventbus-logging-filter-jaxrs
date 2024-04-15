@@ -11,6 +11,8 @@ import org.jboss.logging.Logger;
 /**
  * Questo componente consuma i messaggi dai canali AMQP http-request-in e http-response-in
  * utilizzando l'annotazione {@code @Incoming} per ricevere i messaggi.
+ *
+ * @author Antonio Musarra
  */
 @ApplicationScoped
 public class AmqpConsumer {
@@ -18,6 +20,12 @@ public class AmqpConsumer {
   @Inject
   Logger log;
 
+  /**
+   * Questo metodo è un consumer per i messaggi in arrivo dal canale AMQP http-request-in.
+   *
+   * @param requestMessage Il messaggio in arrivo dal canale AMQP http-request-in
+   * @return Una CompletionStage che rappresenta il completamento del consumo del messaggio
+   */
   @Incoming("http-request-in")
   public CompletionStage<Void> consumeHttpRequest(Message<JsonObject> requestMessage) {
     // Implementa la logica per consumare il messaggio della richiesta HTTP
@@ -25,6 +33,12 @@ public class AmqpConsumer {
     return requestMessage.ack();
   }
 
+  /**
+   * Questo metodo è un consumer per i messaggi in arrivo dal canale AMQP http-response-in.
+   *
+   * @param requestMessage Il messaggio in arrivo dal canale AMQP http-response-in
+   * @return Una CompletionStage che rappresenta il completamento del consumo del messaggio
+   */
   @Incoming("http-response-in")
   public CompletionStage<Void> consumeHttpResponse(Message<JsonObject> requestMessage) {
     // Implementa la logica per consumare il messaggio della richiesta HTTP

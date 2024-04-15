@@ -29,6 +29,8 @@ import org.jboss.logging.Logger;
  * <p>L'indicazione dell'indirizzo virtuale dell'evento per l'Event Handler è definita nel parametro
  * di configurazione {@code app.eventbus.consumer.event.handler.addresses[1]} che viene iniettato
  * tramite l'annotazione {@code @ConfigProperty}
+ *
+ * @author Antonio Musarra
  */
 @ApplicationScoped
 public class MongoDbEventHandler {
@@ -63,7 +65,14 @@ public class MongoDbEventHandler {
     eventBus.consumer(mongoDbEventHandlerVirtualAddress, this::handleEvent);
   }
 
-  // Method to handle the event
+  /**
+   * Metodo per gestire l'evento ricevuto dall'event bus.
+   *
+   * <p>Il metodo riceve il messaggio dell'evento e crea un documento
+   * MongoDB a partire dal messaggio
+   *
+   * @param message il messaggio dell'evento
+   */
   public void handleEvent(Message<JsonObject> message) {
     // Recupera il componente sorgente dagli header del messaggio
     // e il corpo del messaggio stesso in formato JsonObject

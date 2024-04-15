@@ -48,8 +48,9 @@ import org.jboss.logging.Logger;
  * <p>L'elenco delle URI da filtrare è definito nel parametro di configurazione
  * {@code app.filter.uris}.
  *
- * <p>Per ulteriori informazioni sui filtri JAX-RS, vedere la specifica Jakarta EE:
- * https://jakarta.ee/specifications/restful-ws/3.1/jakarta-restful-ws-spec-3.1.html#filters
+ * <p>Per ulteriori informazioni sui filtri JAX-RS, vedere la specifica Jakarta EE: https://jakarta.ee/specifications/restful-ws/3.1/jakarta-restful-ws-spec-3.1.html#filters
+ *
+ * @author Antonio Musarra
  */
 @Provider
 @Priority(Priorities.USER)

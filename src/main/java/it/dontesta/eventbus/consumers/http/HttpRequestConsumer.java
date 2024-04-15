@@ -55,7 +55,14 @@ public class HttpRequestConsumer {
     eventBus.consumer(httpRequestVirtualAddress, this::handleEvent);
   }
 
-  // Method to handle the event
+  /**
+   * Metodo per gestire l'evento ricevuto dall'event bus.
+   *
+   * <p>Il metodo riceve il messaggio dell'evento e invia il messaggio al Dispatcher per la
+   * consegna ai vari Event Handler.
+   *
+   * @param message il messaggio dell'evento
+   */
   public void handleEvent(Message<JsonObject> message) {
     // Creare le opzioni di consegna desiderate
     DeliveryOptions options = new DeliveryOptions()
@@ -63,6 +70,6 @@ public class HttpRequestConsumer {
         .addHeader(SOURCE_VIRTUAL_ADDRESS, httpRequestVirtualAddress)
         .addHeader(SOURCE_COMPONENT, HttpRequestConsumer.class.getName());
 
-        eventBus.publish(dispatcherVirtualAddress, message.body(), options);
+    eventBus.publish(dispatcherVirtualAddress, message.body(), options);
   }
 }
