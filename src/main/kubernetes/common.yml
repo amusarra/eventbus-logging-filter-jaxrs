@@ -1,0 +1,27 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: amqp-hostname-port
+data:
+  amqp-host: activemq-artemis
+  amqp-port: 5672
+binaryData: {}
+immutable: false
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: amqp-username-password
+data:
+  amqp-password: YXJ0ZW1pcw==
+  amqp-username: YXJ0ZW1pcw==
+type: Opaque
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: mongodb
+data:
+  mongodb-connection-url: bW9uZ29kYjovL21vbmdvOjI3MDE3L2F1ZGl0Cg==
+type: Opaque
