@@ -303,7 +303,7 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
   private boolean requestUriIsFiltered(String requestUri) {
     log.debugf("La Request URI %s è tra quelle che devono essere filtrate", requestUri);
 
-    return uris.stream().anyMatch(item -> requestUri.startsWith(item));
+    return uris.stream().anyMatch(requestUri::startsWith);
   }
 
   private void setCookieUserTracing(ContainerRequestContext requestContext,
@@ -314,13 +314,18 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
     Cookie trackingCookie = requestContext.getCookies().get(COOKIE_USER_TRACKING_NAME);
     if (trackingCookie == null) {
       // Imposta il cookie di tracciamento utente sulla risposta
-      NewCookie newTrackingCookie = new NewCookie(COOKIE_USER_TRACKING_NAME, trackingCode,
+      NewCookie newTrackingCookie = new NewCookie(
+          COOKIE_USER_TRACKING_NAME,
+          trackingCode,
           "/",
           null,
           1,
           "Cookie di tracciamento dell'utente",
           (int) TimeUnit.DAYS.toSeconds(30),
-          false);
+          null, // expiry
+          false, // secure
+          true   // httpOnly
+      );
 
       responseContext.getHeaders().add("Set-Cookie", newTrackingCookie);
     }
