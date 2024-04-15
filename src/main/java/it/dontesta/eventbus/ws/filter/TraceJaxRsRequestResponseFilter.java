@@ -88,6 +88,8 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
 
   private static final String COOKIE_USER_TRACKING_NAME = "user_tracking_id";
 
+  private static final String POD_NAME_HEADER = "X-Pod-Name";
+
   @Override
   public void filter(ContainerRequestContext requestContext) {
     // Se il filtro non è abilitato, esci
@@ -140,6 +142,9 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
 
     // Aggiungi il cookie alla risposta HTTP
     setCookieUserTracing(requestContext, responseContext);
+
+    // Aggiungi l'header X-Pod-Name alla risposta
+    responseContext.getHeaders().add(POD_NAME_HEADER, System.getenv("HOSTNAME"));
 
     // Applica la logica del filtro in base all'URI
     if (requestUriIsFiltered(requestUri)) {
