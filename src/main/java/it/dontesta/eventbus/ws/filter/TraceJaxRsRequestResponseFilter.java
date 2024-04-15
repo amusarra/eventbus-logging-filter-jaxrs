@@ -313,19 +313,17 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
     // Verifica se esiste già un cookie di tracciamento nella richiesta
     Cookie trackingCookie = requestContext.getCookies().get(COOKIE_USER_TRACKING_NAME);
     if (trackingCookie == null) {
+
       // Imposta il cookie di tracciamento utente sulla risposta
-      NewCookie newTrackingCookie = new NewCookie(
-          COOKIE_USER_TRACKING_NAME,
-          trackingCode,
-          "/",
-          null,
-          1,
-          "Cookie di tracciamento dell'utente",
-          (int) TimeUnit.DAYS.toSeconds(30),
-          null, // expiry
-          false, // secure
-          true   // httpOnly
-      );
+      NewCookie newTrackingCookie = new NewCookie.Builder(COOKIE_USER_TRACKING_NAME)
+          .value(trackingCode)
+          .domain(null)
+          .path("/")
+          .comment("Cookie di tracciamento dell'utente")
+          .maxAge((int) TimeUnit.DAYS.toSeconds(30))
+          .secure(false)
+          .httpOnly(true)
+          .build();
 
       responseContext.getHeaders().add("Set-Cookie", newTrackingCookie);
     }
