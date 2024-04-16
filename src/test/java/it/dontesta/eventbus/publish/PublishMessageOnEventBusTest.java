@@ -5,11 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.vertx.ConsumeEvent;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.core.eventbus.EventBus;
+import io.vertx.mutiny.core.eventbus.MessageConsumer;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
@@ -29,6 +30,10 @@ class PublishMessageOnEventBusTest {
 
   JsonObject responseMessage = new JsonObject().put("message",
       "Message Response to publish on the event");
+
+  MessageConsumer<JsonObject> httpRequestConsumer;
+
+  MessageConsumer<JsonObject> httpResponseConsumer;
 
   final String ASSERTION_MESSAGE = "The send message is not as expected";
 
@@ -76,6 +81,14 @@ class PublishMessageOnEventBusTest {
 
   @Test
   void testPublishHttpRequestMessageOnEventBus() {
+    // Registrazione del consumatore per l'indirizzo virtuale dell'evento
+    httpRequestConsumer = eventBus.consumer(httpRequestVirtualAddress);
+
+    // Registrazione del gestore per i messaggi ricevuti
+    httpRequestConsumer.handler(message -> {
+      assertEquals(requestMessage, message.body());
+    });
+
     // Publish the messages on the event bus for the HTTP request and response
     eventBus.publish(httpRequestVirtualAddress, requestMessage);
     assertTrue(true);
@@ -83,18 +96,28 @@ class PublishMessageOnEventBusTest {
 
   @Test
   void testPublishHttpResponseMessageOnEventBus() {
+    // Registrazione del consumatore per l'indirizzo virtuale dell'evento
+    httpResponseConsumer = eventBus.consumer(httpResponseVirtualAddress);
+
+    // Registrazione del gestore per i messaggi ricevuti
+    httpResponseConsumer.handler(message -> {
+      assertEquals(responseMessage, message.body());
+    });
+
     // Publish the messages on the event bus for the HTTP request and response
     eventBus.publish(httpResponseVirtualAddress, responseMessage);
     assertTrue(true);
   }
 
-  @ConsumeEvent("http-request")
-  void onHttpRequest(JsonObject message) {
-    assertEquals(requestMessage, message);
-  }
+  @AfterEach
+  public void tearDown() {
+    // De-registra i consumatori dell'evento bus
+    if (httpRequestConsumer != null) {
+      httpRequestConsumer.unregisterAndAwait();
+    }
 
-  @ConsumeEvent("http-response")
-  void onHttpRespone(JsonObject message) {
-    assertEquals(responseMessage, message);
+    if (httpResponseConsumer != null) {
+      httpResponseConsumer.unregisterAndAwait();
+    }
   }
 }
