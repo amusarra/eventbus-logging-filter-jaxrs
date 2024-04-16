@@ -1,11 +1,13 @@
 package it.dontesta.eventbus.consumers.events.handlers;
 
+import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
+import io.vertx.mutiny.core.eventbus.MessageConsumer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
@@ -41,6 +43,8 @@ public class Dispatcher {
   @ConfigProperty(name = "app.eventbus.consumer.dispatcher.address")
   String dispatcherVirtualAddress;
 
+  MessageConsumer<JsonObject> consumer;
+
   public static final String SOURCE_VIRTUAL_ADDRESS = "source-virtual-address";
 
   public static final String SOURCE_COMPONENT = "source-component";
@@ -49,10 +53,20 @@ public class Dispatcher {
 
   void onStart(@Observes StartupEvent ev) {
     log.debugf(
-        "Registering the dispatcher to the event bus for the event handler at addresses: {%s}",
+        "Registering the Dispatcher to the event bus for the event handler at addresses: {%s}",
         dispatcherVirtualAddress);
 
-    eventBus.consumer(dispatcherVirtualAddress, this::handleEvent);
+    consumer = eventBus.consumer(dispatcherVirtualAddress);
+    consumer.handler(this::handleEvent);
+  }
+
+  void onStop(@Observes ShutdownEvent ev) {
+    if (consumer != null) {
+      consumer.unregisterAndAwait();
+      log.debugf(
+          "Unregistering the Dispatcher from the event bus for the event handler at addresses: {%s}",
+          dispatcherVirtualAddress);
+    }
   }
 
   // Method to handle the event

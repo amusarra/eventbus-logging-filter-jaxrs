@@ -1,9 +1,11 @@
 package it.dontesta.eventbus.consumers.events.handlers.queue;
 
+import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
+import io.vertx.mutiny.core.eventbus.MessageConsumer;
 import it.dontesta.eventbus.consumers.http.HttpRequestConsumer;
 import it.dontesta.eventbus.consumers.http.HttpResponseConsumer;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,7 +25,8 @@ import org.jboss.logging.Logger;
  * L'esito dell'operazione viene inviato come risposta al Dispatcher.
  *
  * <p>La registrazione avviene all'avvio dell'applicazione tramite l'annotazione {@code @Observes}
- * e il metodo {@code onStart}.
+ * e il metodo {@code onStart}, mentre la de-registrazione avviene all'arresto dell'applicazione
+ * attraverso il metodo {@code onStop}.
  *
  * <p>L'indicazione dell'indirizzo virtuale dell'evento per l'Event Handler è definita nel parametro
  * di configurazione {@code app.eventbus.consumer.event.handler.addresses[2]} che viene iniettato
@@ -47,13 +50,24 @@ public class AmqpEventHandler {
   @ConfigProperty(name = "app.eventbus.consumer.event.handler.addresses[2]")
   String amqpEventHandlerVirtualAddress;
 
+  MessageConsumer<JsonObject> consumer;
+
   public static final String SOURCE_COMPONENT = "source-component";
 
   void onStart(@Observes StartupEvent ev) {
     log.debugf("Registering the AMQP event handler at addresses: {%s}",
         amqpEventHandlerVirtualAddress);
 
-    eventBus.consumer(amqpEventHandlerVirtualAddress, this::handleEvent);
+    consumer = eventBus.consumer(amqpEventHandlerVirtualAddress);
+    consumer.handler(this::handleEvent);
+  }
+
+  void onStop(@Observes ShutdownEvent ev) {
+    if (consumer != null) {
+      consumer.unregisterAndAwait();
+      log.debugf("Unregistering the AMQP event handler at addresses: {%s}",
+          amqpEventHandlerVirtualAddress);
+    }
   }
 
   /**

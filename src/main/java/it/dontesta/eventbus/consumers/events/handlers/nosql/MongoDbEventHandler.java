@@ -2,10 +2,12 @@ package it.dontesta.eventbus.consumers.events.handlers.nosql;
 
 import io.quarkus.mongodb.reactive.ReactiveMongoClient;
 import io.quarkus.mongodb.reactive.ReactiveMongoCollection;
+import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
+import io.vertx.mutiny.core.eventbus.MessageConsumer;
 import it.dontesta.eventbus.consumers.http.HttpRequestConsumer;
 import it.dontesta.eventbus.consumers.http.HttpResponseConsumer;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -24,7 +26,8 @@ import org.jboss.logging.Logger;
  * L'esito dell'operazione viene inviato come risposta al Dispatcher.
  *
  * <p>La registrazione avviene all'avvio dell'applicazione tramite l'annotazione {@code @Observes}
- * e il metodo {@code onStart}.
+ * e il metodo {@code onStart}, mentre la de-registrazione avviene all'arresto dell'applicazione
+ * attraverso il metodo {@code onStop}.
  *
  * <p>L'indicazione dell'indirizzo virtuale dell'evento per l'Event Handler è definita nel parametro
  * di configurazione {@code app.eventbus.consumer.event.handler.addresses[1]} che viene iniettato
@@ -55,6 +58,8 @@ public class MongoDbEventHandler {
       defaultValue = "jax-rs-requests")
   String databaseCollectionName;
 
+  MessageConsumer<JsonObject> consumer;
+
   public static final String SOURCE_COMPONENT = "source-component";
 
   void onStart(@Observes StartupEvent ev) {
@@ -62,9 +67,18 @@ public class MongoDbEventHandler {
         "Registering the MongoDB event handler at addresses: {%s}",
         mongoDbEventHandlerVirtualAddress);
 
-    eventBus.consumer(mongoDbEventHandlerVirtualAddress, this::handleEvent);
+    consumer = eventBus.consumer(mongoDbEventHandlerVirtualAddress);
+    consumer.handler(this::handleEvent);
   }
 
+  void onStop(@Observes ShutdownEvent ev) {
+    if (consumer != null) {
+      consumer.unregisterAndAwait();
+      log.debugf(
+          "Unregistering the MongoDB event handler at addresses: {%s}",
+          mongoDbEventHandlerVirtualAddress);
+    }
+  }
   /**
    * Metodo per gestire l'evento ricevuto dall'event bus.
    *
