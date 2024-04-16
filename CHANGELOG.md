@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - This CHANGELOG file to hopefully serve as an evolving example of a
   standardized open source project CHANGELOG.
 - Guidelines for contributing to this repository.
+- GitHub Actions for Continuous Integration (CI) and Continuous Deployment (CD).
 
 ### Changed
 
