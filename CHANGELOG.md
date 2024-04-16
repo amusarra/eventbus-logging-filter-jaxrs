@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   standardized open source project CHANGELOG.
 - Guidelines for contributing to this repository.
 - GitHub Actions for Continuous Integration (CI) and Continuous Deployment (CD).
+- Aggiornamento del file README.md con le istruzioni per l'esecuzione dell'applicazione 
+  in modalità sviluppo e creazione di un eseguibile nativo.
 
 ### Changed
 
