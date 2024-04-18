@@ -1,8 +1,5 @@
 # Event Bus Logging Filter JAX-RS
 
-Questo è un progetto Quarkus creato come compendio per l'articolo [Sfruttare al massimo l'Event Bus di Quarkus: Utilizzi e Vantaggi](https://theredcode.it).
-pubblicato sul blog [The Red Code](https://theredcode.it) di [Serena Sensini.](https://www.linkedin.com/in/serena-sensini/)
-
 Questo progetto è un'applicazione Quarkus che mostra come realizzare un sistema che sia capace di
 tracciare le richieste JAX-RS in arrivo e in uscita dall'applicazione su diversi canali di
 storage, come ad esempio un database MongoDB, SQL o un broker AMQP sfruttando l'Event Bus 
