@@ -145,6 +145,50 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${project.basedir}/src/main/resources/application.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>keytool-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>generateKeyPair</goal>
+                        </goals>
+                        <configuration>
+                            <keystore>${project.build.outputDirectory}/${quarkus.http.ssl.certificate.key-store-file}</keystore>
+                            <dname>cn=${project.artifactId}, ou=${project.groupId}, o=dontesta.it, c=IT</dname>
+                            <keypass>${quarkus.http.ssl.certificate.key-store-password}</keypass>
+                            <storepass>${quarkus.http.ssl.certificate.key-store-password}</storepass>
+                            <alias>${project.artifactId}</alias>
+                            <exts>SAN=DNS:localhost</exts>
+                            <sigalg>SHA256withRSA</sigalg>
+                            <validity>365</validity>
+                            <verbose>true</verbose>
+                            <keyalg>RSA</keyalg>
+                            <keysize>4096</keysize>
+                            <skipIfExist>true</skipIfExist>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
