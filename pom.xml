@@ -162,7 +162,8 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>            <plugin>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>keytool-maven-plugin</artifactId>
                 <version>1.7</version>
@@ -173,7 +174,8 @@
                             <goal>generateKeyPair</goal>
                         </goals>
                         <configuration>
-                            <keystore>${project.build.outputDirectory}/${quarkus.http.ssl.certificate.key-store-file}</keystore>
+                            <keystore>${project.build.outputDirectory}/${quarkus.http.ssl.certificate.key-store-file}
+                            </keystore>
                             <dname>cn=${project.artifactId}, ou=${project.groupId}, o=dontesta.it, c=IT</dname>
                             <keypass>${quarkus.http.ssl.certificate.key-store-password}</keypass>
                             <storepass>${quarkus.http.ssl.certificate.key-store-password}</storepass>
