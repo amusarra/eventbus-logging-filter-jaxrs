@@ -58,8 +58,9 @@ leadership del progetto.
 
 ## Attribuzione
 
-Questo Codice di Condotta è adattato dall'[Anteriori del Progetto Covenant][homepage], 
-versione 2.1, disponibile su [https://www.contributor-covenant.org/version/2/1/code_of_conduct/][version].
+Questo [Codice di Condotta](https://www.contributor-covenant.org/it/version/2/1/code_of_conduct/) 
+è adattato dal Contributor Covenant[homepage],versione 2.1, disponibile 
+su [https://www.contributor-covenant.org/version/2/1/code_of_conduct/][version].
 
 [homepage]: https://www.contributor-covenant.org
 [version]: https://www.contributor-covenant.org/version/2/1/code_of_conduct/
