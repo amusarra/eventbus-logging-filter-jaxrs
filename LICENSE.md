@@ -1,6 +1,6 @@
     MIT License
 
-    Event Loggin Filter JAX-RS
+    Quarkus Event Bus Loggin Filter JAX-RS
     Copyright (c) 2024 Antonio Musarra (Antonio Musarra's Blog - https://www.dontesta.it)
 
         Il permesso è così garantito, gratuito, a qualunque persona che ottenga
