@@ -4,7 +4,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![code of conduct](https://img.shields.io/badge/Conduct-Contributor%20Covenant%202.1-purple.svg)](CODE_OF_CONDUCT.md)
 
-![example workflow](https://github.com/amusarra/eventbus-logging-filter-jaxrs/actions/workflows/build-via-maven.yml/badge.svg)
+![Build with Maven](https://github.com/amusarra/eventbus-logging-filter-jaxrs/actions/workflows/build_via_maven.yml/badge.svg) 
+![CI Docker build](https://github.com/amusarra/eventbus-logging-filter-jaxrs/actions/workflows/docker_publish.yml/badge.svg) 
+![CI Docker build native amd64](https://github.com/amusarra/eventbus-logging-filter-jaxrs/actions/workflows/docker_publish_native_amd64.yml/badge.svg)
+
 
 Questo progetto è un'applicazione Quarkus che mostra come realizzare un sistema che sia capace di
 tracciare le richieste JAX-RS in arrivo e in uscita dall'applicazione su diversi canali di
