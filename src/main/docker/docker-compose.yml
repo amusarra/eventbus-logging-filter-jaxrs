@@ -1,0 +1,69 @@
+# This is a sample Docker Compose file that can be used to start the
+# services required by the Event Bus Logging Filter JAX-RS application.
+version: '3.8'
+
+# Define the networks
+networks:
+  logging_filter_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# Define the services
+# 1. MongoDB
+# 2. Artemis
+# 3. Logging Filter
+services:
+  mongodb:
+    image: docker.io/library/mongo:4.4
+    container_name: mongodb
+    networks:
+        - logging_filter_network
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  artemis:
+    image: quay.io/artemiscloud/activemq-artemis-broker:1.0.25
+    container_name: artemis
+    networks:
+        - logging_filter_network
+    environment:
+        - AMQ_USER=artemis
+        - AMQ_PASSWORD=artemis
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+      - "5445:5445"
+      - "5672:5672"
+
+  logging-filter:
+    image: docker.io/amusarra/eventbus-logging-filter-jaxrs:latest
+    container_name: logging-filter
+    networks:
+        - logging_filter_network
+    environment:
+        - AMQP_HOSTNAME=artemis
+        - AMQP_PORT=5672
+        - AMQP_USERNAME=artemis
+        - AMQP_PASSWORD=artemis
+        - MONGODB_CONNECTION_URL=mongodb://mongodb:27017/audit
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:8080/q/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      - artemis
+      - mongodb
+
+# Define the volumes
+volumes:
+  mongodb_data:
+    driver: local
