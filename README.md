@@ -51,12 +51,166 @@ Le estensioni Quarkus utilizzate per l'implementazione del progetto sono le segu
 - io.quarkus:quarkus-rest ✔
 - io.quarkus:quarkus-rest-jackson ✔
 
+## Esecuzione dell'applicazione in Docker
+Vorresti eseguire l'applicazione in un container e testare il funzionamento dell'applicazione fin da subito?
+All'interno del progetto è disponibile il file `src/main/docker/docker-compose.yml` che ti permette di eseguire 
+l'applicazione in un container utilizzando Docker Compose o Podman Compose.
+
+Ecco come fare utilizzando Podman Compose (non cambia nel caso di Docker Compose):
+
+```shell script
+# Tramite Podman Compose (alternativa a Docker Compose)
+podman-compose -f src/main/docker/docker-compose.yml up -d
+```
+Console 1 - Esegui il l'applicazione Quarkus in un container (compresi i servizi di supporto come MongoDB, AMQP, ecc.)
+
+Tramite il comando `docker-compose` o `podman-compose` verranno avviati i seguenti servizi:
+- MongoDB
+- AMQP (Artemis)
+- Applicazione Quarkus
+
+L'immagine dell'applicazione Quarkus è disponibile su [Docker Hub](https://hub.docker.com/repository/docker/amusarra/eventbus-logging-filter-jaxrs/general)
+e questa è pubblicata grazie alla GitHub Actions `.github/workflows/docker_publish.yml` e 
+`.github/workflows/docker_publish_native_amd64.yml` (per build e pubblicazione dell'immagine nativa x86-64).
+
+```shell script
+ 
+Dopo aver eseguito il comando, puoi verificare che i servizi siano attivi tramite il comando `docker ps` o `podman ps`.
+
+```shell script
+# Verifica i container attivi
+podman ps
+```
+Console 2 - Verifica i container attivi
+
+L'output del comando `podman ps` dovrebbe essere simile al seguente:
+
+```shell script
+CONTAINER ID  IMAGE                                                    COMMAND               CREATED         STATUS                   PORTS                                                                                             NAMES
+d021a5f570bc  docker.io/library/mongo:4.4                              mongod                40 seconds ago  Up 40 seconds            0.0.0.0:27017->27017/tcp                                                                          mongodb
+4faee4a45565  quay.io/artemiscloud/activemq-artemis-broker:1.0.25      /opt/amq/bin/laun...  39 seconds ago  Up 39 seconds            0.0.0.0:5445->5445/tcp, 0.0.0.0:5672->5672/tcp, 0.0.0.0:8161->8161/tcp, 0.0.0.0:61616->61616/tcp  artemis
+7a3d8e2e709e  docker.io/amusarra/eventbus-logging-filter-jaxrs:latest                        38 seconds ago  Up 38 seconds (healthy)  0.0.0.0:8080->8080/tcp, 0.0.0.0:8443->8443/tcp                                                    logging-filter
+```
+Console 3 - Output del comando `podman ps`
+
+Il servizio `logging-filter` è l'applicazione Quarkus che è stata avviata in un container e che è pronta per essere 
+utilizzata per testare i servizi REST esposti (fai attenzione che il servizio sia in stato `healthy`).
+
+Sul docker-compose, per il servizio `logging-filter`, è stato abilitato il servizio di Health Check di Quarkus che
+verifica la salute dell'applicazione. Il servizio di Health Check è disponibile all'indirizzo
+http://localhost:8080/q/health.
+
+```yaml
+  # The environment variables are used to configure the connection to the
+  # Artemis message broker and the MongoDB database.
+  # Se the application.properties file for more details about the names of the
+  # environment variables.
+  logging-filter:
+    image: docker.io/amusarra/eventbus-logging-filter-jaxrs:latest
+    container_name: logging-filter
+    networks:
+        - logging_filter_network
+    environment:
+        - AMQP_HOSTNAME=artemis
+        - AMQP_PORT=5672
+        - AMQP_USERNAME=artemis
+        - AMQP_PASSWORD=artemis
+        - MONGODB_CONNECTION_URL=mongodb://mongodb:27017/audit
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:8080/q/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      - artemis
+      - mongodb
+```
+Console 4 - Estratto del docker-compose.yml per il servizio `logging-filter`
+
+Per testare il servizio REST esposto dall'applicazione Quarkus, puoi utilizzare il comando `curl` per inviare una
+richiesta HTTP al servizio REST.
+
+```shell script
+# Invia una richiesta HTTP al servizio REST
+curl -v --http2 \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Test di tracking richiesta JAX-RS"}' \
+  http://localhost:8080/api/rest/echo
+  
+# Risposta attesa
+*   Trying [::1]:8080...
+* Connected to localhost (::1) port 8080
+> POST /api/rest/echo HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.4.0
+> Accept: */*
+> Connection: Upgrade, HTTP2-Settings
+> Upgrade: h2c
+> HTTP2-Settings: AAMAAABkAAQAoAAAAAIAAAAA
+> Content-Type: application/json
+> Content-Length: 48
+>
+< HTTP/1.1 101 Switching Protocols
+< connection: upgrade
+< upgrade: h2c
+* Received 101, Switching to HTTP/2
+* Copied HTTP/2 data in stream buffer to connection buffer after upgrade: len=15
+< HTTP/2 200
+< content-type: application/json;charset=UTF-8
+< content-length: 48
+< set-cookie: user_tracking_id=f7cf38cd-a16d-4d53-91d3-5a3854f93e94;Version=1;Comment="Cookie di tracciamento dell'utente";Path=/;Max-Age=2592000;HttpOnly
+< x-correlation-id: f5f0b80e-f550-45f4-9a75-41d33c6376f3
+< x-pod-name: 7a3d8e2e709e
+<
+* Connection #0 to host localhost left intact
+{"message": "Test di tracking richiesta JAX-RS"}%
+```
+Console 5 - Esempio di richiesta HTTP al servizio REST
+
+Utilizzando il comando `podman logs <container-id>`, puoi verificare i log dell'applicazione Quarkus dove sono presenti
+le informazioni relative al tracciamento delle richieste JAX-RS. A seguire un esempio di output dei log dell'applicazione.
+
+```shell script
+2024-04-23 11:57:43,965 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (executor-thread-35) La Request URI /api/rest/echo è tra quelle che devono essere filtrate
+2024-04-23 11:57:43,966 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (executor-thread-35) Pubblicazione del messaggio della richiesta HTTP su Event Bus
+2024-04-23 11:57:43,967 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Received event message from source virtual address: http-request and source component: it.dontesta.eventbus.consumers.http.HttpRequestConsumer for the target virtual addresses: sql-trace,nosql-trace,queue-trace
+2024-04-23 11:57:43,968 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Sending event message to target virtual address: sql-trace
+2024-04-23 11:57:43,968 ERROR [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Failed to receive response from target virtual address: sql-trace with failure: (NO_HANDLERS,-1) No handlers for address sql-trace
+2024-04-23 11:57:43,968 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Sending event message to target virtual address: nosql-trace
+2024-04-23 11:57:43,969 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Sending event message to target virtual address: queue-trace
+2024-04-23 11:57:43,967 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (executor-thread-35) La Request URI /api/rest/echo è tra quelle che devono essere filtrate
+2024-04-23 11:57:43,970 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (executor-thread-35) Pubblicazione del messaggio della risposta HTTP su Event Bus
+2024-04-23 11:57:43,973 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Received event message from source virtual address: http-response and source component: it.dontesta.eventbus.consumers.http.HttpResponseConsumer for the target virtual addresses: sql-trace,nosql-trace,queue-trace
+2024-04-23 11:57:43,976 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Sending event message to target virtual address: sql-trace
+2024-04-23 11:57:43,977 ERROR [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Failed to receive response from target virtual address: sql-trace with failure: (NO_HANDLERS,-1) No handlers for address sql-trace
+2024-04-23 11:57:43,977 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Sending event message to target virtual address: nosql-trace
+2024-04-23 11:57:43,977 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Sending event message to target virtual address: queue-trace
+2024-04-23 11:57:43,982 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Received response from target virtual address: nosql-trace with result: Documents inserted successfully with Id BsonObjectId{value=6627a2378d1ed50d0c256e95}
+2024-04-23 11:57:43,982 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Received response from target virtual address: nosql-trace with result: Documents inserted successfully with Id BsonObjectId{value=6627a2378d1ed50d0c256e96}
+2024-04-23 11:57:43,984 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Received response from target virtual address: queue-trace with result: Message sent to AMQP queue successfully!
+2024-04-23 11:57:43,984 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Received response from target virtual address: queue-trace with result: Message sent to AMQP queue successfully!
+```
+Log 1 - Esempio di log dell'applicazione Quarkus
+
+A questo punto puoi eseguire lo shutdown dell'applicazione Quarkus e dei servizi di supporto utilizzando il comando
+`podman-compose -f src/main/docker/docker-compose.yml down` o il relativo docker-compose.
+
+Su asciinema.org è disponibile un video che mostra come eseguire l'applicazione Quarkus in un container utilizzando 
+Podman.
+
+[![asciicast](https://asciinema.org/a/655929.svg)](https://asciinema.org/a/655929)
+
 ## Esecuzione dell'applicazione in dev mode
 
 Puoi eseguire l'applicazione in modalità sviluppo che abilita il live coding utilizzando:
 ```shell script
 ./mvnw compile quarkus:dev
 ```
+Console 6 - Esecuzione dell'applicazione in modalità sviluppo
 
 > **_NOTE:_**  Quarkus ora include una UI di sviluppo, disponibile solo in modalità sviluppo all'indirizzo http://localhost:8080/q/dev/.
 
@@ -66,6 +220,7 @@ L'applicazione può essere impacchettata utilizzando:
 ```shell script
 ./mvnw package
 ```
+Console 7 - Impacchettamento dell'applicazione
 
 Il processo produrrà il file `quarkus-run.jar` in `target/quarkus-app/`.
 Questo non è un _über-jar_ in quanto le dipendenze sono copiate nella 
@@ -77,6 +232,7 @@ Se vuoi creare un _über-jar_, esegui il seguente comando:
 ```shell script
 ./mvnw package -Dquarkus.package.type=uber-jar
 ```
+Console 8 - Impacchettamento dell'applicazione come _über-jar_
 
 L'applicazione, impacchettata come un _über-jar_, è ora eseguibile utilizzando `java -jar target/*-runner.jar`.
 
@@ -86,6 +242,7 @@ Puoi creare un eseguibile nativo utilizzando:
 ```shell script
 ./mvnw package -Dnative
 ```
+Console 9 - Creazione di un eseguibile nativo
 
 Nel caso in cui tu non avvessi GraalVM installato, puoi eseguire la build dell'eseguibile nativo in un container 
 utilizzando:
@@ -93,8 +250,9 @@ utilizzando:
 ```shell script
 ./mvnw package -Dnative -Dquarkus.native.container-build=true
 ```
+Console 10 - Creazione di un eseguibile nativo in un container
 
-Puoi esequire l'eseguibile nativo con: `./target/eventbus-logging-filter-jaxrs-1.0.0-SNAPSHOT-runner`
+Puoi eseguire l'eseguibile nativo con: `./target/eventbus-logging-filter-jaxrs-1.0.0-SNAPSHOT-runner`
 
 Se vuoi saperne di più sulla creazione di eseguibili nativi, consulta https://quarkus.io/guides/maven-tooling.
 
