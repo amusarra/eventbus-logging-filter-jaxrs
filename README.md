@@ -72,8 +72,6 @@ Tramite il comando `docker-compose` o `podman-compose` verranno avviati i seguen
 L'immagine dell'applicazione Quarkus è disponibile su [Docker Hub](https://hub.docker.com/repository/docker/amusarra/eventbus-logging-filter-jaxrs/general)
 e questa è pubblicata grazie alla GitHub Actions `.github/workflows/docker_publish.yml` e 
 `.github/workflows/docker_publish_native_amd64.yml` (per build e pubblicazione dell'immagine nativa x86-64).
-
-```shell script
  
 Dopo aver eseguito il comando, puoi verificare che i servizi siano attivi tramite il comando `docker ps` o `podman ps`.
 
