@@ -204,13 +204,66 @@ Podman.
 
 [![asciicast](https://asciinema.org/a/655929.svg)](https://asciinema.org/a/655929)
 
+Potresti anche essere curioso a fare un semplice banchmark dell'applicazione Quarkus in un container. Per fare ciò,
+puoi utilizzare il comando [h2load](https://github.com/nghttp2/nghttp2?tab=readme-ov-file#benchmarking-tool) che è un benchmarking tool per HTTP/2 e HTTP/1.1. Ecco un esempio di come fare.
+
+```shell script
+# Esegui il benchmark dell'applicazione Quarkus utilizzando il protocollo HTTP/2
+# -n 100 indica il numero di richieste da inviare
+# -c 5 indica il numero di connessioni da mantenere aperte
+# -H "Content-Type: application/json" indica l'header Content-Type
+# -H 'Accept-Encoding: gzip, deflate, br, zstd' indica l'header Accept-Encoding
+# -d src/test/resources/payload-1.json indica il payload da inviare
+h2load -n 100 -c 5 \
+        -H "Content-Type: application/json" \
+        -H 'Accept-Encoding: gzip, deflate, br, zstd' \
+        -d src/test/resources/payload-1.json \
+        https://0.0.0.0:8443/api/rest/echo
+```
+Console 6 - Esempio di benchmark dell'applicazione Quarkus
+
+A seguire un esempio di output del comando h2load.
+
+```shell script
+starting benchmark...
+spawning thread #0: 5 total client(s). 100 total requests
+TLS Protocol: TLSv1.3
+Cipher: TLS_AES_256_GCM_SHA384
+Server Temp Key: X25519 253 bits
+Application protocol: h2
+progress: 10% done
+progress: 20% done
+progress: 30% done
+progress: 40% done
+progress: 50% done
+progress: 60% done
+progress: 70% done
+progress: 80% done
+progress: 90% done
+progress: 100% done
+
+finished in 315.73ms, 316.73 req/s, 97.43KB/s
+requests: 100 total, 100 started, 100 done, 100 succeeded, 0 failed, 0 errored, 0 timeout
+status codes: 100 2xx, 0 3xx, 0 4xx, 0 5xx
+traffic: 30.76KB (31500) total, 18.83KB (19280) headers (space savings 34.86%), 9.57KB (9800) data
+                     min         max         mean         sd        +/- sd
+time for request:     2.57ms     42.56ms     10.97ms      6.84ms    72.00%
+time for connect:    20.96ms     73.93ms     42.60ms     19.80ms    60.00%
+time to 1st byte:    49.82ms     82.68ms     65.11ms     16.23ms    60.00%
+req/s           :      63.44      101.74       79.87       19.92    60.00%
+```
+Log 2 - Esempio di output del comando h2load
+
+
+
+
 ## Esecuzione dell'applicazione in dev mode
 
 Puoi eseguire l'applicazione in modalità sviluppo che abilita il live coding utilizzando:
 ```shell script
 ./mvnw compile quarkus:dev
 ```
-Console 6 - Esecuzione dell'applicazione in modalità sviluppo
+Console 7 - Esecuzione dell'applicazione in modalità sviluppo
 
 > **_NOTE:_**  Quarkus ora include una UI di sviluppo, disponibile solo in modalità sviluppo all'indirizzo http://localhost:8080/q/dev/.
 
@@ -220,7 +273,7 @@ L'applicazione può essere impacchettata utilizzando:
 ```shell script
 ./mvnw package
 ```
-Console 7 - Impacchettamento dell'applicazione
+Console 8 - Impacchettamento dell'applicazione
 
 Il processo produrrà il file `quarkus-run.jar` in `target/quarkus-app/`.
 Questo non è un _über-jar_ in quanto le dipendenze sono copiate nella 
@@ -232,7 +285,7 @@ Se vuoi creare un _über-jar_, esegui il seguente comando:
 ```shell script
 ./mvnw package -Dquarkus.package.type=uber-jar
 ```
-Console 8 - Impacchettamento dell'applicazione come _über-jar_
+Console 9 - Impacchettamento dell'applicazione come _über-jar_
 
 L'applicazione, impacchettata come un _über-jar_, è ora eseguibile utilizzando `java -jar target/*-runner.jar`.
 
@@ -242,15 +295,15 @@ Puoi creare un eseguibile nativo utilizzando:
 ```shell script
 ./mvnw package -Dnative
 ```
-Console 9 - Creazione di un eseguibile nativo
+Console 10 - Creazione di un eseguibile nativo
 
-Nel caso in cui tu non avvessi GraalVM installato, puoi eseguire la build dell'eseguibile nativo in un container 
+Nel caso in cui tu non avessi GraalVM installato, puoi eseguire la build dell'eseguibile nativo in un container 
 utilizzando:
 
 ```shell script
 ./mvnw package -Dnative -Dquarkus.native.container-build=true
 ```
-Console 10 - Creazione di un eseguibile nativo in un container
+Console 11 - Creazione di un eseguibile nativo in un container
 
 Puoi eseguire l'eseguibile nativo con: `./target/eventbus-logging-filter-jaxrs-1.0.0-SNAPSHOT-runner`
 
