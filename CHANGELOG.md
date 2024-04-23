@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Abilitazione compressione su protocollo HTTP/1.1
 - Abilitazione protocollo SSL/TLS
 - Abilitazione Router OpenShift in modalità TLS/Passthrough
+- Aggiunto il docker-compose.yml per l'esecuzione dell'applicazione in modalità sviluppo
 
 ### Changed
 
