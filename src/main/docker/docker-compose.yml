@@ -39,6 +39,10 @@ services:
       - "5445:5445"
       - "5672:5672"
 
+  # The environment variables are used to configure the connection to the
+  # Artemis message broker and the MongoDB database.
+  # Se the application.properties file for more details about the names of the
+  # environment variables.
   logging-filter:
     image: docker.io/amusarra/eventbus-logging-filter-jaxrs:latest
     container_name: logging-filter
