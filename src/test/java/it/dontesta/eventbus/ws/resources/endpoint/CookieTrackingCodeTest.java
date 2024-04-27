@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
-public class CookieTrackingCodeTest {
+class CookieTrackingCodeTest {
 
   @Test
   void testCookieResponseSuccess() {

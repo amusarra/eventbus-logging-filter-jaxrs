@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
-public class CorrelationIdHttpHeaderTest {
+class CorrelationIdHttpHeaderTest {
 
   @Test
   void testXCorrelationIdSuccess() {
