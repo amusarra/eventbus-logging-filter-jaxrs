@@ -5,6 +5,37 @@
     <artifactId>eventbus-logging-filter-jaxrs</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
+    <name>eventbus-logging-filter-jaxrs</name>
+    <description>Event Bus Logging Filter JAX-RS</description>
+    <url>https://amusarra.github.io/eventbus-logging-filter-jaxrs-docs</url>
+    <organization>
+        <name>Antonio Musarra's Blog</name>
+        <url>https://www.dontesta.it</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/license/mit</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>amusarra</id>
+            <name>Antonio Musarra</name>
+            <email>antonio.musarra@gmail.com</email>
+            <url>https://www.dontesta.it</url>
+            <timezone>+1</timezone>
+            <roles>
+                <role>IT Senior Consultant</role>
+                <role>Senior Software Architect</role>
+            </roles>
+            <organization>Antonio Musarra's Blog</organization>
+            <organizationUrl>https://www.dontesta.it</organizationUrl>
+        </developer>
+    </developers>
+
     <properties>
         <compiler-plugin.version>3.12.1</compiler-plugin.version>
         <maven.compiler.release>21</maven.compiler.release>
