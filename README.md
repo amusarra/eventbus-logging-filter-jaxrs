@@ -8,6 +8,7 @@
 ![CI Docker build](https://github.com/amusarra/eventbus-logging-filter-jaxrs/actions/workflows/docker_publish.yml/badge.svg) 
 ![CI Docker build native amd64](https://github.com/amusarra/eventbus-logging-filter-jaxrs/actions/workflows/docker_publish_native_amd64.yml/badge.svg)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=amusarra_eventbus-logging-filter-jaxrs&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=amusarra_eventbus-logging-filter-jaxrs)
 
 Questo progetto è un'applicazione Quarkus che mostra come realizzare un sistema che sia capace di
 tracciare le richieste JAX-RS in arrivo e in uscita dall'applicazione su diversi canali di
@@ -56,20 +57,20 @@ Vorresti eseguire l'applicazione in un container e testare il funzionamento dell
 All'interno del progetto è disponibile il file `src/main/docker/docker-compose.yml` che ti permette di eseguire 
 l'applicazione in un container utilizzando Docker Compose o Podman Compose.
 
-Ecco come fare utilizzando Podman Compose (non cambia nel caso di Docker Compose):
+Ecco come fare utilizzando [Podman Compose](https://docs.podman.io/en/latest/markdown/podman-compose.1.html) (non cambia nel caso di [Docker Compose](https://docs.docker.com/compose/)):
 
 ```shell script
 # Tramite Podman Compose (alternativa a Docker Compose)
 podman-compose -f src/main/docker/docker-compose.yml up -d
 ```
-Console 1 - Esegui il l'applicazione Quarkus in un container (compresi i servizi di supporto come MongoDB, AMQP, ecc.)
+Console 1 - Esegui l'applicazione Quarkus in un container (compresi i servizi di supporto come MongoDB, AMQP, ecc.)
 
 Tramite il comando `docker-compose` o `podman-compose` verranno avviati i seguenti servizi:
 - MongoDB
-- AMQP (Artemis)
+- AMQP (Apache ActiveMQ Artemis)
 - Applicazione Quarkus
 
-L'immagine dell'applicazione Quarkus è disponibile su [Docker Hub](https://hub.docker.com/repository/docker/amusarra/eventbus-logging-filter-jaxrs/general)
+L'immagine dell'applicazione Quarkus è disponibile su [Docker Hub](https://hub.docker.com/r/amusarra/eventbus-logging-filter-jaxrs)
 e questa è pubblicata grazie alla GitHub Actions `.github/workflows/docker_publish.yml` e 
 `.github/workflows/docker_publish_native_amd64.yml` (per build e pubblicazione dell'immagine nativa x86-64).
  
@@ -202,7 +203,7 @@ Podman.
 
 [![asciicast](https://asciinema.org/a/655929.svg)](https://asciinema.org/a/655929)
 
-Potresti anche essere curioso a fare un semplice banchmark dell'applicazione Quarkus in un container. Per fare ciò,
+Potresti anche essere curioso a fare un semplice benchmark dell'applicazione Quarkus in un container. Per fare ciò,
 puoi utilizzare il comando [h2load](https://github.com/nghttp2/nghttp2?tab=readme-ov-file#benchmarking-tool) che è un benchmarking tool per HTTP/2 e HTTP/1.1. Ecco un esempio di come fare.
 
 ```shell script
@@ -251,9 +252,6 @@ time to 1st byte:    49.82ms     82.68ms     65.11ms     16.23ms    60.00%
 req/s           :      63.44      101.74       79.87       19.92    60.00%
 ```
 Log 2 - Esempio di output del comando h2load
-
-
-
 
 ## Esecuzione dell'applicazione in dev mode
 
@@ -327,3 +325,8 @@ Antonio Musarra's Blog Team would like inform that JetBrains is helping by
 provided IDE to develop the application. Thanks to its support program for
 an Open Source projects!
 
+
+[![alt tag](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/dashboard?id=amusarra_liferay-portal-security-audit)
+
+This project is using SonarCloud for code quality.
+Thanks to SonarQube Team for free analysis solution for open source projects.
