@@ -326,7 +326,7 @@ provided IDE to develop the application. Thanks to its support program for
 an Open Source projects!
 
 
-[![alt tag](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/dashboard?id=amusarra_liferay-portal-security-audit)
+[![alt tag](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/project/overview?id=amusarra_eventbus-logging-filter-jaxrs)
 
 This project is using SonarCloud for code quality.
 Thanks to SonarQube Team for free analysis solution for open source projects.
