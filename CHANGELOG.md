@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Abilitazione Router OpenShift in modalità TLS/Passthrough
 - Aggiunto il docker-compose.yml per l'esecuzione dell'applicazione in modalità sviluppo
 - Aggiornamento base image a registry.access.redhat.com/ubi9/openjdk-21:1.18-3
+- Aggiornamento configurazione Quarkus per tuning parametri JVM
 
 ### Changed
 
