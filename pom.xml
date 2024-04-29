@@ -39,6 +39,7 @@
     <properties>
         <compiler-plugin.version>3.12.1</compiler-plugin.version>
         <maven.compiler.release>21</maven.compiler.release>
+        <maven.release.plugin.version>3.0.1</maven.release.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
@@ -225,9 +226,33 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven.release.plugin.version}</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <goals>deploy</goals>
+                    <pushChanges>false</pushChanges>
+                    <releaseProfiles>release</releaseProfiles>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <useReleaseProfile>false</useReleaseProfile>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-
+    <scm>
+        <connection>
+            scm:git:git@github.com:amusarra/eventbus-logging-filter-jaxrs.git
+        </connection>
+        <url>
+            scm:git:git@github.com:amusarra/eventbus-logging-filter-jaxrs.git
+        </url>
+        <developerConnection>
+            scm:git:git@github.com:amusarra/eventbus-logging-filter-jaxrs.git
+        </developerConnection>
+        <tag>HEAD</tag>
+    </scm>
     <profiles>
         <profile>
             <id>native</id>
