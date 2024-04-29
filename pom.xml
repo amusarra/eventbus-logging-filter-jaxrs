@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>it.dontesta.eventbus</groupId>
     <artifactId>eventbus-logging-filter-jaxrs</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <name>eventbus-logging-filter-jaxrs</name>
     <description>Event Bus Logging Filter JAX-RS</description>
@@ -251,7 +251,7 @@
         <developerConnection>
             scm:git:git@github.com:amusarra/eventbus-logging-filter-jaxrs.git
         </developerConnection>
-        <tag>HEAD</tag>
+        <tag>v1.0.0</tag>
     </scm>
     <profiles>
         <profile>
