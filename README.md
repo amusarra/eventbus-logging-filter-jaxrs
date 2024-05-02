@@ -243,15 +243,15 @@ progress: 80% done
 progress: 90% done
 progress: 100% done
 
-finished in 315.73ms, 316.73 req/s, 97.43KB/s
+finished in 210.56ms, 474.93 req/s, 145.54KB/s
 requests: 100 total, 100 started, 100 done, 100 succeeded, 0 failed, 0 errored, 0 timeout
 status codes: 100 2xx, 0 3xx, 0 4xx, 0 5xx
-traffic: 30.76KB (31500) total, 18.83KB (19280) headers (space savings 34.86%), 9.57KB (9800) data
+traffic: 30.64KB (31380) total, 18.71KB (19160) headers (space savings 32.54%), 9.57KB (9800) data
                      min         max         mean         sd        +/- sd
-time for request:     2.57ms     42.56ms     10.97ms      6.84ms    72.00%
-time for connect:    20.96ms     73.93ms     42.60ms     19.80ms    60.00%
-time to 1st byte:    49.82ms     82.68ms     65.11ms     16.23ms    60.00%
-req/s           :      63.44      101.74       79.87       19.92    60.00%
+time for request:      970us    107.30ms      4.16ms     12.84ms    97.00%
+time for connect:    62.28ms    165.11ms    103.21ms     42.95ms    80.00%
+time to 1st byte:   115.42ms    169.90ms    148.03ms     29.64ms    60.00%
+req/s           :      95.02      131.20      109.66       19.40    60.00%
 ```
 Log 2 - Esempio di output del comando h2load
 
