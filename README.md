@@ -12,8 +12,6 @@
 
 [![Docker Image Version (tag)](https://img.shields.io/docker/v/amusarra/eventbus-logging-filter-jaxrs?label=Docker%20Hub%20Image%20)](https://hub.docker.com/r/amusarra/eventbus-logging-filter-jaxrs)
 
-
-
 Questo progetto è un'applicazione Quarkus che mostra come realizzare un sistema che sia capace di
 tracciare le richieste JAX-RS in arrivo e in uscita dall'applicazione su diversi canali di
 storage, come ad esempio un database MongoDB, SQL o un broker AMQP sfruttando l'Event Bus 
