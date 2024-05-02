@@ -267,6 +267,10 @@ Console 7 - Esecuzione dell'applicazione in modalità sviluppo
 
 > **_NOTE:_**  Quarkus ora include una UI di sviluppo, disponibile solo in modalità sviluppo all'indirizzo http://localhost:8080/q/dev/.
 
+![Quarkus Dev UI](src/doc/resources/images/quarkus_dev_ui_home_page.jpg)
+
+**Figura 2** - Quarkus Dev UI
+
 ## Packaging e avvio dell'applicazione
 
 L'applicazione può essere impacchettata utilizzando:

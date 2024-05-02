@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Aggiunta figura 2 sul file README.md che mostra la Dev UI di Quarkus.
 
 ### Changed
 - Revisione dei parametri di configurazione della JVM.
