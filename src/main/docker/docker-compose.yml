@@ -26,7 +26,7 @@ services:
       - mongodb_data:/data/db
 
   artemis:
-    image: quay.io/artemiscloud/activemq-artemis-broker:1.0.25
+    image: apache/activemq-artemis:2.33.0
     container_name: artemis
     networks:
         - logging_filter_network
