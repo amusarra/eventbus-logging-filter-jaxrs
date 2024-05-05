@@ -1,0 +1,26 @@
+# Configurations for Taurus to run JMeter tests
+# For more information read https://gettaurus.org/docs/ConfigSyntax/
+
+# General Settings
+settings:
+  default-executor: jmeter
+  artifacts-dir: target/taurus/%Y-%m-%d_%H-%M-%S.%f
+  check-updates: false
+
+# Use local provisioning
+provisioning: local
+---
+# BlazeMeter reporting settings
+modules:
+  blazemeter:
+    token: <your-api-key>:<your-api-secret>
+    test: JAX-RS Services
+    project: Quarkus Event Bus Logging Filter JAX-RS
+    public-report: true
+---
+# Cloud provisioning settings
+modules:
+  cloud:
+    token: <your-api-key>:<your-api-secret>
+    timeout: 7s
+    browser-open: start

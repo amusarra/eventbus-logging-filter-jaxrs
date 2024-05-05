@@ -8,16 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Aggiunta figura 2 sul file README.md che mostra la Dev UI di Quarkus.
 
 ### Changed
-- Revisione dei parametri di configurazione della JVM.
 
 ### Removed
 
 ### Deprecated
 
 ### Security
+
+## [1.1.0] - 2024-05-05
+
+### Added
+- Aggiunta figura 2 sul file README.md che mostra la Dev UI di Quarkus.
+- Aggiunto scenario di Load Testing con JMeter attraverso Taurus
+
+### Changed
+- Revisione dei parametri di configurazione della JVM.
+- Revisione del file README.md con aggiunta del capitolo "Load Testing con JMeter e Taurus".
+
 
 ## [1.0.1] - 2024-04-29
 
