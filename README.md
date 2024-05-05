@@ -19,7 +19,7 @@ di Quarkus.
 
 [![Flusso Applicazione Quarkus](src/doc/resources/images/flusso_applicazione_quarkus.jpeg)](src/doc/resources/images/flusso_applicazione_quarkus.jpeg)
 
-**Figura 1**: Flusso dell'applicazione Quarkus
+Figura 1 - Flusso dell'applicazione Quarkus
 
 Se vuoi saperne di più su Quarkus, visita il sito ufficiale [quarkus.io](https://quarkus.io/).
 A seguire trovi le istruzioni per eseguire l'applicazione in modalità sviluppo e creare un eseguibile
@@ -267,15 +267,15 @@ Console 7 - Esecuzione dell'applicazione in modalità sviluppo
 
 ![Quarkus Dev UI](src/doc/resources/images/quarkus_dev_ui_home_page.jpg)
 
-**Figura 2** - Quarkus Dev UI
+Figura 2 - Quarkus Dev UI
 
 ## Packaging e avvio dell'applicazione
 
-L'applicazione può essere impacchettata utilizzando:
+L'applicazione può essere preparata utilizzando:
 ```shell script
 ./mvnw package
 ```
-Console 8 - Impacchettamento dell'applicazione
+Console 8 - Packaging dell'applicazione
 
 Il processo produrrà il file `quarkus-run.jar` in `target/quarkus-app/`.
 Questo non è un _über-jar_ in quanto le dipendenze sono copiate nella 
@@ -310,6 +310,99 @@ Console 11 - Creazione di un eseguibile nativo in un container
 Puoi eseguire l'eseguibile nativo con: `./target/eventbus-logging-filter-jaxrs-1.0.0-SNAPSHOT-runner`
 
 Se vuoi saperne di più sulla creazione di eseguibili nativi, consulta https://quarkus.io/guides/maven-tooling.
+
+## Scenari di Load Testing con JMeter e Taurus
+All'interno del progetto è disponibile il file jmx `src/test/jmeter/scenario_1.jmx` che consente di eseguire un semplice
+di Load Testing con JMeter.
+
+Lo scopo di questo semplice scenario è quello di testare il servizio REST `api/rest/echo` esposto dall'applicazione 
+Quarkus e di verificare il comportamento del sistema sotto stress in termini di performance e scalabilità ma in particolare
+per mostrare la differenza tra le richieste HTTP/1.1 e HTTP/2 over TLS con e senza compressione GZIP.
+
+Il Test Plan creato, prevede una serie di [Thread Group](https://jmeter.apache.org/usermanual/test_plan.html#thread_group) che includono un sampler HTTP
+configurato opportunamente per il servizio REST `api/rest/echo`. I Thread Group sono:
+1. test in HTTPS/1.1
+2. test in HTTPS/2 over TLS
+3. test in HTTP/2 over TLS con compressione GZIP
+
+La figura seguente mostra la configurazione del Test Plan con JMeter.
+
+![Configurazione Test Plan di JMeter](src/doc/resources/images/jmeter_configurazione_piano_test_1.jpg)
+
+Figura 3 - Configurazione del Test Plan di JMeter
+
+Ognuno dei tre test è quindi un Thread Group di JMeter che può essere configurato attraverso le [User Defined Variables](https://jmeter.apache.org/usermanual/component_reference.html#User_Defined_Variables) (vedi Figura 3) del Test Plan e in particolare:
+1. **numberOfThreads**: questo parametro indica il numero totale di thread (utenti virtuali) che saranno avviati durante l'esecuzione del test. Ogni thread simula un utente che interagisce con il sistema sotto test;
+2. **rampUpPeriod**: il periodo di ramp-up (in secondi) specifica quanto tempo JMeter deve impiegare per far partire tutti i thread specificati nel "Number of Threads". Ad esempio, se hai 100 thread e imposti un periodo di ramp-up di 10 secondi, JMeter inizierà un nuovo thread ogni 0.1 secondo (10 secondi/100 thread);
+3. **loopCount**: questo parametro definisce quante volte ogni thread eseguirà il set di campioni (richieste HTTP o altre operazioni) all'interno del Thread Group. Se imposti il Loop Count su 0, i thread continueranno a eseguire i campioni all'infinito finché il test non viene interrotto manualmente.
+
+La figura seguente mostra come questi valori sono stati impostati sul Thread Group di JMeter.
+
+![Configurazione Thread Group JMeter](src/doc/resources/images/jmeter_configurazione_piano_test_thread_group_1.jpg)
+
+Figura 4 - Configurazione del Thread Group di JMeter
+
+Per eseguire questo scenario di Load Testing è possibile utilizzare [Taurus](https://gettaurus.org/), un framework 
+open source che automatizza i test di carico e le operazioni di test di performance. Taurus supporta JMeter, 
+Gatling, Locust, Selenium e altri strumenti di test di carico.
+
+Per l'installazione di Taurus, puoi seguire la [guida ufficiale](https://gettaurus.org/install/Installation/).
+
+Il file di configurazione di Taurus `src/test/jmeter/taurus/config.yml` è stato creato per eseguire il Test Plan di 
+JMeter. Ecco un esempio di come eseguire il Test Plan di JMeter con Taurus.
+
+```shell script
+# Esegui il Test Plan di JMeter con Taurus
+bzt -o modules.jmeter.properties.numberOfThreads=100 \
+  -o modules.jmeter.properties.rampUpPeriod=0.5 \
+  -o modules.jmeter.properties.loopCount=300 \
+  -o modules.jmeter.properties.httpProtocol=https \
+  -o modules.jmeter.properties.httpPort=8443 \
+  -o modules.jmeter.properties.ipOrFQDN=localhost \
+  src/test/jmeter/taurus/config.yml \
+  src/test/jmeter/scenario_1.jmx
+```
+Console 12 - Esecuzione del Test Plan di JMeter con Taurus
+
+Il comando `bzt` esegue il Test Plan di JMeter con Taurus e i parametri `-o` sono utilizzati per sovrascrivere i valori
+delle variabili definite nel file di configurazione di Taurus `src/test/jmeter/taurus/config.yml` che in questo caso
+agiscono sulle User Defined Variables del Test Plan di JMeter. Dal valore di `ipOrFQDN` si può notare che il test sarà
+eseguito in locale, per cui abbiate cura di avere l'applicazione Quarkus in esecuzione.
+
+I Thread Group in questo caso sono stati configurati per simulare 100 utenti virtuali che inviano 300 richieste al
+servizio REST `api/rest/echo` esposto dall'applicazione Quarkus con un periodo di ramp-up di 0.5 secondi.
+
+> **_NOTA:_**  I dati mostrati a seguire fanno riferimento all'esecuzione del Test Plan sull'ambiente Developer 
+> Sandbox di Red Hat OpenShift, con attivi tre pod dell'applicazione Quarkus, un pod per il servizio MongoDB e un pod
+> per il servizio AMQP (Apache ActiveMQ Artemis).
+
+Le due figure a seguire mostrano Taurus in esecuzione, rispettivamente all'inizio (dov'è mostrato lo stato di
+avanzamento) e alla fine del test (dov'è mostrato il report).
+
+![Taurus in esecuzione](src/doc/resources/images/esecuzione_taurus_gui_ocp_1.jpg)
+
+Figura 5 - Taurus in esecuzione
+
+Dal report di Taurus è possibile vedere i risultati del test di carico eseguito con JMeter. Dalla durata del test, al
+numero di richieste HTTP inviate, al tempo di risposta medio, etc. Da questo report è già possibile vedere come il tempo
+di risposta sia influenzato dal protocollo utilizzato (HTTP/1.1, HTTP/2) e dalla compressione GZIP. 
+
+![Taurus Report](src/doc/resources/images/esecuzione_taurus_report_console_ocp_1.jpg)
+
+Figura 6 - Taurus Report
+
+L'esecuzione del Test Plan di JMeter con Taurus produce all'interno della directory `target/taurus/%Y-%m-%d_%H-%M-%S.%f` 
+i file di log più il jtl dei kpi da poter analizzare con JMeter.
+
+Per esempio, la figura seguente, attraverso [jp@gc - Transactions per Second](https://jmeter-plugins.org/wiki/TransactionsPerSecond/), mostra il throughput del sistema durante il
+test di carico (dai dati letti dal file jtl `kpi.jtl` locato in `target/taurus/%Y-%m-%d_%H-%M-%S.%f`).
+
+![Throughput del sistema](src/doc/resources/images/jmeter_jtl_transazioni_secondo_1.jpg)
+
+Anche da questo grafico è possibile vedere come il throughput del sistema sia influenzato dal protocollo utilizzato
+e il protocollo HTTP/2 over TLS con compressione GZIP sia quello che offre le migliori performance.
+
+Figura 7 - Throughput del sistema
 
 ## Guida ai servizi e alle estensioni utilizzate
 
