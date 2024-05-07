@@ -110,12 +110,25 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-orm-panache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-h2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jacoco</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5-mockito</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -209,8 +222,7 @@
                             <goal>generateKeyPair</goal>
                         </goals>
                         <configuration>
-                            <keystore>${project.build.outputDirectory}/${quarkus.http.ssl.certificate.key-store-file}
-                            </keystore>
+                            <keystore>${project.build.outputDirectory}/${quarkus.http.ssl.certificate.key-store-file}</keystore>
                             <dname>cn=${project.artifactId}, ou=${project.groupId}, o=dontesta.it, c=IT</dname>
                             <keypass>${quarkus.http.ssl.certificate.key-store-password}</keypass>
                             <storepass>${quarkus.http.ssl.certificate.key-store-password}</storepass>
@@ -241,15 +253,9 @@
         </plugins>
     </build>
     <scm>
-        <connection>
-            scm:git:git@github.com:amusarra/eventbus-logging-filter-jaxrs.git
-        </connection>
-        <url>
-            scm:git:git@github.com:amusarra/eventbus-logging-filter-jaxrs.git
-        </url>
-        <developerConnection>
-            scm:git:git@github.com:amusarra/eventbus-logging-filter-jaxrs.git
-        </developerConnection>
+        <connection>scm:git:git@github.com:amusarra/eventbus-logging-filter-jaxrs.git</connection>
+        <url>scm:git:git@github.com:amusarra/eventbus-logging-filter-jaxrs.git</url>
+        <developerConnection>scm:git:git@github.com:amusarra/eventbus-logging-filter-jaxrs.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
     <profiles>
