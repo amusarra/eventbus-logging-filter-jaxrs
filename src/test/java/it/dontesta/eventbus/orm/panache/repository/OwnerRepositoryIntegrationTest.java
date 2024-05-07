@@ -29,7 +29,7 @@ class OwnerRepositoryIntegrationTest {
   @Test
   void testFindOrderedByName() {
     List<Owner> owners = ownerRepository.findOrderedByName();
-    Assertions.assertEquals("John", owners.get(0).name);
+    Assertions.assertEquals("John", owners.getFirst().name);
     Assertions.assertFalse(owners.isEmpty());
   }
 
@@ -39,7 +39,7 @@ class OwnerRepositoryIntegrationTest {
     Assertions.assertNotNull(owner);
     Assertions.assertNotNull(owner.horses);
     Assertions.assertEquals(1, owner.horses.size());
-    Assertions.assertEquals("Francisco", owner.horses.get(0).name);
+    Assertions.assertEquals("Francisco", owner.horses.getFirst().name);
     Assertions.assertEquals("Mario", owner.name);
   }
 }

@@ -31,8 +31,8 @@ class HorseRepositoryIntegrationTest {
   void testFindOrderedByName() {
     List<Horse> horses = horseRepository.findOrderedByName();
     Assertions.assertFalse(horses.isEmpty());
-    Assertions.assertEquals("Francisco", horses.get(0).name);
-    Assertions.assertInstanceOf(LocalDate.class, horses.get(0).dateOfBirth);
+    Assertions.assertEquals("Francisco", horses.getFirst().name);
+    Assertions.assertInstanceOf(LocalDate.class, horses.getFirst().dateOfBirth);
   }
 
   @Test
@@ -40,6 +40,6 @@ class HorseRepositoryIntegrationTest {
     Horse horse = horseRepository.find("name", "Francisco").firstResult();
     Assertions.assertNotNull(horse);
     Assertions.assertEquals("Francisco", horse.name);
-    Assertions.assertEquals("Mario", horse.owners.get(0).name);
+    Assertions.assertEquals("Mario", horse.owners.getFirst().name);
   }
 }
