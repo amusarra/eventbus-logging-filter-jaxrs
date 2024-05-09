@@ -5,6 +5,9 @@ import it.dontesta.eventbus.orm.panache.entity.Owner;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 
+/**
+ * This class represents the Panache repository for the Owner entity.
+ */
 @ApplicationScoped
 public class OwnerRepository implements PanacheRepository<Owner> {
   public List<Owner> findOrderedByName() {

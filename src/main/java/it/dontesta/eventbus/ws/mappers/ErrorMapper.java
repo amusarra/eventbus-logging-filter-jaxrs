@@ -9,6 +9,9 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import org.jboss.logging.Logger;
 
+/**
+ * This class represents the error mapper for the RESTful web services.
+ */
 @Provider
 public class ErrorMapper implements ExceptionMapper<Throwable> {
 

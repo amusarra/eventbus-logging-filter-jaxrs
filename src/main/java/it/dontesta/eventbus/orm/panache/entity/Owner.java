@@ -8,6 +8,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import java.util.List;
 
+/**
+ * This class represents the Owner entity.
+ */
 @Entity
 @Cacheable
 public class Owner extends PanacheEntity {

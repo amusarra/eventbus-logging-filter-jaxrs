@@ -64,12 +64,16 @@ public class Dispatcher {
     if (consumer != null) {
       consumer.unregisterAndAwait();
       log.debugf(
-          "Unregistering the Dispatcher from the event bus for the event handler at addresses: {%s}",
+          "Unregistering the Dispatcher from the event bus for the event handler at addresses:{%s}",
           dispatcherVirtualAddress);
     }
   }
 
-  // Method to handle the event
+  /**
+   * Method to handle the event.
+   *
+   * @param message The message received from the event bus
+   */
   public void handleEvent(Message<JsonObject> message) {
     // Leggere gli header dalle DeliveryOptions
     String sourceVirtualAddress = message.headers().get(SOURCE_VIRTUAL_ADDRESS);

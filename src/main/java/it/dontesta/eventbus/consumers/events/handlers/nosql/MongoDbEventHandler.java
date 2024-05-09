@@ -79,6 +79,7 @@ public class MongoDbEventHandler {
           mongoDbEventHandlerVirtualAddress);
     }
   }
+
   /**
    * Metodo per gestire l'evento ricevuto dall'event bus.
    *

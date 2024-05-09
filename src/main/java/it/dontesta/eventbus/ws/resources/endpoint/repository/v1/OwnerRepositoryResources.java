@@ -17,6 +17,9 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 import org.jboss.logging.Logger;
 
+/**
+ * This class represents the REST endpoint for the Owner repository.
+ */
 @Path("rest/repository/owner/v1")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -33,6 +36,12 @@ public class OwnerRepositoryResources {
     return ownerRepository.findAll().list();
   }
 
+  /**
+   * Retrieves owner by ID from the repository.
+   *
+   * @param id The ID of the owner.
+   * @return The owner.
+   */
   @GET
   @Path("{id}")
   public Owner getOwnerById(@NotNull Long id) {
@@ -46,6 +55,12 @@ public class OwnerRepositoryResources {
     return owner;
   }
 
+  /**
+   * Creates a new owner.
+   *
+   * @param owner The owner to create.
+   * @return The created owner.
+   */
   @POST
   @Transactional
   public Response createOwner(@NotNull Owner owner) {
@@ -60,6 +75,12 @@ public class OwnerRepositoryResources {
     return Response.ok(owner).status(Response.Status.CREATED).build();
   }
 
+  /**
+   * Delete existing owner.
+   *
+   * @param id The owner id to delete.
+   * @return The updated owner.
+   */
   @DELETE
   @Path("{id}")
   @Transactional

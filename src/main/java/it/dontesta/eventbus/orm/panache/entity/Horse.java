@@ -8,6 +8,9 @@ import jakarta.persistence.ManyToMany;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * This class represents the Horse entity.
+ */
 @Entity
 @Cacheable
 public class Horse extends PanacheEntity {

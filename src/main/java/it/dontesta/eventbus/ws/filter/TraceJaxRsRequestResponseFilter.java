@@ -132,8 +132,6 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
       return;
     }
 
-    // Ottieni l'URI della richiesta
-    String requestUri = uriInfo.getRequestUri().getPath();
 
     // Recupera l'ID di correlazione dalla richiesta
     String correlationId =
@@ -144,6 +142,9 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
 
     // Aggiungi il cookie alla risposta HTTP
     setCookieUserTracing(requestContext, responseContext);
+
+    // Ottieni l'URI della richiesta
+    String requestUri = uriInfo.getRequestUri().getPath();
 
     // Aggiungi l'header X-Pod-Name alla risposta
     responseContext.getHeaders().add(POD_NAME_HEADER, System.getenv("HOSTNAME"));
@@ -294,7 +295,8 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
         .put("status-info-family-name", responseContext.getStatusInfo().getFamily().name())
         .put("status-info-reason", responseContext.getStatusInfo().getReasonPhrase())
         .put("headers", getResponseHeaders(responseContext))
-        .put("body", responseContext.getEntity() == null ? null : responseContext.getEntity().toString());
+        .put("body",
+            responseContext.getEntity() == null ? null : responseContext.getEntity().toString());
   }
 
   /**

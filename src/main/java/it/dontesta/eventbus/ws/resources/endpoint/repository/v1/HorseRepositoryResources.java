@@ -17,6 +17,9 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 import org.jboss.logging.Logger;
 
+/**
+ * This class represents the REST endpoint for the Horse repository.
+ */
 @Path("rest/repository/horse/v1")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -28,11 +31,22 @@ public class HorseRepositoryResources {
   @Inject
   Logger log;
 
+  /**
+   * Retrieves all horses from the repository.
+   *
+   * @return A list of horses.
+   */
   @GET
   public List<Horse> getAllHorses() {
     return horseRepository.findAll().list();
   }
 
+  /**
+   * Retrieves horse by ID from the repository.
+   *
+   * @param id The ID of the horse.
+   * @return The horse.
+   */
   @GET
   @Path("{id}")
   public Horse getHorseById(@NotNull Long id) {
@@ -46,6 +60,12 @@ public class HorseRepositoryResources {
     return horse;
   }
 
+  /**
+   * This method creates a new horse.
+   *
+   * @param horse The horse to create.
+   * @return The created horse.
+   */
   @POST
   @Transactional
   public Response createHorse(@NotNull Horse horse) {
@@ -60,6 +80,12 @@ public class HorseRepositoryResources {
     return Response.ok(horse).status(Response.Status.CREATED).build();
   }
 
+  /**
+   * This method deletes a horse by its ID.
+   *
+   * @param id The ID of the horse.
+   * @return The response.
+   */
   @DELETE
   @Path("{id}")
   @Transactional
