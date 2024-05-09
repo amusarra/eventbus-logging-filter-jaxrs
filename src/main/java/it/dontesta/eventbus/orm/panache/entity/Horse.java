@@ -1,5 +1,6 @@
 package it.dontesta.eventbus.orm.panache.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
@@ -24,5 +25,6 @@ public class Horse extends PanacheEntity {
       joinColumns = @JoinColumn(name = "horse_id"),
       inverseJoinColumns = @JoinColumn(name = "owner_id")
   )
+  @JsonManagedReference
   public List<Owner> owners;
 }
