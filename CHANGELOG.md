@@ -6,10 +6,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+### Changed
+### Fixed
+### Removed
+### Deprecated
+### Security
+
+
+## [1.2.0] - 2024-05-10
 
 ### Added
-
+- Aggiornamento versione Quarkus a 3.10.0
+- Aggiunti i moduli Quarkus:
+  - io.quarkus:quarkus-hibernate-orm-panache
+  - io.quarkus:quarkus-jdbc-h2
+- Aggiunte le classi di entità:
+  - it.dontesta.eventbus.orm.panache.entity.Horse
+  - it.dontesta.eventbus.orm.panache.entity.Owner
+- Aggiunte le classi di repository:
+  - it.dontesta.eventbus.orm.panache.repository.HorseRepository
+  - it.dontesta.eventbus.orm.panache.repository.OwnerRepository
+- Aggiunte le classi di risorse (JAX-RS)
+  - it.dontesta.eventbus.ws.resources.endpoint.repository.v1.HorseRepositoryResources
+  - it.dontesta.eventbus.ws.resources.endpoint.repository.v1.OwnerRepositoryResources
+- Aggiunta la classe di Error Mapping (JAX-RS)
+  - it.dontesta.eventbus.ws.mappers.ErrorMapper
+- Aggiunto il file `src/main/resources/load_data.sql` per l'inizializzazione del database H2
+- Aggiunte le classi di test:
+  - it.dontesta.eventbus.orm.panache.repository.HorseRepositoryIntegrationTest
+  - it.dontesta.eventbus.orm.panache.repository.OwnerRepositoryIntegrationTest
+  - it.dontesta.eventbus.orm.panache.repository.PanacheRepositoryMockedTest
+  - it.dontesta.eventbus.ws.resources.endpoint.repository.v1.HorseRepositoryResourcesTest
+  - it.dontesta.eventbus.ws.resources.endpoint.repository.v1.OwnerRepositoryResourcesTest
+  
 ### Changed
+- Revisione del file di configurazione per l'uso di Hibernate ORM Panache
+
+### Fixed
+- Null Pointer Exception sul filtro JAX-RS per il tracking delle richieste quando il body della richiesta è vuoto
+- Google Checkstyle violations
 
 ### Removed
 
