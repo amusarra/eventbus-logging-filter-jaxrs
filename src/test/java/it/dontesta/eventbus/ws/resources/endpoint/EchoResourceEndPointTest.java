@@ -32,4 +32,21 @@ class EchoResourceEndPointTest {
         .body("title", is("Constraint Violation"));
   }
 
+  @Test
+  void testEchoBodyEmpty() {
+    given()
+        .contentType(ContentType.JSON)
+        .when().post("/api/rest/echo")
+        .then()
+        .statusCode(400);
+  }
+
+  @Test
+  void testEchoBodyEmptyWithoutContentType() {
+    given()
+        .when().post("/api/rest/echo")
+        .then()
+        .statusCode(415);
+  }
+
 }
