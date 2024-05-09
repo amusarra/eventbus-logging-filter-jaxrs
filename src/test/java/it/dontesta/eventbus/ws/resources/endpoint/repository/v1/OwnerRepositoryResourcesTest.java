@@ -71,8 +71,7 @@ class OwnerRepositoryResourcesTest {
           "city": "Catania",
           "state": "CT",
           "zipCode": "95100",
-          "country": "Italy",
-          "horses": [{"id": 1}]
+          "country": "Italy"
         }
         """;
 
