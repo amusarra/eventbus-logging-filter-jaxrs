@@ -251,6 +251,10 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
   private JsonObject prepareMessage(ContainerRequestContext requestContext) {
     JsonObject jsonObject;
     try {
+      String mediaType = requestContext.getMediaType() == null ? null :
+          "%s/%s".formatted(requestContext.getMediaType().getType(),
+              requestContext.getMediaType().getSubtype());
+
       jsonObject = new JsonObject()
           .put(CORRELATION_ID_HEADER, requestContext.getProperty(CORRELATION_ID_HEADER))
           .put("remote-ip-address", routingContext.request().remoteAddress().host())
@@ -259,8 +263,7 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
           .put("uri-info", requestContext.getUriInfo().getRequestUri().toString())
           .put(LOCAL_DATE_TIME_IN, requestContext.getProperty(LOCAL_DATE_TIME_IN).toString())
           .put("method", requestContext.getMethod())
-          .put("media-type", "%s/%s".formatted(requestContext.getMediaType().getType(),
-              requestContext.getMediaType().getSubtype()))
+          .put("media-type", mediaType)
           .put("acceptable-language", requestContext.getAcceptableLanguages().toString())
           .put("acceptable-media-types", requestContext.getAcceptableMediaTypes().toString());
     } catch (IOException ioException) {
@@ -291,7 +294,7 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
         .put("status-info-family-name", responseContext.getStatusInfo().getFamily().name())
         .put("status-info-reason", responseContext.getStatusInfo().getReasonPhrase())
         .put("headers", getResponseHeaders(responseContext))
-        .put("body", responseContext.getEntity().toString());
+        .put("body", responseContext.getEntity() == null ? null : responseContext.getEntity().toString());
   }
 
   /**
