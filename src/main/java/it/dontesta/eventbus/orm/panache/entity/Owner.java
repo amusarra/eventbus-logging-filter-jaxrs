@@ -12,34 +12,34 @@ import java.util.List;
 @Cacheable
 public class Owner extends PanacheEntity {
 
-    @Column(length = 60)
-    public String name;
+  @Column(length = 60)
+  public String name;
 
-    @Column(length = 60)
-    public String surname;
+  @Column(length = 60)
+  public String surname;
 
-    @Column(length = 60, unique = true)
-    public String email;
+  @Column(length = 60, unique = true)
+  public String email;
 
-    @Column(length = 20)
-    public String phoneNumber;
+  @Column(length = 20)
+  public String phoneNumber;
 
-    @Column(length = 60)
-    public String address;
+  @Column(length = 60)
+  public String address;
 
-    @Column(length = 60)
-    public String city;
+  @Column(length = 60)
+  public String city;
 
-    @Column(length = 2)
-    public String state;
+  @Column(length = 2)
+  public String state;
 
-    @Column(length = 10)
-    public String zipCode;
+  @Column(length = 10)
+  public String zipCode;
 
-    @Column(length = 60)
-    public String country;
+  @Column(length = 60)
+  public String country;
 
-    @ManyToMany(mappedBy = "owners")
-    @JsonBackReference
-    public List<Horse> horses;
+  @ManyToMany(mappedBy = "owners")
+  @JsonBackReference
+  public List<Horse> horses;
 }
