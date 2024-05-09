@@ -38,8 +38,8 @@ class OwnerRepositoryIntegrationTest {
     Owner owner = ownerRepository.find("name", "Mario").firstResult();
     Assertions.assertNotNull(owner);
     Assertions.assertNotNull(owner.horses);
-    Assertions.assertEquals(1, owner.horses.size());
-    Assertions.assertEquals("Francisco", owner.horses.getFirst().name);
+    Assertions.assertEquals(3, owner.horses.size());
+    Assertions.assertEquals("Judio XXXV", owner.horses.getFirst().name);
     Assertions.assertEquals("Mario", owner.name);
   }
 }

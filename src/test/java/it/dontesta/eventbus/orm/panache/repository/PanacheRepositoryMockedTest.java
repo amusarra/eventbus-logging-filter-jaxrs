@@ -34,7 +34,7 @@ class PanacheRepositoryMockedTest {
 
     // Now let's call the original method
     Mockito.when(ownerRepository.count()).thenCallRealMethod();
-    Assertions.assertEquals(2, ownerRepository.count());
+    Assertions.assertEquals(3, ownerRepository.count());
 
     // Check that we called it 4 times
     Mockito.verify(ownerRepository, Mockito.times(4)).count();
@@ -69,7 +69,7 @@ class PanacheRepositoryMockedTest {
 
     // Now let's call the original method
     Mockito.when(horseRepository.count()).thenCallRealMethod();
-    Assertions.assertEquals(3, horseRepository.count());
+    Assertions.assertEquals(5, horseRepository.count());
 
     Horse horse = new Horse();
     horse.name = "Judio XXXV";
