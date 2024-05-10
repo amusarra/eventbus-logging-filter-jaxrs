@@ -32,7 +32,7 @@ class HorseRepositoryResourcesTest {
         .contentType(ContentType.JSON)
         .when().get("/api/rest/repository/horse/v1/1")
         .then()
-        .body("name", is("Judio XXXV"))
+        .body("name", is("Thunder"))
         .statusCode(Response.Status.OK.getStatusCode());
   }
 
@@ -66,6 +66,7 @@ class HorseRepositoryResourcesTest {
           "name": "Santos XVVI",
           "coat": "Gray",
           "breed": "Pura Raza Española - PRE",
+          "sex": "M",
           "dateOfBirth": "2024-05-01",
           "owners": [{"id": 3}]
         }
