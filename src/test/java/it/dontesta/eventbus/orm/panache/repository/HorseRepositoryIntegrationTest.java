@@ -30,7 +30,7 @@ class HorseRepositoryIntegrationTest {
   void testFindById() {
     Horse horse = horseRepository.findById(1L);
     Assertions.assertNotNull(horse);
-    Assertions.assertEquals("Judio XXXV", horse.name);
+    Assertions.assertEquals("Thunder", horse.name);
   }
 
   @Test
@@ -45,17 +45,17 @@ class HorseRepositoryIntegrationTest {
   void testFindOrderedByName() {
     List<Horse> horses = horseRepository.findOrderedByName();
     Assertions.assertFalse(horses.isEmpty());
-    Assertions.assertEquals("Artemis", horses.getFirst().name);
+    Assertions.assertEquals("Bella", horses.getFirst().name);
     Assertions.assertInstanceOf(LocalDate.class, horses.getFirst().dateOfBirth);
   }
 
   @Test
   @Order(5)
   void testFindByName() {
-    Horse horse = horseRepository.find("name", "Francisco").firstResult();
+    Horse horse = horseRepository.find("name", "Thunder").firstResult();
     Assertions.assertNotNull(horse);
-    Assertions.assertEquals("Francisco", horse.name);
-    Assertions.assertEquals("Mario", horse.owners.getFirst().name);
+    Assertions.assertEquals("Thunder", horse.name);
+    Assertions.assertEquals("John", horse.owners.getFirst().name);
   }
 
   @Test
@@ -66,6 +66,7 @@ class HorseRepositoryIntegrationTest {
     horse.name = "Test Horse";
     horse.coat = "Bay";
     horse.breed = "Arabian";
+    horse.sex = "M";
     horse.dateOfBirth = LocalDate.of(2010, 1, 1);
     horseRepository.persist(horse);
     Assertions.assertNotNull(horse.id);
