@@ -24,17 +24,17 @@
           <elementProp name="numberOfThreads" elementType="Argument">
             <stringProp name="Argument.name">numberOfThreads</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
-            <stringProp name="Argument.value">${__P(numberOfThreads,1)}</stringProp>
+            <stringProp name="Argument.value">${__P(numberOfThreads,6)}</stringProp>
           </elementProp>
           <elementProp name="rampUpPeriod" elementType="Argument">
             <stringProp name="Argument.name">rampUpPeriod</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
-            <stringProp name="Argument.value">${__P(rampUpPeriod,1)}</stringProp>
+            <stringProp name="Argument.value">${__P(rampUpPeriod,5)}</stringProp>
           </elementProp>
           <elementProp name="loopCount" elementType="Argument">
             <stringProp name="Argument.name">loopCount</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
-            <stringProp name="Argument.value">${__P(loopCount,1)}</stringProp>
+            <stringProp name="Argument.value">${__P(loopCount,10)}</stringProp>
           </elementProp>
         </collectionProp>
       </elementProp>
@@ -122,12 +122,12 @@ Connect to 5s</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Owner Repository Resources Transaction Controller" enabled="false">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="1. Owner Repository Resources Transaction Controller" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
           <boolProp name="TransactionController.parent">false</boolProp>
         </TransactionController>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 1 - getAllOwners" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 1.1 - getAllOwners" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
@@ -180,14 +180,14 @@ Connect to 5s</stringProp>
             <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Owner Id" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">ownerId</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">.id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">*.id</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
               <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
               <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Owner. Il valore sarà utilizzato per la successiva chiamata getOwnerById</stringProp>
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 2 - getOwnerById" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 1.2 - getOwnerById" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
@@ -239,7 +239,7 @@ Connect to 5s</stringProp>
             </JSONPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 3 - createOwner" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 1.3 - createOwner" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
@@ -308,14 +308,14 @@ Connect to 5s</stringProp>
             <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Owner Id" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">ownerId</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">.id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">id</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
               <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
-              <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Horse. Il valore sarà utilizzato per la successiva chiamata getHorseById</stringProp>
+              <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Owner. Il valore sarà utilizzato per la successiva chiamata getHorseById</stringProp>
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 4 - deleteOwner" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 1.4 - deleteOwner" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
@@ -347,12 +347,12 @@ Connect to 5s</stringProp>
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Horse Repository Resources Transaction Controller" enabled="false">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="2. Horse Repository Resources Transaction Controller" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
           <boolProp name="TransactionController.parent">false</boolProp>
         </TransactionController>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 1 - getAllHorses" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 2.1 - getAllHorses" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
@@ -405,14 +405,14 @@ Connect to 5s</stringProp>
             <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Horse Id" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">horseId</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">.id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">*.id</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
               <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
               <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Horse. Il valore sarà utilizzato per la successiva chiamata getHorseById</stringProp>
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 2 - getHorseById" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 2.2 - getHorseById" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
@@ -464,7 +464,7 @@ Connect to 5s</stringProp>
             </JSONPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 3 - getAllOwners" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 2.3 - getAllOwners" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
@@ -515,16 +515,16 @@ Connect to 5s</stringProp>
               <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
             </JSONPathAssertion>
             <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Horse Id" enabled="true">
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Owner Id" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">ownerId</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">.id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">*.id</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
               <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
               <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Owner. Il valore sarà utilizzato per la successiva chiamata createHorse</stringProp>
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 4 - createHorse" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 2.4 - createHorse" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
@@ -594,14 +594,14 @@ Connect to 5s</stringProp>
             <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Horse Id" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">horseId</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">.id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">id</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
               <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
               <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Horse. Il valore sarà utilizzato per la successiva chiamata getHorseById</stringProp>
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 5 - deleteHorse" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 2.5 - deleteHorse" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
@@ -651,12 +651,12 @@ Connect to 5s</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Owner Repository Resources Transaction Controller - HTTP/2 over TLS" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="3. Owner Repository Resources Transaction Controller - HTTP/2 over TLS" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
           <boolProp name="TransactionController.parent">false</boolProp>
         </TransactionController>
         <hashTree>
-          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 1 - getAllOwners" enabled="true">
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 3.1 - getAllOwners" enabled="true">
             <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/owner/v1</stringProp>
             <boolProp name="HTTPSampler.image_parser">false</boolProp>
             <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
@@ -711,14 +711,14 @@ Connect to 5s</stringProp>
             <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Owner Id" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">ownerId</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">.id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">*.id</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
               <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
               <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Owner. Il valore sarà utilizzato per la successiva chiamata getOwnerById</stringProp>
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 2 - getOwnerById" enabled="true">
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 3.2 - getOwnerById" enabled="true">
             <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/owner/v1/${id}</stringProp>
             <boolProp name="HTTPSampler.image_parser">false</boolProp>
             <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
@@ -773,14 +773,14 @@ Connect to 5s</stringProp>
             <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Owner Id" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">ownerId</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">.id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">id</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
               <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
               <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Owner. Il valore sarà utilizzato per la successiva chiamata getOwnerById</stringProp>
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 3 - createOwner" enabled="true">
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 3.3 - createOwner" enabled="true">
             <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/owner/v1</stringProp>
             <boolProp name="HTTPSampler.image_parser">false</boolProp>
             <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
@@ -841,7 +841,7 @@ Connect to 5s</stringProp>
             <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Owner Id" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">ownerId</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">.id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">id</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
               <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
               <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Owner. Il valore sarà utilizzato per la successiva chiamata getOwnerById</stringProp>
@@ -858,7 +858,7 @@ Connect to 5s</stringProp>
             </JSONPathAssertion>
             <hashTree/>
           </hashTree>
-          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 4 - deleteOwner" enabled="true">
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 3.4 - deleteOwner" enabled="true">
             <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/owner/v1</stringProp>
             <boolProp name="HTTPSampler.image_parser">false</boolProp>
             <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
@@ -892,8 +892,304 @@ Connect to 5s</stringProp>
             <hashTree/>
           </hashTree>
         </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="4. Horse Repository Resources Transaction Controller - HTTP/2 over TLS" enabled="true">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+          <boolProp name="TransactionController.parent">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 4.1 - getAllHorses" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (200)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="819850145">x-correlation-id: </stringProp>
+                <stringProp name="-1955560959">content-type: application/json;charset=UTF-8</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+              <stringProp name="JSON_PATH">$[0].name</stringProp>
+              <stringProp name="EXPECTED_VALUE">0</stringProp>
+              <boolProp name="JSONVALIDATION">false</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+              <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Horse Id" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">horseId</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">*.id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+              <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Horse. Il valore sarà utilizzato per la successiva chiamata getHorseById</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 4.2 - getHorseById" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1/${id}</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1/${horseId}</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (200)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="819850145">x-correlation-id: </stringProp>
+                <stringProp name="-1955560959">content-type: application/json;charset=UTF-8</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+              <stringProp name="JSON_PATH">.id</stringProp>
+              <stringProp name="EXPECTED_VALUE">${horseId}</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+              <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+            </JSONPathAssertion>
+            <hashTree/>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 4.3 - getAllOwners" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/owner/v1</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/owner/v1</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (200)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="819850145">x-correlation-id: </stringProp>
+                <stringProp name="-1955560959">content-type: application/json;charset=UTF-8</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+              <stringProp name="JSON_PATH">$[0].name</stringProp>
+              <stringProp name="EXPECTED_VALUE">0</stringProp>
+              <boolProp name="JSONVALIDATION">false</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+              <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Owner Id" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">ownerId</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">*.id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+              <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Owner. Il valore sarà utilizzato per la successiva chiamata getOwnerById</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 4.4 - createHorse" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+  &quot;name&quot;: &quot;${name}&quot;,&#xd;
+  &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+  &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+  &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+  &quot;dateOfBirth&quot;: &quot;${dateOfBirth}&quot;,&#xd;
+  &quot;registrationNumber&quot;: &quot;${registrationNumber}&quot;,&#xd;
+  &quot;microchipNumber&quot;: &quot;${microchipNumber}&quot;,&#xd;
+  &quot;passportNumber&quot;: &quot;${passportNumber}&quot;,&#xd;
+  &quot;height&quot;: ${height},&#xd;
+  &quot;owners&quot;: [{&quot;id&quot;: ${ownerId}}]&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (201)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49587">201</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="819850145">x-correlation-id: </stringProp>
+                <stringProp name="-1955560959">content-type: application/json;charset=UTF-8</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+              <stringProp name="JSON_PATH">$.name</stringProp>
+              <stringProp name="EXPECTED_VALUE">0</stringProp>
+              <boolProp name="JSONVALIDATION">false</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+              <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Horse Id" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">horseId</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+              <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Horse. Il valore sarà utilizzato per la successiva chiamata getHorseById</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 4.5 - deleteHorse" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1/${horseId}</stringProp>
+            <stringProp name="HTTPSampler.method">DELETE</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (204)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49590">204</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="HTTP/2 over TLS Compressed" enabled="false">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="HTTP/2 over TLS Compressed" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <stringProp name="LoopController.loops">${loopCount}</stringProp>
@@ -919,204 +1215,546 @@ Connect to 5s</stringProp>
           </collectionProp>
         </HeaderManager>
         <hashTree/>
-        <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="REST Echo Service (HTTP/2 over TLS Compressed)" enabled="true">
-          <boolProp name="HTTPSampler.image_parser">false</boolProp>
-          <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
-          <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
-          <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
-          <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
-          <stringProp name="version">2.0.5</stringProp>
-          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">[&#xd;
-  {&#xd;
-    &quot;_id&quot;: &quot;66366ea0db701d33502a2458&quot;,&#xd;
-    &quot;index&quot;: 0,&#xd;
-    &quot;guid&quot;: &quot;754aeee4-c841-4c90-8776-c16870f2c3c4&quot;,&#xd;
-    &quot;isActive&quot;: false,&#xd;
-    &quot;balance&quot;: &quot;$2,209.14&quot;,&#xd;
-    &quot;picture&quot;: &quot;http://placehold.it/32x32&quot;,&#xd;
-    &quot;age&quot;: 36,&#xd;
-    &quot;eyeColor&quot;: &quot;blue&quot;,&#xd;
-    &quot;name&quot;: &quot;Page Lynn&quot;,&#xd;
-    &quot;gender&quot;: &quot;male&quot;,&#xd;
-    &quot;company&quot;: &quot;EDECINE&quot;,&#xd;
-    &quot;email&quot;: &quot;pagelynn@edecine.com&quot;,&#xd;
-    &quot;phone&quot;: &quot;+1 (853) 597-2804&quot;,&#xd;
-    &quot;address&quot;: &quot;541 Rapelye Street, Winchester, Kentucky, 4325&quot;,&#xd;
-    &quot;about&quot;: &quot;Aliquip commodo officia ut id consequat sint anim enim duis labore et aute in. Ipsum aute non elit culpa cillum elit commodo minim eiusmod Lorem reprehenderit. Eu mollit minim nisi esse esse nulla fugiat proident tempor aute non in. Mollit laborum tempor ad ipsum ut dolor magna ipsum aliqua. Laborum exercitation nostrud eu mollit ipsum consequat amet.\r\n&quot;,&#xd;
-    &quot;registered&quot;: &quot;2023-05-16T12:40:00 -02:00&quot;,&#xd;
-    &quot;latitude&quot;: -41.61242,&#xd;
-    &quot;longitude&quot;: 8.917128,&#xd;
-    &quot;tags&quot;: [&#xd;
-      &quot;laboris&quot;,&#xd;
-      &quot;nostrud&quot;,&#xd;
-      &quot;veniam&quot;,&#xd;
-      &quot;mollit&quot;,&#xd;
-      &quot;proident&quot;,&#xd;
-      &quot;duis&quot;,&#xd;
-      &quot;sit&quot;&#xd;
-    ],&#xd;
-    &quot;friends&quot;: [&#xd;
-      {&#xd;
-        &quot;id&quot;: 0,&#xd;
-        &quot;name&quot;: &quot;Becky Dennis&quot;&#xd;
-      },&#xd;
-      {&#xd;
-        &quot;id&quot;: 1,&#xd;
-        &quot;name&quot;: &quot;Blake Lee&quot;&#xd;
-      },&#xd;
-      {&#xd;
-        &quot;id&quot;: 2,&#xd;
-        &quot;name&quot;: &quot;Singleton Osborne&quot;&#xd;
-      }&#xd;
-    ],&#xd;
-    &quot;greeting&quot;: &quot;Hello, Page Lynn! You have 7 unread messages.&quot;,&#xd;
-    &quot;favoriteFruit&quot;: &quot;strawberry&quot;&#xd;
-  },&#xd;
-  {&#xd;
-    &quot;_id&quot;: &quot;66366ea058b32ec643cc7934&quot;,&#xd;
-    &quot;index&quot;: 1,&#xd;
-    &quot;guid&quot;: &quot;7e9d2825-5e5c-48d5-ac87-eb5009710f8f&quot;,&#xd;
-    &quot;isActive&quot;: false,&#xd;
-    &quot;balance&quot;: &quot;$2,888.53&quot;,&#xd;
-    &quot;picture&quot;: &quot;http://placehold.it/32x32&quot;,&#xd;
-    &quot;age&quot;: 26,&#xd;
-    &quot;eyeColor&quot;: &quot;blue&quot;,&#xd;
-    &quot;name&quot;: &quot;Hull Cruz&quot;,&#xd;
-    &quot;gender&quot;: &quot;male&quot;,&#xd;
-    &quot;company&quot;: &quot;SONGLINES&quot;,&#xd;
-    &quot;email&quot;: &quot;hullcruz@songlines.com&quot;,&#xd;
-    &quot;phone&quot;: &quot;+1 (991) 550-2256&quot;,&#xd;
-    &quot;address&quot;: &quot;948 Schermerhorn Street, Tecolotito, Oklahoma, 4107&quot;,&#xd;
-    &quot;about&quot;: &quot;Officia esse magna aute anim quis aute consequat cillum ipsum. Id nulla exercitation ad id est incididunt ipsum sit cupidatat in sit tempor velit fugiat. Quis dolore cupidatat nulla tempor.\r\n&quot;,&#xd;
-    &quot;registered&quot;: &quot;2020-01-21T07:18:34 -01:00&quot;,&#xd;
-    &quot;latitude&quot;: -12.888507,&#xd;
-    &quot;longitude&quot;: 147.016428,&#xd;
-    &quot;tags&quot;: [&#xd;
-      &quot;sint&quot;,&#xd;
-      &quot;ex&quot;,&#xd;
-      &quot;non&quot;,&#xd;
-      &quot;nisi&quot;,&#xd;
-      &quot;aute&quot;,&#xd;
-      &quot;ex&quot;,&#xd;
-      &quot;sint&quot;&#xd;
-    ],&#xd;
-    &quot;friends&quot;: [&#xd;
-      {&#xd;
-        &quot;id&quot;: 0,&#xd;
-        &quot;name&quot;: &quot;Teri Sweeney&quot;&#xd;
-      },&#xd;
-      {&#xd;
-        &quot;id&quot;: 1,&#xd;
-        &quot;name&quot;: &quot;Robinson Stokes&quot;&#xd;
-      },&#xd;
-      {&#xd;
-        &quot;id&quot;: 2,&#xd;
-        &quot;name&quot;: &quot;Sabrina Bell&quot;&#xd;
-      }&#xd;
-    ],&#xd;
-    &quot;greeting&quot;: &quot;Hello, Hull Cruz! You have 5 unread messages.&quot;,&#xd;
-    &quot;favoriteFruit&quot;: &quot;strawberry&quot;&#xd;
-  },&#xd;
-  {&#xd;
-    &quot;_id&quot;: &quot;66366ea046fa97ec757cadbb&quot;,&#xd;
-    &quot;index&quot;: 2,&#xd;
-    &quot;guid&quot;: &quot;e99b83d7-f019-4866-8e18-1f56aeaeeab4&quot;,&#xd;
-    &quot;isActive&quot;: true,&#xd;
-    &quot;balance&quot;: &quot;$2,325.87&quot;,&#xd;
-    &quot;picture&quot;: &quot;http://placehold.it/32x32&quot;,&#xd;
-    &quot;age&quot;: 36,&#xd;
-    &quot;eyeColor&quot;: &quot;blue&quot;,&#xd;
-    &quot;name&quot;: &quot;Myra Rodriguez&quot;,&#xd;
-    &quot;gender&quot;: &quot;female&quot;,&#xd;
-    &quot;company&quot;: &quot;ACCUPRINT&quot;,&#xd;
-    &quot;email&quot;: &quot;myrarodriguez@accuprint.com&quot;,&#xd;
-    &quot;phone&quot;: &quot;+1 (900) 429-3801&quot;,&#xd;
-    &quot;address&quot;: &quot;247 Pine Street, Deltaville, Kansas, 6198&quot;,&#xd;
-    &quot;about&quot;: &quot;Fugiat consequat enim aliquip veniam reprehenderit magna irure pariatur in occaecat consectetur eu enim. Nisi sunt eu sunt quis nostrud velit nostrud ullamco laborum quis. In officia dolore duis qui. Ad nostrud tempor laborum elit cillum fugiat voluptate.\r\n&quot;,&#xd;
-    &quot;registered&quot;: &quot;2016-10-06T02:29:06 -02:00&quot;,&#xd;
-    &quot;latitude&quot;: 31.524262,&#xd;
-    &quot;longitude&quot;: -45.793818,&#xd;
-    &quot;tags&quot;: [&#xd;
-      &quot;ullamco&quot;,&#xd;
-      &quot;pariatur&quot;,&#xd;
-      &quot;voluptate&quot;,&#xd;
-      &quot;consequat&quot;,&#xd;
-      &quot;sunt&quot;,&#xd;
-      &quot;sunt&quot;,&#xd;
-      &quot;et&quot;&#xd;
-    ],&#xd;
-    &quot;friends&quot;: [&#xd;
-      {&#xd;
-        &quot;id&quot;: 0,&#xd;
-        &quot;name&quot;: &quot;Shannon Campbell&quot;&#xd;
-      },&#xd;
-      {&#xd;
-        &quot;id&quot;: 1,&#xd;
-        &quot;name&quot;: &quot;Elisabeth Stevens&quot;&#xd;
-      },&#xd;
-      {&#xd;
-        &quot;id&quot;: 2,&#xd;
-        &quot;name&quot;: &quot;Harrington Madden&quot;&#xd;
-      }&#xd;
-    ],&#xd;
-    &quot;greeting&quot;: &quot;Hello, Myra Rodriguez! You have 10 unread messages.&quot;,&#xd;
-    &quot;favoriteFruit&quot;: &quot;apple&quot;&#xd;
-  }&#xd;
-]</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-          <stringProp name="HTTPSampler.path">/api/rest/echo</stringProp>
-          <stringProp name="HTTPSampler.method">POST</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
-          <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
-        </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="5. Owner Repository Resources Transaction Controller - HTTP/2 over TLS (Compressed)" enabled="true">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+          <boolProp name="TransactionController.parent">false</boolProp>
+        </TransactionController>
         <hashTree>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (200)" enabled="true">
-            <collectionProp name="Asserion.test_strings">
-              <stringProp name="49586">200</stringProp>
-            </collectionProp>
-            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-            <boolProp name="Assertion.assume_success">false</boolProp>
-            <intProp name="Assertion.test_type">1</intProp>
-            <stringProp name="Assertion.custom_message"></stringProp>
-          </ResponseAssertion>
-          <hashTree/>
-          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
-            <stringProp name="JSON_PATH">$[0].index</stringProp>
-            <stringProp name="EXPECTED_VALUE">0</stringProp>
-            <boolProp name="JSONVALIDATION">true</boolProp>
-            <boolProp name="EXPECT_NULL">false</boolProp>
-            <boolProp name="INVERT">false</boolProp>
-            <boolProp name="ISREGEX">false</boolProp>
-            <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
-          </JSONPathAssertion>
-          <hashTree/>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
-            <collectionProp name="Asserion.test_strings">
-              <stringProp name="819850145">x-correlation-id: </stringProp>
-              <stringProp name="-1955560959">content-type: application/json;charset=UTF-8</stringProp>
-            </collectionProp>
-            <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
-            <boolProp name="Assertion.assume_success">false</boolProp>
-            <intProp name="Assertion.test_type">2</intProp>
-            <stringProp name="Assertion.custom_message"></stringProp>
-          </ResponseAssertion>
-          <hashTree/>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 5.1 - getAllOwners" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/owner/v1</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/owner/v1</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (200)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="819850145">x-correlation-id: </stringProp>
+                <stringProp name="-1955560959">content-type: application/json;charset=UTF-8</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+              <stringProp name="JSON_PATH">$[0].name</stringProp>
+              <stringProp name="EXPECTED_VALUE">0</stringProp>
+              <boolProp name="JSONVALIDATION">false</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+              <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Owner Id" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">ownerId</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">*.id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+              <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Owner. Il valore sarà utilizzato per la successiva chiamata getOwnerById</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 5.2 - getOwnerById" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/owner/v1/${id}</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/owner/v1/${ownerId}</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (200)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="819850145">x-correlation-id: </stringProp>
+                <stringProp name="-1955560959">content-type: application/json;charset=UTF-8</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+              <stringProp name="JSON_PATH">.id</stringProp>
+              <stringProp name="EXPECTED_VALUE">${ownerId}</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+              <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Owner Id" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">ownerId</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+              <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Owner. Il valore sarà utilizzato per la successiva chiamata getOwnerById</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 5.3 - createOwner" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/owner/v1</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+  &quot;name&quot;: &quot;${name}&quot;,&#xd;
+  &quot;surname&quot;: &quot;${surname}&quot;,&#xd;
+  &quot;email&quot;: &quot;${email}&quot;,&#xd;
+  &quot;phoneNumber&quot;: &quot;${phoneNumber}&quot;,&#xd;
+  &quot;address&quot;: &quot;${address}&quot;,&#xd;
+  &quot;city&quot;: &quot;${city}&quot;,&#xd;
+  &quot;state&quot;: &quot;${state}&quot;,&#xd;
+  &quot;zipCode&quot;: &quot;${zipCode}&quot;,&#xd;
+  &quot;country&quot;: &quot;${country}&quot;&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/owner/v1</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (201)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49587">201</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="819850145">x-correlation-id: </stringProp>
+                <stringProp name="-1955560959">content-type: application/json;charset=UTF-8</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Owner Id" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">ownerId</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+              <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Owner. Il valore sarà utilizzato per la successiva chiamata getOwnerById</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+              <stringProp name="JSON_PATH">$.name</stringProp>
+              <stringProp name="EXPECTED_VALUE">0</stringProp>
+              <boolProp name="JSONVALIDATION">false</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+              <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+            </JSONPathAssertion>
+            <hashTree/>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 5.4 - deleteOwner" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/owner/v1</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/owner/v1/${ownerId}</stringProp>
+            <stringProp name="HTTPSampler.method">DELETE</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (204)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49590">204</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="6. Horse Repository Resources Transaction Controller - HTTP/2 over TLS (Compressed)" enabled="true">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+          <boolProp name="TransactionController.parent">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 6.1 - getAllHorses" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (200)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="819850145">x-correlation-id: </stringProp>
+                <stringProp name="-1955560959">content-type: application/json;charset=UTF-8</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+              <stringProp name="JSON_PATH">$[0].name</stringProp>
+              <stringProp name="EXPECTED_VALUE">0</stringProp>
+              <boolProp name="JSONVALIDATION">false</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+              <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Horse Id" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">horseId</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">*.id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+              <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Horse. Il valore sarà utilizzato per la successiva chiamata getHorseById</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 6.2 - getHorseById" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1/${id}</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1/${horseId}</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (200)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="819850145">x-correlation-id: </stringProp>
+                <stringProp name="-1955560959">content-type: application/json;charset=UTF-8</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+              <stringProp name="JSON_PATH">.id</stringProp>
+              <stringProp name="EXPECTED_VALUE">${horseId}</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+              <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+            </JSONPathAssertion>
+            <hashTree/>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 6.3 - getAllOwners" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/owner/v1</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/owner/v1</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (200)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="819850145">x-correlation-id: </stringProp>
+                <stringProp name="-1955560959">content-type: application/json;charset=UTF-8</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+              <stringProp name="JSON_PATH">$[0].name</stringProp>
+              <stringProp name="EXPECTED_VALUE">0</stringProp>
+              <boolProp name="JSONVALIDATION">false</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+              <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Owner Id" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">ownerId</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">*.id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+              <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Owner. Il valore sarà utilizzato per la successiva chiamata getOwnerById</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 6.4 - createHorse" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+  &quot;name&quot;: &quot;${name}&quot;,&#xd;
+  &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+  &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+  &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+  &quot;dateOfBirth&quot;: &quot;${dateOfBirth}&quot;,&#xd;
+  &quot;registrationNumber&quot;: &quot;${registrationNumber}&quot;,&#xd;
+  &quot;microchipNumber&quot;: &quot;${microchipNumber}&quot;,&#xd;
+  &quot;passportNumber&quot;: &quot;${passportNumber}&quot;,&#xd;
+  &quot;height&quot;: ${height},&#xd;
+  &quot;owners&quot;: [{&quot;id&quot;: ${ownerId}}]&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (201)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49587">201</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="819850145">x-correlation-id: </stringProp>
+                <stringProp name="-1955560959">content-type: application/json;charset=UTF-8</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+              <stringProp name="JSON_PATH">$.name</stringProp>
+              <stringProp name="EXPECTED_VALUE">0</stringProp>
+              <boolProp name="JSONVALIDATION">false</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+              <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Horse Id" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">horseId</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+              <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Horse. Il valore sarà utilizzato per la successiva chiamata getHorseById</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 6.5 - deleteHorse" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+            <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1/${horseId}</stringProp>
+            <stringProp name="HTTPSampler.method">DELETE</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (204)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49590">204</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
         </hashTree>
       </hashTree>
       <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
-        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <boolProp name="ResultCollector.error_logging">true</boolProp>
         <objProp>
           <name>saveConfig</name>
           <value class="SampleSaveConfiguration">
