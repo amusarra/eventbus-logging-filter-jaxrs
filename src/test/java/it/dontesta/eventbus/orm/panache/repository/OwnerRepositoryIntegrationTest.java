@@ -53,7 +53,7 @@ class OwnerRepositoryIntegrationTest {
     Assertions.assertNotNull(owner);
     Assertions.assertNotNull(owner.horses);
     Assertions.assertEquals(3, owner.horses.size());
-    Assertions.assertEquals("Judio XXXV", owner.horses.getFirst().name);
+    Assertions.assertEquals("Thunder", owner.horses.getFirst().name);
     Assertions.assertEquals("Mario", owner.name);
   }
 }

@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
+## [1.2.1] - 2024-05-10
+
+### Changed
+- Aggiornamento del modello ORM Panache per l'aggiunta di nuovi attributi nella classe di entità `Horse`
+- Aggiornamento dello script SQL per l'inizializzazione del database H2
+- Aggiornamento dei unit e integration test per l'aggiunta di nuovi attributi nella classe di entità `Horse`
 
 ## [1.2.0] - 2024-05-10
 
