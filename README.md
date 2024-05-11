@@ -399,10 +399,36 @@ test di carico (dai dati letti dal file jtl `kpi.jtl` locato in `target/taurus/%
 
 ![Throughput del sistema](src/doc/resources/images/jmeter_jtl_transazioni_secondo_1.jpg)
 
+Figura 7 - Throughput del sistema
+
 Anche da questo grafico è possibile vedere come il throughput del sistema sia influenzato dal protocollo utilizzato
 e il protocollo HTTP/2 over TLS con compressione GZIP sia quello che offre le migliori performance.
 
-Figura 7 - Throughput del sistema
+Dalla release [1.2.2](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.2) del progetto, è disponibile lo scenario di Load Testing per testare i servizi JAX-RS collegati alle
+due entità ORM (Object Relational Mapping) che sono state implementate nel progetto e introdotte dalla release [1.2.0](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.0).
+
+Per eseguire lo scenario di Load Testing, è possibile utilizzare il file jmx `src/test/jmeter/scenario_2.jmx`, di cui 
+potete vedere la struttura aprendolo con JMeter. A seguire è mostrata la struttura del Test Plan di JMeter.
+
+![Configurazione Test Plan di JMeter Scenario 2](src/doc/resources/images/jmeter_configurazione_piano_test_scenario_2.jpg)
+
+Figura 8 - Configurazione del Test Plan di JMeter (scenario 2 `src/test/jmeter/scenario_2.jmx`)
+
+È possibile eseguire questo scenario sempre con Taurus utilizzando comando `bzt` come mostrato in precedenza. A seguire
+è riportato il comando per eseguire lo scenario di Load Testing con Taurus.
+
+```shell script
+# Esegui lo scenario di Load Testing con Taurus
+bzt -o modules.jmeter.properties.numberOfThreads=1 \
+  -o modules.jmeter.properties.rampUpPeriod=5 \
+  -o modules.jmeter.properties.loopCount=25 \
+  -o modules.jmeter.properties.httpProtocol=https \
+  -o modules.jmeter.properties.httpPort=8443 \
+  -o modules.jmeter.properties.ipOrFQDN=127.0.0.1 \
+  src/test/jmeter/taurus/config.yml \
+  src/test/jmeter/scenario_2.jmx
+```
+Console 13 - Esecuzione dello scenario di Load Testing con Taurus
 
 ## Guida ai servizi e alle estensioni utilizzate
 

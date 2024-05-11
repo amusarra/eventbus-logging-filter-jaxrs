@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Aggiunta gestione del metodo CRUD di Update per la classe di entità `Horse` e `Owner`
+- Aggiunto lo scenario di test JMeter per il nuovi servizi JAX-RS introdotti con le entità `Horse` e `Owner`
+- Aggiornamento del file README.md con le istruzioni per l'esecuzione dello scenario di test JMeter
 
 ### Fixed
 - Eliminazione di alcuni listener jp@gc - JMeter Plugins per il test di carico con JMeter e Taurus
