@@ -52,6 +52,10 @@ class PanacheRepositoryMockedTest {
     Mockito.verify(ownerRepository).findOrderedByName();
     Mockito.verify(ownerRepository, Mockito.atLeastOnce()).findById(Mockito.any());
     Mockito.verifyNoMoreInteractions(ownerRepository);
+
+    // Mock the delete method
+    ownerRepository.delete(owner);
+    Mockito.verify(ownerRepository, Mockito.times(1)).delete(owner);
   }
 
   @Test
@@ -95,5 +99,10 @@ class PanacheRepositoryMockedTest {
     Mockito.verify(horseRepository).findOrderedByName();
     Mockito.verify(horseRepository, Mockito.atLeastOnce()).findById(Mockito.any());
     Mockito.verifyNoMoreInteractions(horseRepository);
+
+    // Mock the delete method
+    horseRepository.delete(horse);
+    Mockito.verify(horseRepository, Mockito.times(1)).delete(horse);
+
   }
 }

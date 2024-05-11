@@ -13,6 +13,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
+## [1.2.3] - 2024-05-12
+
+### Added
+- Aggiunta configurazione datasource di default per il database H2
+- Aggiunta configurazione datasource per PostgreSQL profilo di produzione
+- Aggiunta configurazione per i secrets K8s per la connessione al database PostgreSQL
+- Aggiunte le dipeendenze Quarkus per PostgreSQL
+
+### Changed
+- Aggiornamento docker-compose.yml per aggiungere il servizio PostgreSQL
+- Aggiornamento file README.md con le istruzioni per l'esecuzione dell'applicazione con PostgreSQL
+
+### Fixed
+- Fix docker-compose.yml per l'esecuzione dell'applicazione con PostgreSQL nel caso in cui il container di PostgreSQL sia eseguito su host con sistema operativo Linux
+
 ## [1.2.2] - 2024-05-11
 
 ### Changed

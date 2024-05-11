@@ -53,6 +53,8 @@ Le estensioni Quarkus utilizzate per l'implementazione del progetto sono le segu
 - io.quarkus:quarkus-arc ✔
 - io.quarkus:quarkus-rest ✔
 - io.quarkus:quarkus-rest-jackson ✔
+- io.quarkus:quarkus-jdbc-h2 ✔
+- io.quarkus:quarkus-jdbc-postgresql ✔
 
 ## Esecuzione dell'applicazione in Docker
 Vorresti eseguire l'applicazione in un container e testare il funzionamento dell'applicazione fin da subito?
@@ -60,6 +62,11 @@ All'interno del progetto è disponibile il file `src/main/docker/docker-compose.
 l'applicazione in un container utilizzando Docker Compose o Podman Compose.
 
 Ecco come fare utilizzando [Podman Compose](https://docs.podman.io/en/latest/markdown/podman-compose.1.html) (non cambia nel caso di [Docker Compose](https://docs.docker.com/compose/)):
+
+> Dalla release [1.2.3](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.3) del progetto, il file `docker-compose.yml` è stato aggiornato aggiungendo il servizio di PostgreSQL.
+
+A seguire il comando per avviare l'applicazione Quarkus in un container (compresi i servizi di supporto come MongoDB, 
+AMQP, ecc.).
 
 ```shell script
 # Tramite Podman Compose (alternativa a Docker Compose)
@@ -444,6 +451,7 @@ Console 13 - Esecuzione dello scenario di Load Testing con Taurus
 - Simplified Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence layer with Panache
 - Configura data sources in Quarkus ([guide](https://quarkus.io/guides/datasource)): 
   - Connect to a H2 database using JDBC
+  - Connect to a PostgreSQL database using JDBC
 
 ## Team Tools
 
