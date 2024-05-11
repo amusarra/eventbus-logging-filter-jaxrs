@@ -1,6 +1,9 @@
 package it.dontesta.eventbus.ws;
 
 import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Application;
 
 /**
@@ -12,4 +15,11 @@ import jakarta.ws.rs.core.Application;
  */
 @ApplicationPath("/api")
 public class EventBusApplication extends Application {
+
+  @Path("sw-version")
+  @GET
+  @Produces("text/plain")
+  public String getSoftwareVersion() {
+    return "1.0.0";
+  }
 }

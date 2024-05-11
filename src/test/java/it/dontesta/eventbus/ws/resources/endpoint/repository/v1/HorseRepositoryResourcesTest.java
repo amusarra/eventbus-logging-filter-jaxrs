@@ -82,6 +82,30 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
+  @Order(5)
+  void testCreateHorseWithId() {
+    String json = """
+        {
+          "id": 100,
+          "name": "Santos XVVI",
+          "coat": "Gray",
+          "breed": "Pura Raza Española - PRE",
+          "sex": "M",
+          "dateOfBirth": "2024-05-01",
+          "owners": [{"id": 3}]
+        }
+        """;
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(json)
+        .when().post("/api/rest/repository/horse/v1")
+        .then()
+        .statusCode(422)
+        .body("error", is("Id was invalidly set on request."));
+  }
+
+  @Test
   @Order(6)
   void testUpdateHorse() {
     String json = """
@@ -106,6 +130,52 @@ class HorseRepositoryResourcesTest {
 
   @Test
   @Order(7)
+  void testUpdateHorseNotFoundId() {
+    String json = """
+        {
+          "name": "Whisper updated",
+          "coat": "Gray",
+          "breed": "Pura Raza Española - PRE",
+          "sex": "M",
+          "dateOfBirth": "2024-05-01",
+          "owners": [{"id": 3}]
+        }
+        """;
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(json)
+        .when().put("/api/rest/repository/horse/v1/100")
+        .then()
+        .statusCode(Response.Status.NOT_FOUND.getStatusCode())
+        .body("error", is("Horse with id of 100 not found"));
+  }
+
+  @Test
+  @Order(8)
+  void testUpdateHorseNewOwnerId() {
+    String json = """
+        {
+          "name": "Whisper updated",
+          "coat": "Gray",
+          "breed": "Pura Raza Española - PRE",
+          "sex": "M",
+          "dateOfBirth": "2024-05-01",
+          "owners": [{"id": 1}, {"id": 3}]
+        }
+        """;
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(json)
+        .when().put("/api/rest/repository/horse/v1/1")
+        .then()
+        .statusCode(Response.Status.OK.getStatusCode())
+        .body("name", is("Whisper updated"));
+  }
+
+  @Test
+  @Order(9)
   void testDeleteHorseByIdSuccess() {
     given()
         .when().delete("/api/rest/repository/horse/v1/1")
@@ -114,7 +184,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(8)
+  @Order(9)
   void testDeleteHorseByIdNotFound() {
     given()
         .when().delete("/api/rest/repository/horse/v1/100")
