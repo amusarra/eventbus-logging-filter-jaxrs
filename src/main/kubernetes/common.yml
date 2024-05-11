@@ -25,3 +25,20 @@ metadata:
 data:
   mongodb-connection-url: bW9uZ29kYjovL21vbmdvOjI3MDE3L2F1ZGl0Cg==
 type: Opaque
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: db-username-password
+data:
+  db-password: cXVhcmt1cwo=
+  db-username: cXVhcmt1cwo=
+type: Opaque
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: db-connection-url
+data:
+  db-url: amRiYzpwb3N0Z3Jlc3FsOi8vcG9zdGdyZXNxbDo1NDMyL3F1YXJrdXNfZXZlbnRfYnVzCg==
+type: Opaque
