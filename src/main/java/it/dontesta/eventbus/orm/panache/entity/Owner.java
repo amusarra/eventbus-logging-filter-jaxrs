@@ -15,13 +15,13 @@ import java.util.List;
 @Cacheable
 public class Owner extends PanacheEntity {
 
-  @Column(length = 60)
+  @Column(length = 60, nullable = false)
   public String name;
 
-  @Column(length = 60)
+  @Column(length = 60, nullable = false)
   public String surname;
 
-  @Column(length = 60, unique = true)
+  @Column(length = 60, nullable = false, unique = true)
   public String email;
 
   @Column(length = 20)

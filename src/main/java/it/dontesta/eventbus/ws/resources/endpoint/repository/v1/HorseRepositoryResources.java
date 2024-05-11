@@ -1,6 +1,7 @@
 package it.dontesta.eventbus.ws.resources.endpoint.repository.v1;
 
 import it.dontesta.eventbus.orm.panache.entity.Horse;
+import it.dontesta.eventbus.orm.panache.entity.Owner;
 import it.dontesta.eventbus.orm.panache.repository.HorseRepository;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -9,12 +10,15 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.jboss.logging.Logger;
 
 /**
@@ -78,6 +82,52 @@ public class HorseRepositoryResources {
 
     horseRepository.persist(horse);
     return Response.ok(horse).status(Response.Status.CREATED).build();
+  }
+
+  /**
+   * This method updates a horse.
+   *
+   * @param id The ID of the horse.
+   * @param horse The horse to update.
+   * @return The updated horse.
+   */
+  @PUT
+  @Path("{id}")
+  @Transactional
+  public Horse updateHorse(@NotNull Long id, @NotNull Horse horse) {
+    Horse entity = horseRepository.findById(id);
+
+    if (entity == null) {
+      throw new WebApplicationException("Horse with id of %d not found".formatted(id),
+          Response.Status.NOT_FOUND);
+    }
+
+    entity.name = horse.name;
+    entity.sex = horse.sex;
+    entity.coat = horse.coat;
+    entity.breed = horse.breed;
+    entity.dateOfBirth = horse.dateOfBirth;
+
+    entity.owners.forEach(owner -> {
+      log.debug("Existing owner: %s".formatted(owner.name));
+    });
+
+    // Create a Set of owner IDs from entity.owners
+    Set<Long> entityOwnerIds = entity.owners.stream().map(owner -> owner.id).collect(Collectors.toSet());
+
+    // Filter the owners of horse.owners that are not present in entity.owners
+    List<Owner> newOwners = horse.owners.stream()
+        .filter(horseOwner -> !entityOwnerIds.contains(horseOwner.id))
+        .collect(Collectors.toList());
+
+    // Create the new owners with the IDs and add them to entity.owners
+    newOwners.forEach(horseOwner -> {
+      Owner owner = new Owner();
+      owner.id = horseOwner.id;
+      entity.owners.add(owner);
+    });
+
+    return entity;
   }
 
   /**

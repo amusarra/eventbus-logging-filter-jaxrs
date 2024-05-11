@@ -86,6 +86,33 @@ class OwnerRepositoryResourcesTest {
 
   @Test
   @Order(6)
+  void testUpdateOwner() {
+    String json = """
+        {
+          "id": 1,
+          "name": "John Updated 3",
+          "surname": "Doe",
+          "email": "john2.doe@dontesta.it",
+          "phoneNumber": "123456789",
+          "address": "Via Roma 3",
+          "city": "Rome",
+          "state": "RM",
+          "zipCode": "00100",
+          "country": "Italy"
+        }
+        """;
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(json)
+        .when().put("/api/rest/repository/owner/v1")
+        .then()
+        .statusCode(Response.Status.OK.getStatusCode())
+        .body("name", is("John Updated 3"));
+  }
+
+  @Test
+  @Order(7)
   void testDeleteOwnerByIdNotFound() {
     given()
         .when().delete("/api/rest/repository/owner/v1/100")
