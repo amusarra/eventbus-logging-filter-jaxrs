@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Aggiornamento docker-compose.yml per aggiungere il servizio PostgreSQL
 - Aggiornamento file README.md con le istruzioni per l'esecuzione dell'applicazione con PostgreSQL
 
+### Fixed
+- Fix docker-compose.yml per l'esecuzione dell'applicazione con PostgreSQL nel caso in cui il container di PostgreSQL sia eseguito su host con sistema operativo Linux
+
 ## [1.2.2] - 2024-05-11
 
 ### Changed
