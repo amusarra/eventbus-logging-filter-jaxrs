@@ -83,6 +83,29 @@ class HorseRepositoryResourcesTest {
 
   @Test
   @Order(6)
+  void testUpdateHorse() {
+    String json = """
+        {
+          "name": "Whisper updated",
+          "coat": "Gray",
+          "breed": "Pura Raza Española - PRE",
+          "sex": "M",
+          "dateOfBirth": "2024-05-01",
+          "owners": [{"id": 3}]
+        }
+        """;
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(json)
+        .when().put("/api/rest/repository/horse/v1/4")
+        .then()
+        .statusCode(Response.Status.OK.getStatusCode())
+        .body("name", is("Whisper updated"));
+  }
+
+  @Test
+  @Order(7)
   void testDeleteHorseByIdSuccess() {
     given()
         .when().delete("/api/rest/repository/horse/v1/1")
@@ -91,7 +114,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(7)
+  @Order(8)
   void testDeleteHorseByIdNotFound() {
     given()
         .when().delete("/api/rest/repository/horse/v1/100")

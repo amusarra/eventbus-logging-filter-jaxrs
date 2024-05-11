@@ -9,6 +9,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.WebApplicationException;
@@ -73,6 +74,62 @@ public class OwnerRepositoryResources {
 
     ownerRepository.persist(owner);
     return Response.ok(owner).status(Response.Status.CREATED).build();
+  }
+
+  /**
+   * Update existing owner.
+   *
+   * @param owner The owner to update.
+   * @return The updated owner.
+   */
+  @PUT
+  @Transactional
+  public Owner updateOwner(@NotNull Owner owner) {
+    if (owner.id == null) {
+      throw new WebApplicationException("Owner ID was not set on request.",
+          Response.Status.BAD_REQUEST);
+    }
+
+    Owner existingOwner = ownerRepository.findById(owner.id);
+
+    if (existingOwner == null) {
+      throw new WebApplicationException("Owner with id of %d not found".formatted(owner.id),
+          Response.Status.NOT_FOUND);
+    }
+
+    // Update the owner
+    // This code is not the best way to update an entity
+    if (owner.name != null) {
+      existingOwner.name = owner.name;
+    }
+    if (owner.surname != null) {
+      existingOwner.surname = owner.surname;
+    }
+    if (owner.email != null) {
+      existingOwner.email = owner.email;
+    }
+    if (owner.phoneNumber != null) {
+      existingOwner.phoneNumber = owner.phoneNumber;
+    }
+    if (owner.address != null) {
+      existingOwner.address = owner.address;
+    }
+    if (owner.city != null) {
+      existingOwner.city = owner.city;
+    }
+    if (owner.state != null) {
+      existingOwner.state = owner.state;
+    }
+    if (owner.zipCode != null) {
+      existingOwner.zipCode = owner.zipCode;
+    }
+    if (owner.country != null) {
+      existingOwner.country = owner.country;
+    }
+
+    ownerRepository.persist(existingOwner);
+
+    return existingOwner;
   }
 
   /**
