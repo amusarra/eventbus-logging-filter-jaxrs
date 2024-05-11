@@ -13,7 +13,8 @@ networks:
 # Define the services
 # 1. MongoDB
 # 2. Artemis
-# 3. Logging Filter
+# 3. Postgres
+# 4. Logging Filter
 services:
   mongodb:
     image: docker.io/library/mongo:4.4
@@ -39,11 +40,37 @@ services:
       - "5445:5445"
       - "5672:5672"
 
+  # See https://hub.docker.com/_/postgres for more details about the
+  # environment variables used to configure the PostgreSQL database.
+  postgres:
+    image: postgres:16.3
+    container_name: postgres
+    restart: always
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    networks:
+      - logging_filter_network
+    environment:
+      - POSTGRES_USER=quarkus
+      - POSTGRES_PASSWORD=quarkus
+      - POSTGRES_DB=quarkus
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8090:8080"
+
   # The environment variables are used to configure the connection to the
   # Artemis message broker and the MongoDB database.
   # Se the application.properties file for more details about the names of the
   # environment variables.
   logging-filter:
+    # Use the following image if you want to use the pre-built image from Docker Hub:
+    # docker.io/amusarra/eventbus-logging-filter-jaxrs:latest
     image: docker.io/amusarra/eventbus-logging-filter-jaxrs:latest
     container_name: logging-filter
     networks:
@@ -54,6 +81,9 @@ services:
         - AMQP_USERNAME=artemis
         - AMQP_PASSWORD=artemis
         - MONGODB_CONNECTION_URL=mongodb://mongodb:27017/audit
+        - DB_USERNAME=quarkus
+        - DB_PASSWORD=quarkus
+        - DB_URL=jdbc:postgresql://postgres:5432/quarkus
     ports:
       - "8080:8080"
       - "8443:8443"
@@ -66,8 +96,11 @@ services:
     depends_on:
       - artemis
       - mongodb
+      - postgres
 
 # Define the volumes
 volumes:
   mongodb_data:
+    driver: local
+  postgres_data:
     driver: local
