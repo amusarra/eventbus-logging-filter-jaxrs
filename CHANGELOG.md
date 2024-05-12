@@ -11,10 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Aggiunta configurazione Jacoco per l'exclusion di una classe dal coverage report
 - Aggiunta sulla configurazione di Quarkus le nuove secret per il database PostgreSQL
 - Aggiunte le configurazioni per il database PostgreSQL per il profile di produzione (anche se non abilitate)
-- Aggiunta l'environment JAVA_OPTS per la configurazione della JVM sul docker-compose.yml
+- Aggiunta environment JAVA_OPTS per la configurazione della JVM sul docker-compose.yml
+- Aggiunta env JAVA_OPTS su docker-compose.yml Sono state aggiunte opzioni di ottimizzazione riguardo il GC e in particolare le opzioni per la JMX utili al fine di monitoraggio delle performance
+- Aggiunto il capitolo "Monitoraggio delle performance dell'applicazione Quarkus" al file README.md
 
 ### Changed
 - Aggiornamento README.md con la nota circa l'importanza di avere un container runtime correttamente configurato
+- Logging application for prod profile
+- Reviewed quarkus.thread-pool.max-threads value
 
 ### Fixed
 - Risoluzione issue di SonarCloud
