@@ -5,10 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.MessageConsumer;
 import jakarta.inject.Inject;
+import java.util.List;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -19,11 +21,17 @@ class PublishMessageOnEventBusTest {
   @Inject
   EventBus eventBus;
 
+  @ConfigProperty(name = "app.eventbus.consumer.dispatcher.address")
+  String dispatcherVirtualAddress;
+
   @ConfigProperty(name = "app.eventbus.consumer.http.request.address")
   String httpRequestVirtualAddress;
 
   @ConfigProperty(name = "app.eventbus.consumer.http.response.address")
   String httpResponseVirtualAddress;
+
+  @ConfigProperty(name = "app.eventbus.consumer.event.handler.addresses")
+  List<String> eventHandlerVirtualAddresses;
 
   JsonObject requestMessage = new JsonObject().put("message",
       "Message Request to publish on the event bus");
@@ -40,6 +48,13 @@ class PublishMessageOnEventBusTest {
   final String HTTP_REQUEST_VIRTUAL_ADDRESS_TEST = "http-request-test";
 
   final String HTTP_RESPONSE_VIRTUAL_ADDRESS_TEST = "http-response-test";
+
+  final String SOURCE_VIRTUAL_ADDRESS = "source-virtual-address";
+
+  final String SOURCE_COMPONENT = "source-component";
+
+  final String TARGET_VIRTUAL_ADDRESSES = "target-virtual-addresses";
+
 
   @Test
   void testPublishFakeHttpRequestMessageOnEventBus() {
@@ -106,6 +121,28 @@ class PublishMessageOnEventBusTest {
 
     // Publish the messages on the event bus for the HTTP request and response
     eventBus.publish(httpResponseVirtualAddress, responseMessage);
+    assertTrue(true);
+  }
+
+  @Test
+  void testPublishHttpRequestMessageWithFakeHeaderOnEventBus() {
+    // Creare le opzioni di consegna desiderate
+    DeliveryOptions options = new DeliveryOptions()
+        .addHeader(SOURCE_VIRTUAL_ADDRESS, "fakeSourceVirtualAddress")
+        .addHeader(TARGET_VIRTUAL_ADDRESSES, String.join(",", eventHandlerVirtualAddresses))
+        .addHeader(SOURCE_COMPONENT, "fakeSourceComponent");
+
+    // Registrazione del consumatore per l'indirizzo virtuale dell'evento
+    httpRequestConsumer = eventBus.consumer(dispatcherVirtualAddress);
+
+    // Registrazione del gestore per i messaggi ricevuti
+    httpRequestConsumer.handler(message -> {
+      assertEquals(requestMessage, message.body());
+    });
+
+    // Publish the messages on the event bus for the HTTP request and response
+    // with the fake headers
+    eventBus.publish(dispatcherVirtualAddress, requestMessage, options);
     assertTrue(true);
   }
 
