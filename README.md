@@ -442,7 +442,7 @@ bzt -o modules.jmeter.properties.numberOfThreads=1 \
 Console 12 - Esecuzione dello scenario di Load Testing con Taurus
 
 ## Accesso alla Java Management Extensions (JMX)
-Dalla versione 1.2.4 del progetto è possibile accedere alla Java Management Extensions (JMX) dell'applicazione Quarkus
+Dalla versione [1.2.4](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.4) del progetto è possibile accedere alla Java Management Extensions (JMX) dell'applicazione Quarkus
 in esecuzione quando questa è avviata utilizzando il docker-compose. Questo è possibile grazie alla configurazione 
 mostrata a seguire e in particolare i parametri `JAVA_OPTS` che abilitano la JMX.
 
