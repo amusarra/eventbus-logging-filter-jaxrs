@@ -56,6 +56,10 @@ Le estensioni Quarkus utilizzate per l'implementazione del progetto sono le segu
 - io.quarkus:quarkus-jdbc-h2 ✔
 - io.quarkus:quarkus-jdbc-postgresql ✔
 
+> È importante che abbiate installato e configurato correttamente il vostro ambiente di container runtime (Docker o 
+> Podman) al fine di eseguire l'applicazione in dev mode ed eseguire i test, entrambe le operazioni richiedono l'uso
+> dei Dev Services di Quarkus (e di conseguenza del container runtime).
+
 ## Esecuzione dell'applicazione in Docker
 Vorresti eseguire l'applicazione in un container e testare il funzionamento dell'applicazione fin da subito?
 All'interno del progetto è disponibile il file `src/main/docker/docker-compose.yml` che ti permette di eseguire 
