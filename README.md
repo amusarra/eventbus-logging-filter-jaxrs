@@ -141,7 +141,7 @@ http://localhost:8080/q/health.
       - artemis
       - mongodb
 ```
-Console 4 - Estratto del docker-compose.yml per il servizio `logging-filter`
+Source 1 - Estratto del docker-compose.yml per il servizio `logging-filter`
 
 Per testare il servizio REST esposto dall'applicazione Quarkus, puoi utilizzare il comando `curl` per inviare una
 richiesta HTTP al servizio REST.
@@ -181,7 +181,7 @@ curl -v --http2 \
 * Connection #0 to host localhost left intact
 {"message": "Test di tracking richiesta JAX-RS"}%
 ```
-Console 5 - Esempio di richiesta HTTP al servizio REST
+Console 4 - Esempio di richiesta HTTP al servizio REST
 
 Utilizzando il comando `podman logs <container-id>`, puoi verificare i log dell'applicazione Quarkus dove sono presenti
 le informazioni relative al tracciamento delle richieste JAX-RS. A seguire un esempio di output dei log dell'applicazione.
@@ -232,7 +232,7 @@ h2load -n 100 -c 5 \
         -d src/test/resources/payload-1.json \
         https://0.0.0.0:8443/api/rest/echo
 ```
-Console 6 - Esempio di benchmark dell'applicazione Quarkus
+Console 5 - Esempio di benchmark dell'applicazione Quarkus
 
 A seguire un esempio di output del comando h2load.
 
@@ -272,7 +272,7 @@ Puoi eseguire l'applicazione in modalità sviluppo che abilita il live coding ut
 ```shell script
 ./mvnw compile quarkus:dev
 ```
-Console 7 - Esecuzione dell'applicazione in modalità sviluppo
+Console 6 - Esecuzione dell'applicazione in modalità sviluppo
 
 > **_NOTE:_**  Quarkus ora include una UI di sviluppo, disponibile solo in modalità sviluppo all'indirizzo http://localhost:8080/q/dev/.
 
@@ -286,7 +286,7 @@ L'applicazione può essere preparata utilizzando:
 ```shell script
 ./mvnw package
 ```
-Console 8 - Packaging dell'applicazione
+Console 7 - Packaging dell'applicazione
 
 Il processo produrrà il file `quarkus-run.jar` in `target/quarkus-app/`.
 Questo non è un _über-jar_ in quanto le dipendenze sono copiate nella 
@@ -298,7 +298,7 @@ Se vuoi creare un _über-jar_, esegui il seguente comando:
 ```shell script
 ./mvnw package -Dquarkus.package.type=uber-jar
 ```
-Console 9 - Impacchettamento dell'applicazione come _über-jar_
+Console 8 - Impacchettamento dell'applicazione come _über-jar_
 
 L'applicazione, impacchettata come un _über-jar_, è ora eseguibile utilizzando `java -jar target/*-runner.jar`.
 
@@ -308,7 +308,7 @@ Puoi creare un eseguibile nativo utilizzando:
 ```shell script
 ./mvnw package -Dnative
 ```
-Console 10 - Creazione di un eseguibile nativo
+Console 9 - Creazione di un eseguibile nativo
 
 Nel caso in cui tu non avessi GraalVM installato, puoi eseguire la build dell'eseguibile nativo in un container 
 utilizzando:
@@ -316,7 +316,7 @@ utilizzando:
 ```shell script
 ./mvnw package -Dnative -Dquarkus.native.container-build=true
 ```
-Console 11 - Creazione di un eseguibile nativo in un container
+Console 10 - Creazione di un eseguibile nativo in un container
 
 Puoi eseguire l'eseguibile nativo con: `./target/eventbus-logging-filter-jaxrs-1.0.0-SNAPSHOT-runner`
 
@@ -373,7 +373,7 @@ bzt -o modules.jmeter.properties.numberOfThreads=100 \
   src/test/jmeter/taurus/config.yml \
   src/test/jmeter/scenario_1.jmx
 ```
-Console 12 - Esecuzione del Test Plan di JMeter con Taurus
+Console 11 - Esecuzione del Test Plan di JMeter con Taurus
 
 Il comando `bzt` esegue il Test Plan di JMeter con Taurus e i parametri `-o` sono utilizzati per sovrascrivere i valori
 delle variabili definite nel file di configurazione di Taurus `src/test/jmeter/taurus/config.yml` che in questo caso
@@ -439,7 +439,54 @@ bzt -o modules.jmeter.properties.numberOfThreads=1 \
   src/test/jmeter/taurus/config.yml \
   src/test/jmeter/scenario_2.jmx
 ```
-Console 13 - Esecuzione dello scenario di Load Testing con Taurus
+Console 12 - Esecuzione dello scenario di Load Testing con Taurus
+
+## Accesso alla Java Management Extensions (JMX)
+Dalla versione 1.2.4 del progetto è possibile accedere alla Java Management Extensions (JMX) dell'applicazione Quarkus
+in esecuzione quando questa è avviata utilizzando il docker-compose. Questo è possibile grazie alla configurazione 
+mostrata a seguire e in particolare i parametri `JAVA_OPTS` che abilitano la JMX.
+
+```shell script
+
+```yaml
+  logging-filter:
+    # Use the following image if you want to use the pre-built image from Docker Hub:
+    # docker.io/amusarra/eventbus-logging-filter-jaxrs:latest
+    image: docker.io/amusarra/eventbus-logging-filter-jaxrs:latest
+    container_name: logging-filter
+    networks:
+      - logging_filter_network
+    environment:
+      - JAVA_OPTS=-Xms100M -Xmx500M -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions
+        -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 -XX:G1ReservePercent=10
+        -XX:ConcGCThreads=4 -XX:G1NewSizePercent=5 -XX:G1MaxNewSizePercent=60
+        -XX:ParallelGCThreads=4 -XX:+ExitOnOutOfMemoryError -Dcom.sun.management.jmxremote.port=9091
+        -Dcom.sun.management.jmxremote.rmi.port=9091 -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false
+        -Djava.rmi.server.hostname=127.0.0.1
+```
+Source 2 - Estratto del docker-compose.yml per il servizio `logging-filter` con JMX abilitato
+
+Una volta che il container è in esecuzione, è possibile accedere alla JMX dell'applicazione Quarkus utilizzando un
+client JMX come [JConsole](https://openjdk.org/tools/svc/jconsole/), [VisualVM](https://visualvm.github.io/) o 
+[Java Mission Control](https://www.oracle.com/java/technologies/jdk-mission-control.html). In questo caso, la stringa 
+di connessione JMX è `service:jmx:rmi:///jndi/rmi://localhost:9091/jmxrmi`. A seguire un esempio di connessione tramite
+VisualVM.
+
+![Connessione JMX con VisualVM](src/doc/resources/images/jmx_visualvm_1.jpg)
+
+Figura 9 - Connessione JMX con VisualVM
+
+La figura a seguire mostra invece il monitoraggio dell'applicazione, dove sono presenti le informazioni relative alla
+memoria, al garbage collector, al class loader, al thread, ecc.
+
+![Monitoraggio JMX con VisualVM](src/doc/resources/images/jmx_visualvm_2.jpg)
+
+Figura 10 - Monitoraggio JMX con VisualVM
+
+In ambiente OpenShift, è possibile accedere alla JMX dell'applicazione Quarkus utilizzando per esempio il progetto
+[Cryostat](https://cryostat.io/) (JFR for Containerized Java Applications).
+
 
 ## Guida ai servizi e alle estensioni utilizzate
 
