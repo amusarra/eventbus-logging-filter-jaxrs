@@ -100,9 +100,7 @@ class PublishMessageOnEventBusTest {
     httpRequestConsumer = eventBus.consumer(httpRequestVirtualAddress);
 
     // Registrazione del gestore per i messaggi ricevuti
-    httpRequestConsumer.handler(message -> {
-      assertEquals(requestMessage, message.body());
-    });
+    httpRequestConsumer.handler(message -> assertEquals(requestMessage, message.body()));
 
     // Publish the messages on the event bus for the HTTP request and response
     eventBus.publish(httpRequestVirtualAddress, requestMessage);
@@ -115,9 +113,7 @@ class PublishMessageOnEventBusTest {
     httpResponseConsumer = eventBus.consumer(httpResponseVirtualAddress);
 
     // Registrazione del gestore per i messaggi ricevuti
-    httpResponseConsumer.handler(message -> {
-      assertEquals(responseMessage, message.body());
-    });
+    httpResponseConsumer.handler(message -> assertEquals(responseMessage, message.body()));
 
     // Publish the messages on the event bus for the HTTP request and response
     eventBus.publish(httpResponseVirtualAddress, responseMessage);
@@ -136,9 +132,7 @@ class PublishMessageOnEventBusTest {
     httpRequestConsumer = eventBus.consumer(dispatcherVirtualAddress);
 
     // Registrazione del gestore per i messaggi ricevuti
-    httpRequestConsumer.handler(message -> {
-      assertEquals(requestMessage, message.body());
-    });
+    httpRequestConsumer.handler(message -> assertEquals(requestMessage, message.body()));
 
     // Publish the messages on the event bus for the HTTP request and response
     // with the fake headers
