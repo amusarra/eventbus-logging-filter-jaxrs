@@ -74,19 +74,27 @@ services:
     image: docker.io/amusarra/eventbus-logging-filter-jaxrs:latest
     container_name: logging-filter
     networks:
-        - logging_filter_network
+      - logging_filter_network
     environment:
-        - AMQP_HOSTNAME=artemis
-        - AMQP_PORT=5672
-        - AMQP_USERNAME=artemis
-        - AMQP_PASSWORD=artemis
-        - MONGODB_CONNECTION_URL=mongodb://mongodb:27017/audit
-        - DB_USERNAME=quarkus
-        - DB_PASSWORD=quarkus
-        - DB_URL=jdbc:postgresql://postgres:5432/quarkus
+      - AMQP_HOSTNAME=artemis
+      - AMQP_PORT=5672
+      - AMQP_USERNAME=artemis
+      - AMQP_PASSWORD=artemis
+      - MONGODB_CONNECTION_URL=mongodb://mongodb:27017/audit
+      - DB_USERNAME=quarkus
+      - DB_PASSWORD=quarkus
+      - DB_URL=jdbc:postgresql://postgres:5432/quarkus
+      - JAVA_OPTS=-Xms100M -Xmx500M -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions
+        -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 -XX:G1ReservePercent=10
+        -XX:ConcGCThreads=4 -XX:G1NewSizePercent=5 -XX:G1MaxNewSizePercent=60
+        -XX:ParallelGCThreads=4 -XX:+ExitOnOutOfMemoryError -Dcom.sun.management.jmxremote.port=9091
+        -Dcom.sun.management.jmxremote.rmi.port=9091 -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false
+        -Djava.rmi.server.hostname=127.0.0.1
     ports:
       - "8080:8080"
       - "8443:8443"
+      - "9091:9091"
     healthcheck:
       test: [ "CMD-SHELL", "curl --fail http://localhost:8080/q/health" ]
       interval: 30s
