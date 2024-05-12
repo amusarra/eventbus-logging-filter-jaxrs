@@ -7,10 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Aggiunto altro unit test per la pubblicazione di messaggi fake
+- Aggiunta configurazione Jacoco per l'exclusion di una classe dal coverage report
+- Aggiunta sulla configurazione di Quarkus le nuove secret per il database PostgreSQL
+- Aggiunte le configurazioni per il database PostgreSQL per il profile di produzione (anche se non abilitate)
+- Aggiunta l'environment JAVA_OPTS per la configurazione della JVM sul docker-compose.yml
+
 ### Changed
+- Aggiornamento README.md con la nota circa l'importanza di avere un container runtime correttamente configurato
+
 ### Fixed
+- Risoluzione issue di SonarCloud
+
 ### Removed
+
 ### Deprecated
+
 ### Security
 
 ## [1.2.3] - 2024-05-12
