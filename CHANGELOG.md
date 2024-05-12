@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+### Changed
+### Removed
+### Deprecated
+### Security
+
+[1.2.4] - 2024-05-13
+### Added
 - Aggiunto altro unit test per la pubblicazione di messaggi fake
 - Aggiunta configurazione Jacoco per l'exclusion di una classe dal coverage report
 - Aggiunta sulla configurazione di Quarkus le nuove secret per il database PostgreSQL
