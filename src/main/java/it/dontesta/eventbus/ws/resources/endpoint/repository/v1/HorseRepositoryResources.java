@@ -108,9 +108,7 @@ public class HorseRepositoryResources {
     entity.breed = horse.breed;
     entity.dateOfBirth = horse.dateOfBirth;
 
-    entity.owners.forEach(owner -> {
-      log.debug("Existing owner: %s".formatted(owner.name));
-    });
+    entity.owners.forEach(owner -> log.debug("Existing owner: %s".formatted(owner.name)));
 
     // Create a Set of owner IDs from entity.owners
     Set<Long> entityOwnerIds = entity.owners.stream().map(owner -> owner.id).collect(Collectors.toSet());
@@ -118,7 +116,7 @@ public class HorseRepositoryResources {
     // Filter the owners of horse.owners that are not present in entity.owners
     List<Owner> newOwners = horse.owners.stream()
         .filter(horseOwner -> !entityOwnerIds.contains(horseOwner.id))
-        .collect(Collectors.toList());
+        .toList();
 
     // Create the new owners with the IDs and add them to entity.owners
     newOwners.forEach(horseOwner -> {
