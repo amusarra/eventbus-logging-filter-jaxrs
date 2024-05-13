@@ -1,5 +1,7 @@
 package it.dontesta.eventbus.consumers.events.handlers.nosql;
 
+import static it.dontesta.eventbus.application.configuration.EventHandlerAddress.*;
+
 import io.quarkus.mongodb.reactive.ReactiveMongoClient;
 import io.quarkus.mongodb.reactive.ReactiveMongoCollection;
 import io.quarkus.runtime.ShutdownEvent;
@@ -65,19 +67,17 @@ public class MongoDbEventHandler {
 
   public static final String SOURCE_COMPONENT = "source-component";
 
-  public static final String SOURCE_VIRTUAL_ADDRESS = "nosql-trace";
+  public static final String SOURCE_VIRTUAL_ADDRESS_NOSQL = "nosql-trace";
 
   void onStart(@Observes StartupEvent ev) {
 
-    boolean existsAndEnabled = EventHandlerAddress.isAddressAndExistsEnabled(
-        eventHandlerAddresses, SOURCE_VIRTUAL_ADDRESS);
-
-    if (existsAndEnabled) {
+    if (isAddressAndExistsEnabled(
+        eventHandlerAddresses, SOURCE_VIRTUAL_ADDRESS_NOSQL)) {
       log.debugf(
           "Registering the MongoDB event handler at addresses: {%s}",
-          SOURCE_VIRTUAL_ADDRESS);
+          SOURCE_VIRTUAL_ADDRESS_NOSQL);
 
-      consumer = eventBus.consumer(SOURCE_VIRTUAL_ADDRESS);
+      consumer = eventBus.consumer(SOURCE_VIRTUAL_ADDRESS_NOSQL);
       consumer.handler(this::handleEvent);
     }
 
@@ -88,7 +88,7 @@ public class MongoDbEventHandler {
       consumer.unregisterAndAwait();
       log.debugf(
           "Unregistering the MongoDB event handler at addresses: {%s}",
-          SOURCE_VIRTUAL_ADDRESS);
+          SOURCE_VIRTUAL_ADDRESS_NOSQL);
     }
   }
 

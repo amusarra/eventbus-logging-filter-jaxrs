@@ -1,5 +1,7 @@
 package it.dontesta.eventbus.consumers.events.handlers.queue;
 
+import static it.dontesta.eventbus.application.configuration.EventHandlerAddress.isAddressAndExistsEnabled;
+
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import io.vertx.core.json.JsonObject;
@@ -57,18 +59,16 @@ public class AmqpEventHandler {
 
   public static final String SOURCE_COMPONENT = "source-component";
 
-  public static final String SOURCE_VIRTUAL_ADDRESS = "queue-trace";
+  public static final String SOURCE_VIRTUAL_ADDRESS_QUEUE = "queue-trace";
 
   void onStart(@Observes StartupEvent ev) {
 
-    boolean existsAndEnabled = EventHandlerAddress.isAddressAndExistsEnabled(
-        eventHandlerAddresses, SOURCE_VIRTUAL_ADDRESS);
-
-    if (existsAndEnabled) {
+    if (isAddressAndExistsEnabled(
+        eventHandlerAddresses, SOURCE_VIRTUAL_ADDRESS_QUEUE)) {
       log.debugf("Registering the AMQP event handler at addresses: {%s}",
-          SOURCE_VIRTUAL_ADDRESS);
+          SOURCE_VIRTUAL_ADDRESS_QUEUE);
 
-      consumer = eventBus.consumer(SOURCE_VIRTUAL_ADDRESS);
+      consumer = eventBus.consumer(SOURCE_VIRTUAL_ADDRESS_QUEUE);
       consumer.handler(this::handleEvent);
     }
   }
@@ -77,7 +77,7 @@ public class AmqpEventHandler {
     if (consumer != null) {
       consumer.unregisterAndAwait();
       log.debugf("Unregistering the AMQP event handler at addresses: {%s}",
-          SOURCE_VIRTUAL_ADDRESS);
+          SOURCE_VIRTUAL_ADDRESS_QUEUE);
     }
   }
 
