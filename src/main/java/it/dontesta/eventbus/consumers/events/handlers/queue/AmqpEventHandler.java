@@ -1,16 +1,20 @@
 package it.dontesta.eventbus.consumers.events.handlers.queue;
 
+import static it.dontesta.eventbus.application.configuration.EventHandlerAddress.isAddressAndExistsEnabled;
+
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
 import io.vertx.mutiny.core.eventbus.MessageConsumer;
+import it.dontesta.eventbus.application.configuration.EventHandlerAddress;
 import it.dontesta.eventbus.consumers.http.HttpRequestConsumer;
 import it.dontesta.eventbus.consumers.http.HttpResponseConsumer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
+import java.util.List;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
@@ -26,10 +30,11 @@ import org.jboss.logging.Logger;
  *
  * <p>La registrazione avviene all'avvio dell'applicazione tramite l'annotazione {@code @Observes}
  * e il metodo {@code onStart}, mentre la de-registrazione avviene all'arresto dell'applicazione
- * attraverso il metodo {@code onStop}.
+ * attraverso il metodo {@code onStop}. La registrazione avviene solo se l'indirizzo dell'event handler
+ * è abilitato.
  *
  * <p>L'indicazione dell'indirizzo virtuale dell'evento per l'Event Handler è definita nel parametro
- * di configurazione {@code app.eventbus.consumer.event.handler.addresses[2]} che viene iniettato
+ * di configurazione {@code app.eventbus.consumer.event.handler.addresses} che viene iniettato
  * tramite l'annotazione {@code @ConfigProperty}
  */
 @ApplicationScoped
@@ -47,26 +52,32 @@ public class AmqpEventHandler {
   @Inject
   Logger log;
 
-  @ConfigProperty(name = "app.eventbus.consumer.event.handler.addresses[2]")
-  String amqpEventHandlerVirtualAddress;
+  @ConfigProperty(name = "app.eventbus.consumer.event.handler.addresses")
+  List<EventHandlerAddress> eventHandlerAddresses;
 
   MessageConsumer<JsonObject> consumer;
 
   public static final String SOURCE_COMPONENT = "source-component";
 
-  void onStart(@Observes StartupEvent ev) {
-    log.debugf("Registering the AMQP event handler at addresses: {%s}",
-        amqpEventHandlerVirtualAddress);
+  public static final String SOURCE_VIRTUAL_ADDRESS_QUEUE = "queue-trace";
 
-    consumer = eventBus.consumer(amqpEventHandlerVirtualAddress);
-    consumer.handler(this::handleEvent);
+  void onStart(@Observes StartupEvent ev) {
+
+    if (isAddressAndExistsEnabled(
+        eventHandlerAddresses, SOURCE_VIRTUAL_ADDRESS_QUEUE)) {
+      log.debugf("Registering the AMQP event handler at addresses: {%s}",
+          SOURCE_VIRTUAL_ADDRESS_QUEUE);
+
+      consumer = eventBus.consumer(SOURCE_VIRTUAL_ADDRESS_QUEUE);
+      consumer.handler(this::handleEvent);
+    }
   }
 
   void onStop(@Observes ShutdownEvent ev) {
     if (consumer != null) {
       consumer.unregisterAndAwait();
       log.debugf("Unregistering the AMQP event handler at addresses: {%s}",
-          amqpEventHandlerVirtualAddress);
+          SOURCE_VIRTUAL_ADDRESS_QUEUE);
     }
   }
 

@@ -1,5 +1,7 @@
 package it.dontesta.eventbus.consumers.events.handlers.nosql;
 
+import static it.dontesta.eventbus.application.configuration.EventHandlerAddress.*;
+
 import io.quarkus.mongodb.reactive.ReactiveMongoClient;
 import io.quarkus.mongodb.reactive.ReactiveMongoCollection;
 import io.quarkus.runtime.ShutdownEvent;
@@ -8,11 +10,13 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.core.eventbus.Message;
 import io.vertx.mutiny.core.eventbus.MessageConsumer;
+import it.dontesta.eventbus.application.configuration.EventHandlerAddress;
 import it.dontesta.eventbus.consumers.http.HttpRequestConsumer;
 import it.dontesta.eventbus.consumers.http.HttpResponseConsumer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
+import java.util.List;
 import org.bson.Document;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
@@ -27,10 +31,11 @@ import org.jboss.logging.Logger;
  *
  * <p>La registrazione avviene all'avvio dell'applicazione tramite l'annotazione {@code @Observes}
  * e il metodo {@code onStart}, mentre la de-registrazione avviene all'arresto dell'applicazione
- * attraverso il metodo {@code onStop}.
+ * attraverso il metodo {@code onStop}. La registrazione avviene solo se l'indirizzo dell'event handler
+ * è abilitato.
  *
  * <p>L'indicazione dell'indirizzo virtuale dell'evento per l'Event Handler è definita nel parametro
- * di configurazione {@code app.eventbus.consumer.event.handler.addresses[1]} che viene iniettato
+ * di configurazione {@code app.eventbus.consumer.event.handler.addresses} che viene iniettato
  * tramite l'annotazione {@code @ConfigProperty}
  *
  * @author Antonio Musarra
@@ -47,8 +52,8 @@ public class MongoDbEventHandler {
   @Inject
   ReactiveMongoClient mongoClient;
 
-  @ConfigProperty(name = "app.eventbus.consumer.event.handler.addresses[1]")
-  String mongoDbEventHandlerVirtualAddress;
+  @ConfigProperty(name = "app.eventbus.consumer.event.handler.addresses")
+  List<EventHandlerAddress> eventHandlerAddresses;
 
   @ConfigProperty(name = "app.eventbus.consumer.event.handler.nosql.mongodb.database.name",
       defaultValue = "audit")
@@ -62,13 +67,20 @@ public class MongoDbEventHandler {
 
   public static final String SOURCE_COMPONENT = "source-component";
 
-  void onStart(@Observes StartupEvent ev) {
-    log.debugf(
-        "Registering the MongoDB event handler at addresses: {%s}",
-        mongoDbEventHandlerVirtualAddress);
+  public static final String SOURCE_VIRTUAL_ADDRESS_NOSQL = "nosql-trace";
 
-    consumer = eventBus.consumer(mongoDbEventHandlerVirtualAddress);
-    consumer.handler(this::handleEvent);
+  void onStart(@Observes StartupEvent ev) {
+
+    if (isAddressAndExistsEnabled(
+        eventHandlerAddresses, SOURCE_VIRTUAL_ADDRESS_NOSQL)) {
+      log.debugf(
+          "Registering the MongoDB event handler at addresses: {%s}",
+          SOURCE_VIRTUAL_ADDRESS_NOSQL);
+
+      consumer = eventBus.consumer(SOURCE_VIRTUAL_ADDRESS_NOSQL);
+      consumer.handler(this::handleEvent);
+    }
+
   }
 
   void onStop(@Observes ShutdownEvent ev) {
@@ -76,7 +88,7 @@ public class MongoDbEventHandler {
       consumer.unregisterAndAwait();
       log.debugf(
           "Unregistering the MongoDB event handler at addresses: {%s}",
-          mongoDbEventHandlerVirtualAddress);
+          SOURCE_VIRTUAL_ADDRESS_NOSQL);
     }
   }
 

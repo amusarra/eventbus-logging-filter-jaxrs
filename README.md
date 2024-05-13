@@ -274,7 +274,7 @@ Puoi eseguire l'applicazione in modalità sviluppo che abilita il live coding ut
 ```
 Console 6 - Esecuzione dell'applicazione in modalità sviluppo
 
-> **_NOTE:_**  Quarkus ora include una UI di sviluppo, disponibile solo in modalità sviluppo all'indirizzo http://localhost:8080/q/dev/.
+> **_NOTE:_** Quarkus ora include una UI di sviluppo, disponibile solo in modalità sviluppo all'indirizzo http://localhost:8080/q/dev/.
 
 ![Quarkus Dev UI](src/doc/resources/images/quarkus_dev_ui_home_page.jpg)
 
@@ -383,7 +383,7 @@ eseguito in locale, per cui abbiate cura di avere l'applicazione Quarkus in esec
 I Thread Group in questo caso sono stati configurati per simulare 100 utenti virtuali che inviano 300 richieste al
 servizio REST `api/rest/echo` esposto dall'applicazione Quarkus con un periodo di ramp-up di 0.5 secondi.
 
-> **_NOTA:_**  I dati mostrati a seguire fanno riferimento all'esecuzione del Test Plan sull'ambiente Developer 
+> **_NOTA:_** I dati mostrati a seguire fanno riferimento all'esecuzione del Test Plan sull'ambiente Developer 
 > Sandbox di Red Hat OpenShift, con attivi tre pod dell'applicazione Quarkus, un pod per il servizio MongoDB e un pod
 > per il servizio AMQP (Apache ActiveMQ Artemis).
 
@@ -425,6 +425,69 @@ potete vedere la struttura aprendolo con JMeter. A seguire è mostrata la strutt
 
 Figura 8 - Configurazione del Test Plan di JMeter (scenario 2 `src/test/jmeter/scenario_2.jmx`)
 
+I thread group sono stati configurati con lo stesso principio del primo scenario di Load Testing, di conseguenza sono
+stati creati per versione di protocollo HTTP (HTTPS/1.1, HTTP/2 over TLS e compressed); per ognuno di essi è stato
+creato un flusso di richieste verso i servizi JAX-RS dell'entità ORM `Owner` e `Horse` (introdotte dalla versione 
+[1.2.0](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.0) del progetto).
+
+Per questo scenario, attraverso l'elemento di configurazione [HTTP Header Manager](https://jmeter.apache.org/usermanual/component_reference.html#HTTP_Header_Manager), sono stati configurati un set di header HTTP custom e che
+riguardano nello specifico delle informazioni su JMeter; questi sono:
+1. X-TestCaseId: un identificativo univoco del test case
+2. X-TestPlanName: il nome del test plan
+3. X-TestThreadGroupName: il nome del thread group
+4. X-TestThreadNumber: il numero del thread
+
+Queste informazioni possono essere utili per tracciare le richieste HTTP inviate da JMeter e per identificare il test.
+A seguire un esempio di una richiesta eseguita da JMeter e tracciata su MongoDB dove sono evidenti gli header HTTP custom.
+
+```bson
+{
+  "_id" : ObjectId("66425a820d65f7240e2ba113"),
+  "X-Correlation-ID" : "bc187f1f-9c6c-499b-9d13-0b87b31d2abb",
+  "remote-ip-address" : "127.0.0.1",
+  "headers" : {
+    "Accept" : [
+      "*/*"
+    ],
+    "X-TestThreadGroupName" : [
+      "HTTPS/1.1"
+    ],
+    "Connection" : [
+      "keep-alive"
+    ],
+    "User-Agent" : [
+      "Java/21.0.2"
+    ],
+    "X-TestPlanName" : [
+      "modified_scenario_2.jmx"
+    ],
+    "Host" : [
+      "127.0.0.1:8443"
+    ],
+    "X-TestCaseId" : [
+      "005044d0-9848-4f22-8e50-02fa395a5ede"
+    ],
+    "Content-Length" : [
+      "296"
+    ],
+    "Content-Type" : [
+      "application/json;charset=UTF-8"
+    ],
+    "X-TestThreadNumber" : [
+      "1"
+    ]
+  },
+  "body" : "{\r\n  \"name\": \"Crimson Comet-updated\",\r\n  \"sex\": \"F\",\r\n  \"coat\": \"chestnut\",\r\n  \"breed\": \"Appaloosa\",\r\n  \"dateOfBirth\": \"2004-01-19\",\r\n  \"registrationNumber\": \"0FOTDW12MI531U\",\r\n  \"microchipNumber\": \"C782CF2I1IN\",\r\n  \"passportNumber\": \"39K4CK1I3ZDU4\",\r\n  \"height\": 134,\r\n  \"owners\": [{\"id\": 3}]\r\n}",
+  "uri-info" : "https://127.0.0.1:8443/api/rest/repository/horse/v1/6",
+  "local-date-time-in" : "2024-05-13T20:22:58.622629",
+  "method" : "PUT",
+  "media-type" : "application/json",
+  "acceptable-language" : "[]",
+  "acceptable-media-types" : "[*/*]"
+}
+```
+Log 3 - Esempio di richiesta HTTP tracciata su MongoDB
+
 È possibile eseguire questo scenario sempre con Taurus utilizzando comando `bzt` come mostrato in precedenza. A seguire
 è riportato il comando per eseguire lo scenario di Load Testing con Taurus.
 
@@ -445,8 +508,6 @@ Console 12 - Esecuzione dello scenario di Load Testing con Taurus
 Dalla versione [1.2.4](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.4) del progetto è possibile accedere alla Java Management Extensions (JMX) dell'applicazione Quarkus
 in esecuzione quando questa è avviata utilizzando il docker-compose. Questo è possibile grazie alla configurazione 
 mostrata a seguire e in particolare i parametri `JAVA_OPTS` che abilitano la JMX.
-
-```shell script
 
 ```yaml
   logging-filter:
