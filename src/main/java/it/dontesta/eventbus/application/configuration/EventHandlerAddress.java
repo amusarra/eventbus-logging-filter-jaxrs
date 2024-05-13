@@ -1,5 +1,7 @@
 package it.dontesta.eventbus.application.configuration;
 
+import java.util.List;
+
 /**
  * Questa classe rappresenta l'indirizzo dell'event handler.
  *
@@ -57,5 +59,20 @@ public class EventHandlerAddress {
    */
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
+  }
+
+  /**
+   * Verifica se l'indirizzo dell'event handler esiste e se è abilitato.
+   *
+   * @param eventHandlerAddresses la lista degli indirizzi degli event handler
+   * @param address l'indirizzo dell'event handler
+   * @return true se l'indirizzo dell'event handler esiste e se è abilitato, false altrimenti
+   */
+  public static boolean isAddressAndExistsEnabled(List<EventHandlerAddress> eventHandlerAddresses,
+                                                  String address) {
+    return eventHandlerAddresses.stream()
+        .anyMatch(eventHandlerAddress ->
+            eventHandlerAddress.getAddress().equals(address) &&
+            eventHandlerAddress.isEnabled());
   }
 }

@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.quarkus.test.junit.QuarkusTest;
 import it.dontesta.eventbus.application.configuration.converter.EventHandlerAddressConverter;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Assertions;
@@ -23,6 +24,12 @@ class ApplicationConfigurationTest {
   void setUp() {
     converter = new EventHandlerAddressConverter();
     eventHandlerAddress = new EventHandlerAddress("testAddress", true);
+
+    eventHandlerAddresses = new ArrayList<>();
+    eventHandlerAddresses.add(new EventHandlerAddress("testAddress1", true));
+    eventHandlerAddresses.add(new EventHandlerAddress("testAddress2", false));
+    eventHandlerAddresses.add(new EventHandlerAddress("testAddress3", true));
+
   }
 
   @Test
@@ -59,6 +66,21 @@ class ApplicationConfigurationTest {
     eventHandlerAddress.setEnabled(false);
     assertFalse(eventHandlerAddress.isEnabled());
   }
+
+  @Test
+  void testIsAddressAndExistsEnabled() {
+    // Test when address exists and is enabled
+    assertTrue(EventHandlerAddress.isAddressAndExistsEnabled(eventHandlerAddresses, "testAddress1"));
+
+    // Test when address exists but is not enabled
+    assertFalse(EventHandlerAddress.isAddressAndExistsEnabled(eventHandlerAddresses, "testAddress2"));
+
+    // Test when address does not exist
+    assertFalse(EventHandlerAddress.isAddressAndExistsEnabled(eventHandlerAddresses, "nonExistingAddress"));
+  }
+
+
+  private List<EventHandlerAddress> eventHandlerAddresses;
 
   private EventHandlerAddress eventHandlerAddress;
 

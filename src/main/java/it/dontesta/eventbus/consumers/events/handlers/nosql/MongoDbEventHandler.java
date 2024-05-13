@@ -69,10 +69,8 @@ public class MongoDbEventHandler {
 
   void onStart(@Observes StartupEvent ev) {
 
-    boolean existsAndEnabled = eventHandlerAddresses.stream()
-        .anyMatch(eventHandlerAddress ->
-            eventHandlerAddress.getAddress().equals(SOURCE_VIRTUAL_ADDRESS) &&
-            eventHandlerAddress.isEnabled());
+    boolean existsAndEnabled = EventHandlerAddress.isAddressAndExistsEnabled(
+        eventHandlerAddresses, SOURCE_VIRTUAL_ADDRESS);
 
     if (existsAndEnabled) {
       log.debugf(
