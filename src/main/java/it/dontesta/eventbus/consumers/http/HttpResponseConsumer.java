@@ -10,7 +10,6 @@ import io.vertx.mutiny.core.eventbus.MessageConsumer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
-import java.util.List;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
@@ -42,16 +41,11 @@ public class HttpResponseConsumer {
   @ConfigProperty(name = "app.eventbus.consumer.dispatcher.address")
   String dispatcherVirtualAddress;
 
-  @ConfigProperty(name = "app.eventbus.consumer.event.handler.addresses")
-  List<String> eventHandlerVirtualAddresses;
-
   MessageConsumer<JsonObject> consumer;
 
   public static final String SOURCE_VIRTUAL_ADDRESS = "source-virtual-address";
 
   public static final String SOURCE_COMPONENT = "source-component";
-
-  public static final String TARGET_VIRTUAL_ADDRESSES = "target-virtual-addresses";
 
   void onStart(@Observes StartupEvent ev) {
     log.debugf(
@@ -82,7 +76,6 @@ public class HttpResponseConsumer {
   public void handleEvent(Message<JsonObject> message) {
     // Creare le opzioni di consegna desiderate
     DeliveryOptions options = new DeliveryOptions()
-        .addHeader(TARGET_VIRTUAL_ADDRESSES, String.join(",", eventHandlerVirtualAddresses))
         .addHeader(SOURCE_VIRTUAL_ADDRESS, httpResponseVirtualAddress)
         .addHeader(SOURCE_COMPONENT, HttpResponseConsumer.class.getName());
 
