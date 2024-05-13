@@ -55,8 +55,6 @@ public class Dispatcher {
 
   public static final String SOURCE_COMPONENT = "source-component";
 
-  public static final String TARGET_VIRTUAL_ADDRESSES = "target-virtual-addresses";
-
   void onStart(@Observes StartupEvent ev) {
     log.debugf(
         "Registering the Dispatcher to the event bus for the event handler at addresses: {%s}",
@@ -96,9 +94,8 @@ public class Dispatcher {
         .toList();
 
     log.debugf(
-        new StringBuilder().append(
-                "Received event message from source virtual address: %s and source component: %s ")
-            .append("for the target virtual addresses: %s").toString(),
+        "Received event message from source virtual address: %s and source component: %s " +
+        "for the target virtual addresses: %s",
         sourceVirtualAddress, sourceComponent, targetVirtualAddressesList);
 
     // Invia l'evento a tutti i target virtual addresses

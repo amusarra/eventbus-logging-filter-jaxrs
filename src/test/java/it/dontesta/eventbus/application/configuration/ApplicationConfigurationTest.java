@@ -35,7 +35,7 @@ class ApplicationConfigurationTest {
   void testEventBusConsumerEventHandlerAddresses() {
     Assertions.assertNotNull(eventHandlerVirtualAddresses);
     Assertions.assertFalse(eventHandlerVirtualAddresses.isEmpty());
-    Assertions.assertTrue(eventHandlerVirtualAddresses.size() > 0);
+    Assertions.assertTrue(eventHandlerVirtualAddresses.size() >= 2);
   }
 
   @Test
