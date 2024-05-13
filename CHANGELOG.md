@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
+[1.2.5] - 2024-05-14
+### Changed
+- Aggiornamento del file README.md sezione Scenari di Test con JMeter e Taurus
+- Aggiornamento della gestione degli Event Handler attraverso la configurazione di Quarkus
+- Adeguamento file JMX `scenario_2.jmx`
+
+### Fixed
+- Risoluzione issue di SonarCloud
+
 [1.2.4] - 2024-05-13
 ### Added
 - Aggiunto altro unit test per la pubblicazione di messaggi fake
