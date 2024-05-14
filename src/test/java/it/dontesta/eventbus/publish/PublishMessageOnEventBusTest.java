@@ -53,7 +53,6 @@ class PublishMessageOnEventBusTest {
 
   /**
    * Source component header.
-   *
    * È il nome dell'header che contiene il nome del componente sorgente
    * che ha inviato l'evento. Il nome del componente è in formato
    * <b>FQCN (Fully Qualified Class Name)</b>.
