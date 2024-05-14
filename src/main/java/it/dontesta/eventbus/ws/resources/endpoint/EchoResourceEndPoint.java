@@ -16,6 +16,13 @@ import jakarta.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 public class EchoResourceEndPoint {
 
+  /**
+   * This method echoes the input parameter.
+   *
+   * @param input the input parameter
+   *
+   * @return the response
+   */
   @Path("echo")
   @POST
   public Response echo(

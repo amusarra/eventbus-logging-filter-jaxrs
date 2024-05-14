@@ -10,6 +10,12 @@ import java.util.List;
  */
 @ApplicationScoped
 public class HorseRepository implements PanacheRepository<Horse> {
+
+  /**
+   * This method finds all the horses ordered by name.
+   *
+   * @return the list of horses ordered by name
+   */
   public List<Horse> findOrderedByName() {
     return find("ORDER BY name").list();
   }
