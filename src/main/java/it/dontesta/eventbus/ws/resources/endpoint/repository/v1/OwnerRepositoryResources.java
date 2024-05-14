@@ -16,7 +16,6 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
-import org.jboss.logging.Logger;
 
 /**
  * This class represents the REST endpoint for the Owner repository.
