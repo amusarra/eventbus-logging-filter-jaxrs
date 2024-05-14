@@ -29,9 +29,11 @@ public class OwnerRepositoryResources {
   @Inject
   OwnerRepository ownerRepository;
 
-  @Inject
-  Logger log;
-
+  /**
+   * Retrieves all owners from the repository.
+   *
+   * @return The list of owners.
+   */
   @GET
   public List<Owner> getAllOwners() {
     return ownerRepository.findAll().list();

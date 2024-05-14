@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Overview</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            color: #666;
+        }
+
+        ul {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<h1>Overview</h1>
+<p>Questo è il documento di overview per il progetto Event Bus Logging Filter JAX-RS.</p>
+<p>Per questo progetto è disponibile la
+    <a href="https://amusarra.github.io/eventbus-logging-filter-jaxrs-docs/"> documentazione estesa</a>
+</p>
+
+<h2>Package Principali</h2>
+<ul>
+    <li><a href="it/dontesta/eventbus/application/configuration/package-summary.html">Configuration</a></li>
+    <li><a href="it/dontesta/eventbus/consumers/events/handlers/package-summary.html">Handlers</a></li>
+    <li><a href="it/dontesta/eventbus/consumers/http/package-summary.html">HTTP</a></li>
+    <li><a href="it/dontesta/eventbus/ws/package-summary.html">WS</a></li>
+</ul>
+
+<h2>Classi Principali</h2>
+<ul>
+    <li>
+        <a href="it/dontesta/eventbus/ws/filter/TraceJaxRsRequestResponseFilter.html">TraceJaxRsRequestResponseFilter</a>:
+        Questo componente è responsabile di processare gli eventi/messaggi veicolati dal Dispatcher
+        tramite l'event bus e inviare il messaggio verso il broker AMQP.
+        L'esito dell'operazione viene inviato come risposta al Dispatcher
+    </li>
+    <li><a href="it/dontesta/eventbus/consumers/events/handlers/Dispatcher.html">Dispatcher</a>:
+        Questo componente è responsabile di inviare gli eventi ricevuti da un consumer a uno o più
+        consumer target che sono stati abilitati da configurazione
+        <code>app.eventbus.consumer.event.handler.addresses</code>.
+        Questi consumer target sono i cosiddetti event handler.
+    </li>
+    <li><a href="it/dontesta/eventbus/consumers/events/handlers/queue/AmqpEventHandler.html">AmqpEventHandler</a>:
+        Questo componente è responsabile di processare gli eventi/messaggi veicolati dal Dispatcher
+        tramite l'event bus e inviare il messaggio verso il broker AMQP. L'esito dell'operazione viene inviato come
+        risposta al Dispatcher.
+    </li>
+    <li><a href="it/dontesta/eventbus/consumers/events/handlers/nosql/MongoDbEventHandler.html">MongoDbEventHandler</a>:
+        Questo componente è responsabile di processare gli eventi/messaggi veicolati dal Dispatcher
+        tramite l'event bus e inserire il documento MongoDB nel database specificato. L'esito dell'operazione viene
+        inviato come risposta al Dispatcher.
+    </li>
+    <li><a href="it/dontesta/eventbus/consumers/http/HttpRequestConsumer.html">HttpRequestConsumer</a>:
+        Questo consumer si registra all'indirizzo virtuale dell'evento per la richiesta HTTP e gestisce
+        gli eventi ricevuti dall'event bus tramite il metodo <code>handleEvent</code>.
+    </li>
+    <li><a href="it/dontesta/eventbus/consumers/http/HttpResponseConsumer.html">HttpResponseConsumer</a>:
+        Questo consumer si registra all'indirizzo virtuale dell'evento per la risposta HTTP e gestisce
+        gli eventi ricevuti dall'event bus tramite il metodo <code>handleEvent</code>.
+    </li>
+</ul>
+</body>
+</html>

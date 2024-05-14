@@ -51,6 +51,13 @@ class PublishMessageOnEventBusTest {
 
   final String SOURCE_VIRTUAL_ADDRESS = "source-virtual-address";
 
+  /**
+   * Source component header.
+   *
+   * È il nome dell'header che contiene il nome del componente sorgente
+   * che ha inviato l'evento. Il nome del componente è in formato
+   * <b>FQCN (Fully Qualified Class Name)</b>.
+   */
   final String SOURCE_COMPONENT = "source-component";
 
   final String TARGET_VIRTUAL_ADDRESSES = "target-virtual-addresses";

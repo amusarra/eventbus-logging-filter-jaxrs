@@ -9,6 +9,7 @@ import java.util.List;
  * e usato dal converter {@code EventHandlerAddressConverter} per convertire la stringa di
  * configurazione in un oggetto {@code EventHandlerAddress}.
  *
+ * @since 1.2.5
  * @see it.dontesta.eventbus.application.configuration.converter.EventHandlerAddressConverter
  */
 public class EventHandlerAddress {
@@ -19,6 +20,9 @@ public class EventHandlerAddress {
 
   /**
    * Costruttore di default.
+   *
+   * @param address l'indirizzo dell'event handler
+   * @param enabled true se l'event handler è abilitato, false altrimenti
    */
   public EventHandlerAddress(String address, boolean enabled) {
     this.address = address;
