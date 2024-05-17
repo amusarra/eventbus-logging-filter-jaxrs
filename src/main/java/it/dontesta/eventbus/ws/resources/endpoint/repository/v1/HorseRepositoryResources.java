@@ -3,8 +3,10 @@ package it.dontesta.eventbus.ws.resources.endpoint.repository.v1;
 import it.dontesta.eventbus.orm.panache.entity.Horse;
 import it.dontesta.eventbus.orm.panache.entity.Owner;
 import it.dontesta.eventbus.orm.panache.repository.HorseRepository;
+import it.dontesta.eventbus.ws.input.wrapper.HorseListWrapper;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -82,6 +84,26 @@ public class HorseRepositoryResources {
 
     horseRepository.persist(horse);
     return Response.ok(horse).status(Response.Status.CREATED).build();
+  }
+
+  /**
+   * This method creates a horses from a list of horses.
+   *
+   * @param horseListWrapper The list of horses to create.
+   * @return The created horses.
+   */
+  @POST
+  @Path("list")
+  @Transactional
+  public Response createHorses(@Valid HorseListWrapper horseListWrapper) {
+    // Return a 422 Unprocessable Entity if an ID was provided
+    horseListWrapper.getHorses().forEach(horse -> {
+      if (horse.id != null) {
+        throw new WebApplicationException("Id was invalidly set on request.", 422);
+      }
+      horseRepository.persist(horse);
+    });
+    return Response.ok(horseListWrapper).status(Response.Status.CREATED).build();
   }
 
   /**

@@ -107,6 +107,105 @@ class HorseRepositoryResourcesTest {
 
   @Test
   @Order(6)
+  void testCreateHorses() {
+    String json = """
+        {
+          "horses": [
+            {
+              "name": "Thunder",
+              "coat": "Black",
+              "breed": "PSA",
+              "sex": "M",
+              "dateOfBirth": "2024-05-11",
+              "owners": [
+                {
+                  "id": 3
+                }
+              ]
+            },
+            {
+              "name": "Furia",
+              "coat": "White",
+              "breed": "Quarter",
+              "sex": "F",
+              "dateOfBirth": "2024-05-12",
+              "owners": [
+                {
+                  "id": 1
+                }
+              ]
+            },
+            {
+              "name": "Focoso",
+              "coat": "White",
+              "breed": "Quarter",
+              "sex": "F",
+              "dateOfBirth": "2024-05-12",
+              "owners": [
+                {
+                  "id": 1
+                }
+              ]
+            }
+          ]
+        }
+        """;
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(json)
+        .when().post("/api/rest/repository/horse/v1/list")
+        .then()
+        .statusCode(Response.Status.CREATED.getStatusCode())
+        .body("horses[0].name", is("Thunder"))
+        .body("horses[1].name", is("Furia"));
+  }
+
+  @Test
+  @Order(7)
+  void testCreateHorsesWhitId() {
+    String json = """
+        {
+          "horses": [
+            {
+              "id": 100,
+              "name": "Thunder",
+              "coat": "Black",
+              "breed": "PSA",
+              "sex": "M",
+              "dateOfBirth": "2024-05-11",
+              "owners": [
+                {
+                  "id": 3
+                }
+              ]
+            },
+            {
+              "name": "Furia",
+              "coat": "White",
+              "breed": "Quarter",
+              "sex": "F",
+              "dateOfBirth": "2024-05-12",
+              "owners": [
+                {
+                  "id": 1
+                }
+              ]
+            }
+          ]
+        }
+        """;
+
+    given()
+        .contentType(ContentType.JSON)
+        .body(json)
+        .when().post("/api/rest/repository/horse/v1/list")
+        .then()
+        .statusCode(422);
+  }
+
+  @Test
+  @Order(8)
   void testUpdateHorse() {
     String json = """
         {
@@ -129,7 +228,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(7)
+  @Order(9)
   void testUpdateHorseNotFoundId() {
     String json = """
         {
@@ -152,7 +251,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(8)
+  @Order(10)
   void testUpdateHorseNewOwnerId() {
     String json = """
         {
@@ -175,7 +274,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(9)
+  @Order(11)
   void testDeleteHorseByIdSuccess() {
     given()
         .when().delete("/api/rest/repository/horse/v1/1")
@@ -184,7 +283,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(9)
+  @Order(12)
   void testDeleteHorseByIdNotFound() {
     given()
         .when().delete("/api/rest/repository/horse/v1/100")
