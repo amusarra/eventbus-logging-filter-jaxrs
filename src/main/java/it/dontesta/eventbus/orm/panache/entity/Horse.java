@@ -50,19 +50,19 @@ public class Horse extends PanacheEntity {
   /**
    * Il numero di registrazione del cavallo.
    */
-  @Column(length = 15)
+  @Column(length = 20)
   public String registrationNumber;
 
   /**
    * Il numero del microchip del cavallo.
    */
-  @Column(length = 15)
+  @Column(length = 20)
   public String microchipNumber;
 
   /**
    * Il numero del passaporto del cavallo.
    */
-  @Column(length = 15)
+  @Column(length = 20)
   public String passportNumber;
 
   /**

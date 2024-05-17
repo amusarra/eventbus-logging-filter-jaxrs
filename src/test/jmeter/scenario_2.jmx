@@ -138,7 +138,7 @@ Connect to 5s</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="1. Owner Repository Resources Transaction Controller" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="1. Owner Repository Resources TC" enabled="true">
           <boolProp name="TransactionController.includeTimers">true</boolProp>
           <boolProp name="TransactionController.parent">false</boolProp>
         </TransactionController>
@@ -357,7 +357,7 @@ Connect to 5s</stringProp>
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="2. Horse Repository Resources Transaction Controller" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="2. Horse Repository Resources TC" enabled="true">
           <boolProp name="TransactionController.includeTimers">true</boolProp>
           <boolProp name="TransactionController.parent">false</boolProp>
         </TransactionController>
@@ -667,6 +667,251 @@ Connect to 5s</stringProp>
             </ResponseAssertion>
             <hashTree/>
           </hashTree>
+          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Create Horses in Loop LC" enabled="true">
+            <stringProp name="LoopController.loops">50</stringProp>
+          </LoopController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 2.6 - createHorses" enabled="true">
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
+  &quot;horses&quot;: [&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    }    &#xd;
+  ]&#xd;
+}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1/list</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+              <boolProp name="HTTPSampler.image_parser">false</boolProp>
+              <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+              <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+              <boolProp name="HTTPSampler.md5">false</boolProp>
+              <intProp name="HTTPSampler.ipSourceType">0</intProp>
+              <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (201)" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="49587">201</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">1</intProp>
+                <stringProp name="Assertion.custom_message"></stringProp>
+              </ResponseAssertion>
+              <hashTree/>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="1817634785">X-Correlation-ID: </stringProp>
+                  <stringProp name="-1510192575">Content-Type: application/json;charset=UTF-8</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+                <stringProp name="Assertion.custom_message"></stringProp>
+              </ResponseAssertion>
+              <hashTree/>
+              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+                <stringProp name="JSON_PATH">$.horses[:1].id</stringProp>
+                <stringProp name="EXPECTED_VALUE">0</stringProp>
+                <boolProp name="JSONVALIDATION">false</boolProp>
+                <boolProp name="EXPECT_NULL">false</boolProp>
+                <boolProp name="INVERT">false</boolProp>
+                <boolProp name="ISREGEX">false</boolProp>
+                <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+              </JSONPathAssertion>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Horse Id" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">createdHorseId</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">id</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+                <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Horse. Il valore sarà utilizzato per la successiva chiamata getHorseById</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 2.7 - getAllHorses" enabled="true">
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <boolProp name="HTTPSampler.md5">false</boolProp>
+            <intProp name="HTTPSampler.ipSourceType">0</intProp>
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (200)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="1817634785">X-Correlation-ID: </stringProp>
+                <stringProp name="-1510192575">Content-Type: application/json;charset=UTF-8</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+              <stringProp name="JSON_PATH">$[0].name</stringProp>
+              <stringProp name="EXPECTED_VALUE">0</stringProp>
+              <boolProp name="JSONVALIDATION">false</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+              <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Horses Id" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">horseIds</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">*.id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+              <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Horse. Il valore sarà utilizzato per la successiva chiamata getHorseById</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+          </hashTree>
+          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="Delete Horses" enabled="true">
+            <stringProp name="ForeachController.inputVal">horseIds</stringProp>
+            <stringProp name="ForeachController.returnVal">horseId</stringProp>
+            <boolProp name="ForeachController.useSeparator">true</boolProp>
+            <stringProp name="ForeachController.startIndex">5</stringProp>
+          </ForeachController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 2.8 - deleteHorse" enabled="true">
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+              <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1/${horseId}</stringProp>
+              <stringProp name="HTTPSampler.method">DELETE</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+              <boolProp name="HTTPSampler.image_parser">false</boolProp>
+              <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+              <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+              <boolProp name="HTTPSampler.md5">false</boolProp>
+              <intProp name="HTTPSampler.ipSourceType">0</intProp>
+              <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (204)" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="49590">204</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">1</intProp>
+                <stringProp name="Assertion.custom_message"></stringProp>
+              </ResponseAssertion>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 2.6 - deleteOwner" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
@@ -717,7 +962,7 @@ Connect to 5s</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="3. Owner Repository Resources Transaction Controller - HTTP/2 over TLS" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="3. Owner Repository Resources TC - HTTP/2 over TLS" enabled="true">
           <boolProp name="TransactionController.includeTimers">true</boolProp>
           <boolProp name="TransactionController.parent">false</boolProp>
         </TransactionController>
@@ -942,7 +1187,7 @@ Connect to 5s</stringProp>
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="4. Horse Repository Resources Transaction Controller - HTTP/2 over TLS" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="4. Horse Repository Resources TC - HTTP/2 over TLS" enabled="true">
           <boolProp name="TransactionController.includeTimers">true</boolProp>
           <boolProp name="TransactionController.parent">false</boolProp>
         </TransactionController>
@@ -1262,7 +1507,211 @@ Connect to 5s</stringProp>
             </ResponseAssertion>
             <hashTree/>
           </hashTree>
-          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 4.6 - deleteOwner" enabled="true">
+          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Create Horses in Loop LC" enabled="true">
+            <stringProp name="LoopController.loops">50</stringProp>
+          </LoopController>
+          <hashTree>
+            <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 4.6 - createHorses" enabled="true">
+              <boolProp name="HTTPSampler.image_parser">false</boolProp>
+              <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+              <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+              <stringProp name="version">2.0.5</stringProp>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
+  &quot;horses&quot;: [&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    }    &#xd;
+  ]&#xd;
+}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1/list</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+              <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+            </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+            <hashTree/>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 4.7 - getAllHorses" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (200)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="819850145">x-correlation-id: </stringProp>
+                <stringProp name="-1955560959">content-type: application/json;charset=UTF-8</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+              <stringProp name="JSON_PATH">$[0].name</stringProp>
+              <stringProp name="EXPECTED_VALUE">0</stringProp>
+              <boolProp name="JSONVALIDATION">false</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+              <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Horses Id" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">horseIds</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">*.id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+              <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Horse. Il valore sarà utilizzato per la successiva chiamata getHorseById</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+          </hashTree>
+          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="Delete Horses" enabled="true">
+            <stringProp name="ForeachController.inputVal">horseIds</stringProp>
+            <stringProp name="ForeachController.returnVal">horseId</stringProp>
+            <boolProp name="ForeachController.useSeparator">true</boolProp>
+            <stringProp name="ForeachController.startIndex">5</stringProp>
+          </ForeachController>
+          <hashTree>
+            <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 4.8 - deleteHorse" enabled="true">
+              <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
+              <boolProp name="HTTPSampler.image_parser">false</boolProp>
+              <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+              <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+              <stringProp name="version">2.0.5</stringProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+              <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1/${horseId}</stringProp>
+              <stringProp name="HTTPSampler.method">DELETE</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+              <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+            </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (204)" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="49590">204</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">1</intProp>
+                <stringProp name="Assertion.custom_message"></stringProp>
+              </ResponseAssertion>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 4.9 - deleteOwner" enabled="true">
             <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/owner/v1</stringProp>
             <boolProp name="HTTPSampler.image_parser">false</boolProp>
             <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
@@ -1323,7 +1772,7 @@ Connect to 5s</stringProp>
           </collectionProp>
         </HeaderManager>
         <hashTree/>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="5. Owner Repository Resources Transaction Controller - HTTP/2 over TLS (Compressed)" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="5. Owner Repository Resources TC - HTTP/2 over TLS (Compressed)" enabled="true">
           <boolProp name="TransactionController.includeTimers">true</boolProp>
           <boolProp name="TransactionController.parent">false</boolProp>
         </TransactionController>
@@ -1548,7 +1997,7 @@ Connect to 5s</stringProp>
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="6. Horse Repository Resources Transaction Controller - HTTP/2 over TLS (Compressed)" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="6. Horse Repository Resources TC - HTTP/2 over TLS (Compressed)" enabled="true">
           <boolProp name="TransactionController.includeTimers">true</boolProp>
           <boolProp name="TransactionController.parent">false</boolProp>
         </TransactionController>
@@ -1868,7 +2317,211 @@ Connect to 5s</stringProp>
             </ResponseAssertion>
             <hashTree/>
           </hashTree>
-          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 6.6 - deleteOwner" enabled="true">
+          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Create Horses in Loop LC" enabled="true">
+            <stringProp name="LoopController.loops">50</stringProp>
+          </LoopController>
+          <hashTree>
+            <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 6.6 - createHorses" enabled="true">
+              <boolProp name="HTTPSampler.image_parser">false</boolProp>
+              <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+              <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+              <stringProp name="version">2.0.5</stringProp>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
+  &quot;horses&quot;: [&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;name&quot;: &quot;${horseName}${__Random(1,999,)}&quot;,&#xd;
+      &quot;coat&quot;: &quot;${coat}&quot;,&#xd;
+      &quot;breed&quot;: &quot;${breed}&quot;,&#xd;
+      &quot;sex&quot;: &quot;${sex}&quot;,&#xd;
+      &quot;dateOfBirth&quot;: &quot;${__RandomDate(yyyy-MM-dd,2000-05-17,2024-05-17,it_IT,)}&quot;,&#xd;
+      &quot;registrationNumber&quot;: &quot;${registrationNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;microchipNumber&quot;: &quot;${microchipNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;passportNumber&quot;: &quot;${passportNumber}-${__Random(1,999,)}&quot;,&#xd;
+      &quot;height&quot;: ${__Random(100,180,)},&#xd;
+      &quot;owners&quot;: [{&quot;id&quot;: ${createdOwnerId}}]&#xd;
+    }    &#xd;
+  ]&#xd;
+}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1/list</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+              <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+            </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+            <hashTree/>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 6.7 - getAllHorses" enabled="true">
+            <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
+            <boolProp name="HTTPSampler.image_parser">false</boolProp>
+            <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+            <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+            <stringProp name="version">2.0.5</stringProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+            <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+          </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (200)" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">1</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Header" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="819850145">x-correlation-id: </stringProp>
+                <stringProp name="-1955560959">content-type: application/json;charset=UTF-8</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Response JSON" enabled="true">
+              <stringProp name="JSON_PATH">$[0].name</stringProp>
+              <stringProp name="EXPECTED_VALUE">0</stringProp>
+              <boolProp name="JSONVALIDATION">false</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+              <stringProp name="TestPlan.comments">Check JSON Path and value</stringProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extractor Horses Id" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">horseIds</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">*.id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
+              <stringProp name="TestPlan.comments">Estrazione dell&apos;identificativo dell&apos;Horse. Il valore sarà utilizzato per la successiva chiamata getHorseById</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+          </hashTree>
+          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="Delete Horses" enabled="true">
+            <stringProp name="ForeachController.inputVal">horseIds</stringProp>
+            <stringProp name="ForeachController.returnVal">horseId</stringProp>
+            <boolProp name="ForeachController.useSeparator">true</boolProp>
+            <stringProp name="ForeachController.startIndex">5</stringProp>
+          </ForeachController>
+          <hashTree>
+            <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 6.8 - deleteHorse" enabled="true">
+              <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
+              <boolProp name="HTTPSampler.image_parser">false</boolProp>
+              <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
+              <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+              <stringProp name="version">2.0.5</stringProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+              <stringProp name="HTTPSampler.path">/api/rest/repository/horse/v1/${horseId}</stringProp>
+              <stringProp name="HTTPSampler.method">DELETE</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">false</boolProp>
+              <boolProp name="HTTP2Sampler.http1_upgrade">false</boolProp>
+            </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response OK (204)" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="49590">204</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">1</intProp>
+                <stringProp name="Assertion.custom_message"></stringProp>
+              </ResponseAssertion>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 6.7 - deleteOwner" enabled="true">
             <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/owner/v1</stringProp>
             <boolProp name="HTTPSampler.image_parser">false</boolProp>
             <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
