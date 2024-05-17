@@ -24,7 +24,7 @@
           <elementProp name="numberOfThreads" elementType="Argument">
             <stringProp name="Argument.name">numberOfThreads</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
-            <stringProp name="Argument.value">${__P(numberOfThreads,1)}</stringProp>
+            <stringProp name="Argument.value">${__P(numberOfThreads,2)}</stringProp>
           </elementProp>
           <elementProp name="rampUpPeriod" elementType="Argument">
             <stringProp name="Argument.name">rampUpPeriod</stringProp>
@@ -34,7 +34,7 @@
           <elementProp name="loopCount" elementType="Argument">
             <stringProp name="Argument.name">loopCount</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
-            <stringProp name="Argument.value">${__P(loopCount,1)}</stringProp>
+            <stringProp name="Argument.value">${__P(loopCount,2)}</stringProp>
           </elementProp>
         </collectionProp>
       </elementProp>
@@ -134,7 +134,7 @@ Connect to 5s</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration">60</stringProp>
         <stringProp name="ThreadGroup.delay">5</stringProp>
-        <boolProp name="ThreadGroup.delayedStart">false</boolProp>
+        <boolProp name="ThreadGroup.delayedStart">true</boolProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
@@ -667,7 +667,7 @@ Connect to 5s</stringProp>
             </ResponseAssertion>
             <hashTree/>
           </hashTree>
-          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Create Horses in Loop LC" enabled="true">
+          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Create Horses in Loop LC" enabled="false">
             <stringProp name="LoopController.loops">50</stringProp>
           </LoopController>
           <hashTree>
@@ -813,7 +813,7 @@ Connect to 5s</stringProp>
               <hashTree/>
             </hashTree>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 2.7 - getAllHorses" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Step 2.7 - getAllHorses" enabled="false">
             <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
@@ -873,7 +873,7 @@ Connect to 5s</stringProp>
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="Delete Horses" enabled="true">
+          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="Delete Horses" enabled="false">
             <stringProp name="ForeachController.inputVal">horseIds</stringProp>
             <stringProp name="ForeachController.returnVal">horseId</stringProp>
             <boolProp name="ForeachController.useSeparator">true</boolProp>
@@ -958,7 +958,7 @@ Connect to 5s</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration">60</stringProp>
         <stringProp name="ThreadGroup.delay">5</stringProp>
-        <boolProp name="ThreadGroup.delayedStart">false</boolProp>
+        <boolProp name="ThreadGroup.delayedStart">true</boolProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
@@ -1507,7 +1507,7 @@ Connect to 5s</stringProp>
             </ResponseAssertion>
             <hashTree/>
           </hashTree>
-          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Create Horses in Loop LC" enabled="true">
+          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Create Horses in Loop LC" enabled="false">
             <stringProp name="LoopController.loops">50</stringProp>
           </LoopController>
           <hashTree>
@@ -1612,7 +1612,7 @@ Connect to 5s</stringProp>
             </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
             <hashTree/>
           </hashTree>
-          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 4.7 - getAllHorses" enabled="true">
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 4.7 - getAllHorses" enabled="false">
             <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
             <boolProp name="HTTPSampler.image_parser">false</boolProp>
             <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
@@ -1672,7 +1672,7 @@ Connect to 5s</stringProp>
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="Delete Horses" enabled="true">
+          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="Delete Horses" enabled="false">
             <stringProp name="ForeachController.inputVal">horseIds</stringProp>
             <stringProp name="ForeachController.returnVal">horseId</stringProp>
             <boolProp name="ForeachController.useSeparator">true</boolProp>
@@ -1759,7 +1759,7 @@ Connect to 5s</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration">60</stringProp>
         <stringProp name="ThreadGroup.delay">5</stringProp>
-        <boolProp name="ThreadGroup.delayedStart">false</boolProp>
+        <boolProp name="ThreadGroup.delayedStart">true</boolProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
@@ -2422,7 +2422,7 @@ Connect to 5s</stringProp>
             </com.blazemeter.jmeter.http2.sampler.HTTP2Sampler>
             <hashTree/>
           </hashTree>
-          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 6.7 - getAllHorses" enabled="true">
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 6.7 - getAllHorses" enabled="false">
             <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/horse/v1</stringProp>
             <boolProp name="HTTPSampler.image_parser">false</boolProp>
             <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
@@ -2482,7 +2482,7 @@ Connect to 5s</stringProp>
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="Delete Horses" enabled="true">
+          <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="Delete Horses" enabled="false">
             <stringProp name="ForeachController.inputVal">horseIds</stringProp>
             <stringProp name="ForeachController.returnVal">horseId</stringProp>
             <boolProp name="ForeachController.useSeparator">true</boolProp>
@@ -2521,7 +2521,7 @@ Connect to 5s</stringProp>
               <hashTree/>
             </hashTree>
           </hashTree>
-          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 6.7 - deleteOwner" enabled="true">
+          <com.blazemeter.jmeter.http2.sampler.HTTP2Sampler guiclass="com.blazemeter.jmeter.http2.sampler.gui.HTTP2SamplerGui" testclass="com.blazemeter.jmeter.http2.sampler.HTTP2Sampler" testname="Step 6.7 - deleteOwner" enabled="false">
             <stringProp name="TestPlan.comments">Servizio REST /api/rest/repository/owner/v1</stringProp>
             <boolProp name="HTTPSampler.image_parser">false</boolProp>
             <boolProp name="HTTPSampler.concurrentDwn">false</boolProp>
@@ -2740,6 +2740,51 @@ Connect to 5s</stringProp>
         </objProp>
         <stringProp name="filename"></stringProp>
       </ResultCollector>
+      <hashTree/>
+      <kg.apc.jmeter.vizualizers.CorrectedResultCollector guiclass="kg.apc.jmeter.vizualizers.TransactionsPerSecondGui" testclass="kg.apc.jmeter.vizualizers.CorrectedResultCollector" testname="jp@gc - Transactions per Second" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+        <longProp name="interval_grouping">1000</longProp>
+        <boolProp name="graph_aggregated">false</boolProp>
+        <stringProp name="include_sample_labels"></stringProp>
+        <stringProp name="exclude_sample_labels"></stringProp>
+        <stringProp name="start_offset"></stringProp>
+        <stringProp name="end_offset"></stringProp>
+        <boolProp name="include_checkbox_state">false</boolProp>
+        <boolProp name="exclude_checkbox_state">false</boolProp>
+      </kg.apc.jmeter.vizualizers.CorrectedResultCollector>
       <hashTree/>
     </hashTree>
   </hashTree>
