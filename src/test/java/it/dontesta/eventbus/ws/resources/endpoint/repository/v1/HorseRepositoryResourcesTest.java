@@ -26,7 +26,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(1)
+  @Order(2)
   void getAllHorsesLimitSuccess() {
     given()
         .contentType(ContentType.JSON)
@@ -36,7 +36,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(1)
+  @Order(3)
   void getCountSuccess() {
     given()
         .contentType(ContentType.JSON)
@@ -46,7 +46,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(2)
+  @Order(4)
   void getHorseByIdSuccess() {
     given()
         .contentType(ContentType.JSON)
@@ -57,7 +57,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(3)
+  @Order(5)
   void getHorseByIdNotFound() {
     given()
         .contentType(ContentType.JSON)
@@ -68,7 +68,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(4)
+  @Order(6)
   void testCreateHorseBodyNull() {
     given()
         .contentType(ContentType.JSON)
@@ -79,7 +79,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(5)
+  @Order(7)
   void testCreateHorse() {
     String json = """
         {
@@ -102,7 +102,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(5)
+  @Order(8)
   void testCreateHorseWithId() {
     String json = """
         {
@@ -126,7 +126,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(6)
+  @Order(9)
   void testCreateHorses() {
     String json = """
         {
@@ -182,7 +182,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(7)
+  @Order(10)
   void testCreateHorsesWhitId() {
     String json = """
         {
@@ -225,7 +225,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(8)
+  @Order(11)
   void testUpdateHorse() {
     String json = """
         {
@@ -248,7 +248,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(9)
+  @Order(12)
   void testUpdateHorseNotFoundId() {
     String json = """
         {
@@ -271,7 +271,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(10)
+  @Order(13)
   void testUpdateHorseNewOwnerId() {
     String json = """
         {
@@ -294,7 +294,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(11)
+  @Order(14)
   void testDeleteHorseByIdSuccess() {
     given()
         .when().delete("/api/rest/repository/horse/v1/1")
@@ -303,7 +303,7 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(12)
+  @Order(15)
   void testDeleteHorseByIdNotFound() {
     given()
         .when().delete("/api/rest/repository/horse/v1/100")
@@ -312,12 +312,11 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
-  @Order(13)
+  @Order(16)
   void testDeleteHorseAll() {
     given()
         .when().delete("/api/rest/repository/horse/v1/all")
         .then()
         .statusCode(Response.Status.NO_CONTENT.getStatusCode());
   }
-
 }
