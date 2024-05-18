@@ -1,10 +1,13 @@
 package it.dontesta.eventbus.ws.resources.endpoint.repository.v1;
 
+import io.quarkus.panache.common.Page;
 import it.dontesta.eventbus.orm.panache.entity.Horse;
 import it.dontesta.eventbus.orm.panache.entity.Owner;
 import it.dontesta.eventbus.orm.panache.repository.HorseRepository;
+import it.dontesta.eventbus.ws.input.wrapper.HorseListWrapper;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -13,6 +16,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -41,7 +45,10 @@ public class HorseRepositoryResources {
    * @return A list of horses.
    */
   @GET
-  public List<Horse> getAllHorses() {
+  public List<Horse> getAllHorses(@QueryParam("limit") Integer limit) {
+    if (limit != null) {
+      return horseRepository.findAll().page(Page.ofSize(limit)).list();
+    }
     return horseRepository.findAll().list();
   }
 
@@ -65,6 +72,17 @@ public class HorseRepositoryResources {
   }
 
   /**
+   * Retrieves the number of horses in the repository.
+   *
+   * @return The number of horses.
+   */
+  @GET
+  @Path("count")
+  public long countHorses() {
+    return horseRepository.count();
+  }
+
+  /**
    * This method creates a new horse.
    *
    * @param horse The horse to create.
@@ -82,6 +100,26 @@ public class HorseRepositoryResources {
 
     horseRepository.persist(horse);
     return Response.ok(horse).status(Response.Status.CREATED).build();
+  }
+
+  /**
+   * This method creates a horses from a list of horses.
+   *
+   * @param horseListWrapper The list of horses to create.
+   * @return The created horses.
+   */
+  @POST
+  @Path("list")
+  @Transactional
+  public Response createHorses(@Valid HorseListWrapper horseListWrapper) {
+    // Return a 422 Unprocessable Entity if an ID was provided
+    horseListWrapper.getHorses().forEach(horse -> {
+      if (horse.id != null) {
+        throw new WebApplicationException("Id was invalidly set on request.", 422);
+      }
+      horseRepository.persist(horse);
+    });
+    return Response.ok(horseListWrapper).status(Response.Status.CREATED).build();
   }
 
   /**
@@ -146,6 +184,19 @@ public class HorseRepositoryResources {
     }
 
     horseRepository.delete(horse);
+    return Response.status(Response.Status.NO_CONTENT).build();
+  }
+
+  /**
+   * This method deletes all horses.
+   *
+   * @return The response.
+   */
+  @DELETE
+  @Path("all")
+  @Transactional
+  public Response deleteAllHorses() {
+    horseRepository.deleteAll();
     return Response.status(Response.Status.NO_CONTENT).build();
   }
 }

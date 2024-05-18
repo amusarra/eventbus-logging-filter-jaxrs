@@ -17,7 +17,7 @@ networks:
 # 4. Logging Filter
 services:
   mongodb:
-    image: docker.io/library/mongo:4.4
+    image: docker.io/library/mongo:4.4.3-bionic
     container_name: mongodb
     networks:
         - logging_filter_network

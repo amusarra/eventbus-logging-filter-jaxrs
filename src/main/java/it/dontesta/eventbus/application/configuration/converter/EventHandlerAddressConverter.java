@@ -15,7 +15,7 @@ import org.eclipse.microprofile.config.spi.Converter;
  * rappresenta l'indice dell'indirizzo dell'event handler.
  *
  * <p>Il formato della stringa è il seguente: {@code address=address,enabled=enabled} dove address è
- * l'indirizzo dell'event handler e enabled è un flag booleano che indica se l'event handler è
+ * l'indirizzo dell'event handler ed enabled è un flag booleano che indica se l'event handler è
  * abilitato o meno.
  */
 public class EventHandlerAddressConverter implements Converter<EventHandlerAddress> {

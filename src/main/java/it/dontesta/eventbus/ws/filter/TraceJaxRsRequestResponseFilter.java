@@ -21,7 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +111,7 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
     // Applica la logica del filtro in base all'URI
     if (requestUriIsFiltered(requestUri)) {
       // Aggiungi la data ora di quando la richiesta arriva al filtro
-      requestContext.setProperty(LOCAL_DATE_TIME_IN, LocalDateTime.now());
+      requestContext.setProperty(LOCAL_DATE_TIME_IN, Instant.now());
 
       /*
        * Se l'URI richiesto è presente nell'elenco delle URI da filtrare
@@ -290,7 +290,7 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
     return new JsonObject()
         .put(CORRELATION_ID_HEADER,
             responseContext.getHeaders().get(CORRELATION_ID_HEADER).getFirst())
-        .put(LOCAL_DATE_TIME_OUT, LocalDateTime.now().toString())
+        .put(LOCAL_DATE_TIME_OUT, Instant.now())
         .put("status", responseContext.getStatus())
         .put("status-info-family-name", responseContext.getStatusInfo().getFamily().name())
         .put("status-info-reason", responseContext.getStatusInfo().getReasonPhrase())

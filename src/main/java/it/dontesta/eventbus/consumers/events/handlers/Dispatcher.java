@@ -51,8 +51,18 @@ public class Dispatcher {
 
   MessageConsumer<JsonObject> consumer;
 
+  /**
+   * Source virtual address header.
+   * È il nome dell'header che contiene l'indirizzo virtuale del consumer che ha inviato l'evento.
+   */
   public static final String SOURCE_VIRTUAL_ADDRESS = "source-virtual-address";
 
+  /**
+   * Source component header.
+   * È il nome dell'header che contiene il nome del componente sorgente
+   * che ha inviato l'evento. Il nome del componente è in formato
+   * <b>FQCN (Fully Qualified Class Name)</b>.
+   */
   public static final String SOURCE_COMPONENT = "source-component";
 
   void onStart(@Observes StartupEvent ev) {
@@ -94,7 +104,8 @@ public class Dispatcher {
         .toList();
 
     log.debugf(
-        "Received event message from source virtual address: %s and source component: %s " +
+        "Received event message from source virtual address: %s and source component: %s "
+        +
         "for the target virtual addresses: %s",
         sourceVirtualAddress, sourceComponent, targetVirtualAddressesList);
 

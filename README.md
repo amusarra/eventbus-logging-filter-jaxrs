@@ -266,13 +266,44 @@ req/s           :      95.02      131.20      109.66       19.40    60.00%
 ```
 Log 2 - Esempio di output del comando h2load
 
+### Qualche nota sulla configurazione di Podman
+Nel caso in cui abbiate Podman al posto di Docker, potreste incontrare il problema mostrato seguire quanto avvierete l'applicazione.
+
+```text
+...
+2024-05-15 12:22:07,164 ERROR [org.tes.doc.DockerClientProviderStrategy] (build-43) Could not find a valid Docker environment. Please check configuration. Attempted configurations were:
+	UnixSocketClientProviderStrategy: failed with exception InvalidConfigurationException (Could not find unix domain socket). Root cause AccessDeniedException (/var/run/docker.sock)
+	DockerDesktopClientProviderStrategy: failed with exception NullPointerException (Cannot invoke "java.nio.file.Path.toString()" because the return value of "org.testcontainers.dockerclient.DockerDesktopClientProviderStrategy.getSocketPath()" is null)As no valid configuration was found, execution cannot continue.
+...
+```
+Log 3 - Esempio di errore di configurazione di Podman
+
+In questo caso, dovreste attivare il servizio `podman.socket` per le [API service](https://github.com/containers/podman/blob/main/docs/tutorials/socket_activation.md) e in modo che il socket sia accessibile a tutti gli utenti. Per fare ciò, eseguire i seguenti comandi.
+    
+```shell script
+# I comandi seguenti devono essere eseguiti come utente normale (!= root)
+# Abilita il servizio podman.socket per le API service in modalità user
+systemctl --user start podman.socket
+
+# Verifica che il socket sia stato creato
+ls -l $XDG_RUNTIME_DIR/podman/podman.sock
+
+# Verifica che il servizio podman.socket sia attivo
+systemctl --user status podman.socket
+
+# Export della variabile d'ambiente DOCKER_HOST
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
+```
+Console 6 - Abilita il servizio podman.socket per le API service
+
+ 
 ## Esecuzione dell'applicazione in dev mode
 
 Puoi eseguire l'applicazione in modalità sviluppo che abilita il live coding utilizzando:
 ```shell script
 ./mvnw compile quarkus:dev
 ```
-Console 6 - Esecuzione dell'applicazione in modalità sviluppo
+Console 7 - Esecuzione dell'applicazione in modalità sviluppo
 
 > **_NOTE:_** Quarkus ora include una UI di sviluppo, disponibile solo in modalità sviluppo all'indirizzo http://localhost:8080/q/dev/.
 
@@ -286,7 +317,7 @@ L'applicazione può essere preparata utilizzando:
 ```shell script
 ./mvnw package
 ```
-Console 7 - Packaging dell'applicazione
+Console 8 - Packaging dell'applicazione
 
 Il processo produrrà il file `quarkus-run.jar` in `target/quarkus-app/`.
 Questo non è un _über-jar_ in quanto le dipendenze sono copiate nella 
@@ -298,7 +329,7 @@ Se vuoi creare un _über-jar_, esegui il seguente comando:
 ```shell script
 ./mvnw package -Dquarkus.package.type=uber-jar
 ```
-Console 8 - Impacchettamento dell'applicazione come _über-jar_
+Console 9 - Impacchettamento dell'applicazione come _über-jar_
 
 L'applicazione, impacchettata come un _über-jar_, è ora eseguibile utilizzando `java -jar target/*-runner.jar`.
 
@@ -316,7 +347,7 @@ utilizzando:
 ```shell script
 ./mvnw package -Dnative -Dquarkus.native.container-build=true
 ```
-Console 10 - Creazione di un eseguibile nativo in un container
+Console 11 - Creazione di un eseguibile nativo in un container
 
 Puoi eseguire l'eseguibile nativo con: `./target/eventbus-logging-filter-jaxrs-1.0.0-SNAPSHOT-runner`
 
@@ -373,7 +404,7 @@ bzt -o modules.jmeter.properties.numberOfThreads=100 \
   src/test/jmeter/taurus/config.yml \
   src/test/jmeter/scenario_1.jmx
 ```
-Console 11 - Esecuzione del Test Plan di JMeter con Taurus
+Console 12 - Esecuzione del Test Plan di JMeter con Taurus
 
 Il comando `bzt` esegue il Test Plan di JMeter con Taurus e i parametri `-o` sono utilizzati per sovrascrivere i valori
 delle variabili definite nel file di configurazione di Taurus `src/test/jmeter/taurus/config.yml` che in questo caso
@@ -486,7 +517,7 @@ A seguire un esempio di una richiesta eseguita da JMeter e tracciata su MongoDB 
   "acceptable-media-types" : "[*/*]"
 }
 ```
-Log 3 - Esempio di richiesta HTTP tracciata su MongoDB
+Log 4 - Esempio di richiesta HTTP tracciata su MongoDB
 
 È possibile eseguire questo scenario sempre con Taurus utilizzando comando `bzt` come mostrato in precedenza. A seguire
 è riportato il comando per eseguire lo scenario di Load Testing con Taurus.
@@ -502,7 +533,7 @@ bzt -o modules.jmeter.properties.numberOfThreads=1 \
   src/test/jmeter/taurus/config.yml \
   src/test/jmeter/scenario_2.jmx
 ```
-Console 12 - Esecuzione dello scenario di Load Testing con Taurus
+Console 13 - Esecuzione dello scenario di Load Testing con Taurus
 
 ## Accesso alla Java Management Extensions (JMX)
 Dalla versione [1.2.4](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.4) del progetto è possibile accedere alla Java Management Extensions (JMX) dell'applicazione Quarkus

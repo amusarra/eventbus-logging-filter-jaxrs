@@ -12,7 +12,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
-[1.2.5] - 2024-05-14
+## [1.2.6] - 2024-05-19
+### Added
+- Aggiunta nota sul file README.md riguardo l'uso di Podman rispetto a Docker
+- Aggiunta nuova operation `createHorses()` per inserire più Horse in una sola chiamata
+- Aggiunta nuova operation `countHorses()` per contare il numero di Horse
+- Aggiunta nuova operation `deleteHorses()` per eliminare tutti gli Horse
+- Aggiunti nuovi test per le nuove operazioni
+
+### Changed
+- Aggiornamento operation `getAllHorses()` per accettare il parametro `limit` con l'obiettivo di limitare il numero di Horse restituiti
+- Aggiornamento scenario di test JMeter `scenario_2.jmx` per includere le nuove operazioni
+- Uso di `Instant.now()` per la generazione del tracking invece di `LocalDateTime.now()`
+
+### Fixed
+- Removed unused import in `HorseRepositoryResources`
+- Rivista `@Order` annotation per i test
+
+## [1.2.5] - 2024-05-14
 ### Changed
 - Aggiornamento del file README.md sezione Scenari di Test con JMeter e Taurus
 - Aggiornamento della gestione degli Event Handler attraverso la configurazione di Quarkus
@@ -21,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Risoluzione issue di SonarCloud
 
-[1.2.4] - 2024-05-13
+## [1.2.4] - 2024-05-13
 ### Added
 - Aggiunto altro unit test per la pubblicazione di messaggi fake
 - Aggiunta configurazione Jacoco per l'exclusion di una classe dal coverage report

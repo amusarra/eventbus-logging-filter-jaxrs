@@ -25,7 +25,7 @@ import org.jboss.logging.Logger;
  * per AMQP e gestisce gli eventi ricevuti dall'event bus tramite il metodo {@code handleEvent}.
  *
  * <p>Questo componente è responsabile di processare gli eventi/messaggi veicolati dal Dispatcher
- * tramite l'event bus e inviare il messaggio verso il brocker AMQP..
+ * tramite l'event bus e inviare il messaggio verso il broker AMQP.
  * L'esito dell'operazione viene inviato come risposta al Dispatcher.
  *
  * <p>La registrazione avviene all'avvio dell'applicazione tramite l'annotazione {@code @Observes}
@@ -57,8 +57,19 @@ public class AmqpEventHandler {
 
   MessageConsumer<JsonObject> consumer;
 
+  /**
+   * Source component header.
+   * È il nome dell'header che contiene il nome del componente sorgente
+   * che ha inviato l'evento. Il nome del componente è in formato
+   * <b>FQCN (Fully Qualified Class Name)</b>.
+   */
   public static final String SOURCE_COMPONENT = "source-component";
 
+  /**
+   * Indirizzo virtuale della coda AMQP per la gestione degli eventi.
+   * È il nome dell'indirizzo virtuale della coda AMQP per la gestione degli eventi
+   * su cui il consumer si registra per ricevere gli eventi. @see {@link #onStart(StartupEvent)}
+   */
   public static final String SOURCE_VIRTUAL_ADDRESS_QUEUE = "queue-trace";
 
   void onStart(@Observes StartupEvent ev) {

@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>it.dontesta.eventbus</groupId>
   <artifactId>eventbus-logging-filter-jaxrs</artifactId>
-  <version>1.2.5</version>
+  <version>1.2.6</version>
   <name>eventbus-logging-filter-jaxrs</name>
   <description>Event Bus Logging Filter JAX-RS</description>
   <url>https://amusarra.github.io/eventbus-logging-filter-jaxrs-docs</url>
@@ -39,9 +39,11 @@
     <url>scm:git:git@github.com:amusarra/eventbus-logging-filter-jaxrs.git</url>
   </scm>
   <properties>
+    <asciidoclet.version>2.0.0</asciidoclet.version>
     <compiler-plugin.version>3.12.1</compiler-plugin.version>
     <maven.compiler.release>21</maven.compiler.release>
     <maven.release.plugin.version>3.0.1</maven.release.plugin.version>
+    <maven.javadoc.plugin.version>3.6.3</maven.javadoc.plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
@@ -250,6 +252,39 @@
           <pushChanges>true</pushChanges>
           <tagNameFormat>v@{project.version}</tagNameFormat>
           <useReleaseProfile>false</useReleaseProfile>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven.javadoc.plugin.version}</version>
+        <configuration>
+          <source>21</source>
+          <doctitle>Event Bus Logging Filter JAX-RS - API</doctitle>
+          <keywords>true</keywords>
+          <linksource>true</linksource>
+          <overview>${basedir}/src/main/javadoc/overview.html</overview>
+          <links>
+            <link>https://docs.oracle.com/en/java/javase/21/docs/api</link>
+          </links>
+          <groups>
+            <group>
+              <title>JAX-RS Application Packages</title>
+              <packages>it.dontesta.eventbus.ws.*</packages>
+            </group>
+            <group>
+              <title>Application Configuration Packages</title>
+              <packages>it.dontesta.eventbus.application.*</packages>
+            </group>
+            <group>
+              <title>Event Bus Consumer Packages</title>
+              <packages>it.dontesta.eventbus.consumers.*</packages>
+            </group>
+            <group>
+              <title>ORM Packages</title>
+              <packages>it.dontesta.eventbus.orm.*</packages>
+            </group>
+          </groups>
         </configuration>
       </plugin>
     </plugins>

@@ -10,6 +10,12 @@ import java.util.List;
  */
 @ApplicationScoped
 public class OwnerRepository implements PanacheRepository<Owner> {
+
+  /**
+   * This method finds all the owners ordered by name.
+   *
+   * @return the list of owners ordered by name
+   */
   public List<Owner> findOrderedByName() {
     return find("ORDER BY name").list();
   }
