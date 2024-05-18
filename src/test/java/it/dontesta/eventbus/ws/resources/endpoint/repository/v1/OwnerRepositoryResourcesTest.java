@@ -205,7 +205,7 @@ class OwnerRepositoryResourcesTest {
     given()
         .when().delete("/api/rest/repository/owner/v1/1")
         .then()
-        .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        .statusCode(Response.Status.NO_CONTENT.getStatusCode());
   }
 
 }

@@ -26,6 +26,26 @@ class HorseRepositoryResourcesTest {
   }
 
   @Test
+  @Order(1)
+  void getAllHorsesLimitSuccess() {
+    given()
+        .contentType(ContentType.JSON)
+        .when().get("/api/rest/repository/horse/v1?limit=10")
+        .then()
+        .statusCode(Response.Status.OK.getStatusCode());
+  }
+
+  @Test
+  @Order(1)
+  void getCountSuccess() {
+    given()
+        .contentType(ContentType.JSON)
+        .when().get("/api/rest/repository/horse/v1/count")
+        .then()
+        .statusCode(Response.Status.OK.getStatusCode());
+  }
+
+  @Test
   @Order(2)
   void getHorseByIdSuccess() {
     given()
@@ -290,4 +310,14 @@ class HorseRepositoryResourcesTest {
         .then()
         .statusCode(Response.Status.NOT_FOUND.getStatusCode());
   }
+
+  @Test
+  @Order(13)
+  void testDeleteHorseAll() {
+    given()
+        .when().delete("/api/rest/repository/horse/v1/all")
+        .then()
+        .statusCode(Response.Status.NO_CONTENT.getStatusCode());
+  }
+
 }
