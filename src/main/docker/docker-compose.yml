@@ -43,7 +43,7 @@ services:
   # See https://hub.docker.com/_/postgres for more details about the
   # environment variables used to configure the PostgreSQL database.
   postgres:
-    image: postgres:16.3
+    image: registry.redhat.io/rhel8/postgresql-16:1-16.1716485357
     container_name: postgres
     restart: always
     # set shared memory limit when using docker-compose
@@ -51,9 +51,9 @@ services:
     networks:
       - logging_filter_network
     environment:
-      - POSTGRES_USER=quarkus
-      - POSTGRES_PASSWORD=quarkus
-      - POSTGRES_DB=quarkus
+      - POSTGRESQL_USER=quarkus
+      - POSTGRESQL_PASSWORD=quarkus
+      - POSTGRESQL_DATABASE=quarkus_event_bus
     ports:
       - "5432:5432"
     volumes:
@@ -83,7 +83,7 @@ services:
       - MONGODB_CONNECTION_URL=mongodb://mongodb:27017/audit
       - DB_USERNAME=quarkus
       - DB_PASSWORD=quarkus
-      - DB_URL=jdbc:postgresql://postgres:5432/quarkus
+      - DB_URL=jdbc:postgresql://postgres:5432/quarkus_event_bus
       - JAVA_OPTS=-Xms100M -Xmx500M -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions
         -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 -XX:G1ReservePercent=10
         -XX:ConcGCThreads=4 -XX:G1NewSizePercent=5 -XX:G1MaxNewSizePercent=60
