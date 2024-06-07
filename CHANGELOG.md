@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
+## [1.2.7] - 2024-06-07
+### Fixed
+- Fixed name of the secret name and base64 encoding
+- Changed the PostgreSQL image to RedHat version.
+
 ## [1.2.6] - 2024-05-19
 ### Added
 - Aggiunta nota sul file README.md riguardo l'uso di Podman rispetto a Docker
