@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed name of the secret name and base64 encoding
 - Changed the PostgreSQL image to RedHat version.
 
+### Changed
+- Updated the README.md file with the instructions to run the application with PostgreSQL
+
 ## [1.2.6] - 2024-05-19
 ### Added
 - Aggiunta nota sul file README.md riguardo l'uso di Podman rispetto a Docker
