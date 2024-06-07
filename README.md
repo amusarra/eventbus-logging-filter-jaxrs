@@ -81,6 +81,7 @@ Console 1 - Esegui l'applicazione Quarkus in un container (compresi i servizi di
 Tramite il comando `docker-compose` o `podman-compose` verranno avviati i seguenti servizi:
 - MongoDB
 - AMQP (Apache ActiveMQ Artemis)
+- PostgreSQL (dalla release 1.2.3)
 - Applicazione Quarkus
 
 L'immagine dell'applicazione Quarkus è disponibile su [Docker Hub](https://hub.docker.com/r/amusarra/eventbus-logging-filter-jaxrs)
@@ -114,7 +115,7 @@ http://localhost:8080/q/health.
 
 ```yaml
   # The environment variables are used to configure the connection to the
-  # Artemis message broker and the MongoDB database.
+  # Artemis message broker, MongoDB database e PostgreSQL database.
   # Se the application.properties file for more details about the names of the
   # environment variables.
   logging-filter:
@@ -128,9 +129,20 @@ http://localhost:8080/q/health.
         - AMQP_USERNAME=artemis
         - AMQP_PASSWORD=artemis
         - MONGODB_CONNECTION_URL=mongodb://mongodb:27017/audit
+        - DB_USERNAME=quarkus
+        - DB_PASSWORD=quarkus
+        - DB_URL=jdbc:postgresql://postgres:5432/quarkus_event_bus
+        - JAVA_OPTS=-Xms100M -Xmx500M -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions
+          -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 -XX:G1ReservePercent=10
+          -XX:ConcGCThreads=4 -XX:G1NewSizePercent=5 -XX:G1MaxNewSizePercent=60
+          -XX:ParallelGCThreads=4 -XX:+ExitOnOutOfMemoryError -Dcom.sun.management.jmxremote.port=9091
+          -Dcom.sun.management.jmxremote.rmi.port=9091 -Dcom.sun.management.jmxremote.authenticate=false
+          -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false
+          -Djava.rmi.server.hostname=127.0.0.1
     ports:
       - "8080:8080"
       - "8443:8443"
+      - "9091:9091"
     healthcheck:
       test: [ "CMD-SHELL", "curl --fail http://localhost:8080/q/health" ]
       interval: 30s
@@ -140,6 +152,7 @@ http://localhost:8080/q/health.
     depends_on:
       - artemis
       - mongodb
+      - postgres
 ```
 Source 1 - Estratto del docker-compose.yml per il servizio `logging-filter`
 
