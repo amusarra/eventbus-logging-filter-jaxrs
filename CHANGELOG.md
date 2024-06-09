@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
+## [1.2.8] - 2024-06-09
+### Changed
+- Finest tuning for the JMX configuration
+
 ## [1.2.7] - 2024-06-07
 ### Fixed
 - Fixed name of the secret name and base64 encoding
