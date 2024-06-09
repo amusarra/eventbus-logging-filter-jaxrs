@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>it.dontesta.eventbus</groupId>
   <artifactId>eventbus-logging-filter-jaxrs</artifactId>
-  <version>1.2.7-SNAPSHOT</version>
+  <version>1.2.8</version>
   <name>eventbus-logging-filter-jaxrs</name>
   <description>Event Bus Logging Filter JAX-RS</description>
   <url>https://amusarra.github.io/eventbus-logging-filter-jaxrs-docs</url>
@@ -42,8 +42,8 @@
     <asciidoclet.version>2.0.0</asciidoclet.version>
     <compiler-plugin.version>3.12.1</compiler-plugin.version>
     <maven.compiler.release>21</maven.compiler.release>
-    <maven.release.plugin.version>3.0.1</maven.release.plugin.version>
     <maven.javadoc.plugin.version>3.6.3</maven.javadoc.plugin.version>
+    <maven.release.plugin.version>3.0.1</maven.release.plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
@@ -121,6 +121,11 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-jdbc-postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkiverse.micrometer.registry</groupId>
+      <artifactId>quarkus-micrometer-registry-jmx</artifactId>
+      <version>3.2.4</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -255,7 +260,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${maven.javadoc.plugin.version}</version>
         <configuration>
