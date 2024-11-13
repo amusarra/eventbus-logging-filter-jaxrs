@@ -60,6 +60,8 @@ Le estensioni Quarkus utilizzate per l'implementazione del progetto sono le segu
 > Podman) al fine di eseguire l'applicazione in dev mode ed eseguire i test, entrambe le operazioni richiedono l'uso
 > dei Dev Services di Quarkus (e di conseguenza del container runtime).
 
+> Dalla release [1.2.9](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.9) del progetto, la versione di Quarkus è stata aggiornata alla release 3.16.2.
+
 ## Esecuzione dell'applicazione in Docker
 Vorresti eseguire l'applicazione in un container e testare il funzionamento dell'applicazione fin da subito?
 All'interno del progetto è disponibile il file `src/main/docker/docker-compose.yml` che ti permette di eseguire 

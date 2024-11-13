@@ -39,7 +39,7 @@ class AmqpConsumerTest {
 
     amqpConsumer.consumeHttpRequest(message);
 
-    verify(log, times(1)).debug("Received HTTP request message: " + jsonObject);
+    verify(log, times(1)).debug("Received HTTP request message: %s".formatted(jsonObject));
     verify(message, times(1)).ack();
   }
 
@@ -51,7 +51,7 @@ class AmqpConsumerTest {
 
     amqpConsumer.consumeHttpResponse(message);
 
-    verify(log, times(1)).debug("Received HTTP response message: " + jsonObject);
+    verify(log, times(1)).debug("Received HTTP response message: %s".formatted(jsonObject));
     verify(message, times(1)).ack();
   }
 }

@@ -29,7 +29,7 @@ public class AmqpConsumer {
   @Incoming("http-request-in")
   public CompletionStage<Void> consumeHttpRequest(Message<JsonObject> requestMessage) {
     // Implementa la logica per consumare il messaggio della richiesta HTTP
-    log.debug("Received HTTP request message: " + requestMessage.getPayload());
+    log.debug("Received HTTP request message: %s".formatted(requestMessage.getPayload()));
     return requestMessage.ack();
   }
 
@@ -42,7 +42,7 @@ public class AmqpConsumer {
   @Incoming("http-response-in")
   public CompletionStage<Void> consumeHttpResponse(Message<JsonObject> requestMessage) {
     // Implementa la logica per consumare il messaggio della richiesta HTTP
-    log.debug("Received HTTP response message: " + requestMessage.getPayload());
+    log.debug("Received HTTP response message: %s".formatted(requestMessage.getPayload()));
     return requestMessage.ack();
   }
 }
