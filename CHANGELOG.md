@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
+## [1.2.10]
+### Changed
+- Upgrade to Quarkus 3.16.4
+- Upgrade Container base image to registry.redhat.io/ubi9/openjdk-21:1.21-3
+
 ## [1.2.9]
 ### Changed
 - Upgrade to Quarkus 3.16.2
