@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
+## [1.2.11]
+### Fixed
+- Fixed FROM URI container image in Dockerfile
+- 
 ## [1.2.10]
 ### Changed
 - Upgrade to Quarkus 3.16.4
