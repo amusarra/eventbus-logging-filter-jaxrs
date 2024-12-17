@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
+## [1.2.12] - 2024-12-17
+### Changed
+- Upgrade to Quarkus 3.17.4
+- Update the CONTRIBUTING.md file with the Quarkus contribution guide
+
+### Security
+- Update the image base (for Dockerfile.jvm and Dockerfile.legacy-jar) to registry.access.redhat.com/ubi9/openjdk-21:1.21-3.1733995526
+- Update the image base (for Dockerfile.native) to registry.access.redhat.com/ubi9/ubi-minimal:9.5-1733767867
+
 ## [1.2.11]
 ### Fixed
 - Fixed FROM URI container image in Dockerfile
