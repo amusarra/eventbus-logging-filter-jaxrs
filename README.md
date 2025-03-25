@@ -8,10 +8,32 @@
 ![CI Docker build](https://github.com/amusarra/eventbus-logging-filter-jaxrs/actions/workflows/docker_publish.yml/badge.svg) 
 ![CI Docker build native amd64](https://github.com/amusarra/eventbus-logging-filter-jaxrs/actions/workflows/docker_publish_native_amd64.yml/badge.svg)
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=amusarra_eventbus-logging-filter-jaxrs&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=amusarra_eventbus-logging-filter-jaxrs)
+## Container Images
 
-[![Docker Image Version (tag)](https://img.shields.io/docker/v/amusarra/eventbus-logging-filter-jaxrs?label=Docker%20Hub%20Image%20)](https://hub.docker.com/r/amusarra/eventbus-logging-filter-jaxrs)
+| Image                                    | Latest Tag                                                                                                                          | Repository Link                                                               | Pull Command                                                                                                 |
+|------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| `amusarra/eventbus-logging-filter-jaxrs` | ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/amusarra/eventbus-logging-filter-jaxrs/latest-amd64native) | [Docker Hub](https://hub.docker.com/r/amusarra/eventbus-logging-filter-jaxrs) | Pull the latest AMD64 native version `docker pull amusarra/eventbus-logging-filter-jaxrs:latest-amd64native` |
+| `amusarra/eventbus-logging-filter-jaxrs` | ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/amusarra/eventbus-logging-filter-jaxrs/latest)             | [Docker Hub](https://hub.docker.com/r/amusarra/eventbus-logging-filter-jaxrs) | Pull the latest version `docker pull amusarra/eventbus-logging-filter-jaxrs:latest`                          |
 
+> Remember that to use the podman command, you need to replace `docker` with `podman`. Also remember that the pattern for the version of the image is `latest` or `latest-amd64native`; you can replace `latest` with the desired version: `1.0.0`, `1.0.1`, or the branch name (main, develop, etc.) For example, `docker pull amusarra/eventbus-logging-filter-jaxrs:v1.2.12`, referer to the release 1.2.12 of the project.
+
+For more information about the tags available, please visit the Docker Hub repository.
+
+## SonarQube Report (cloud)
+
+| Metric          | Value                                                                                                                                         |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| Quality Gate    | ![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=amusarra_eventbus-logging-filter-jaxrs&metric=alert_status)             |
+| Security        | ![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=amusarra_eventbus-logging-filter-jaxrs&metric=security_rating)       |
+| Reliability     | ![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=amusarra_eventbus-logging-filter-jaxrs&metric=reliability_rating) |
+| Maintainability | ![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=amusarra_eventbus-logging-filter-jaxrs&metric=sqale_rating)          |
+| Coverage        | ![Coverage](https://sonarcloud.io/api/project_badges/measure?project=amusarra_eventbus-logging-filter-jaxrs&metric=coverage)                     |
+| Duplications    | ![Duplications](https://sonarcloud.io/api/project_badges/measure?project=amusarra_eventbus-logging-filter-jaxrs&metric=duplicated_lines_density) |
+
+For more information, visit the [SonarCloud Dashboard](https://sonarcloud.io/dashboard?id=amusarra_eventbus-logging-filter-jaxrs).
+
+
+## Introduzione
 Questo progetto è un'applicazione Quarkus che mostra come realizzare un sistema che sia capace di
 tracciare le richieste JAX-RS in arrivo e in uscita dall'applicazione su diversi canali di
 storage, come ad esempio un database MongoDB, SQL o un broker AMQP sfruttando l'Event Bus 
@@ -60,7 +82,8 @@ Le estensioni Quarkus utilizzate per l'implementazione del progetto sono le segu
 > Podman) al fine di eseguire l'applicazione in dev mode ed eseguire i test, entrambe le operazioni richiedono l'uso
 > dei Dev Services di Quarkus (e di conseguenza del container runtime).
 
-> Dalla release [1.2.9](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.9) del progetto, la versione di Quarkus è stata aggiornata alla release 3.16.2.
+> Fare riferimento al CHANGELOG.md per verificare eventuali modifiche e/o aggiornamenti della versione di Quarkus e
+> eventuali estensioni utilizzate.
 
 ## Esecuzione dell'applicazione in Docker
 Vorresti eseguire l'applicazione in un container e testare il funzionamento dell'applicazione fin da subito?

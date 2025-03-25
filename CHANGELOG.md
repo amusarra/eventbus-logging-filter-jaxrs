@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
+## [1.2.13] - 2025-03-25
+### Changed
+- Upgrade to Quarkus 3.19.4. See the migration guide at https://github.com/quarkusio/quarkus/wiki/Migration-Guide-3.19
+- Upgrade io.quarkiverse.micrometer.registry:quarkus-micrometer-registry-jmx to 3.3.1
+- Update the README.md
+
 ## [1.2.12] - 2024-12-17
 ### Changed
 - Upgrade to Quarkus 3.17.4
