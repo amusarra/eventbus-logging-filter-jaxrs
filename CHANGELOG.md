@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
+## [1.3.0] - 2025-06-03
+### Changed
+- Upgrade to Quarkus 3.23.0. See the migration guide at https://github.com/quarkusio/quarkus/wiki/Migration-Guide-3.23 (PR #8)
+- Translate the README.md file to English (PR #10)
+
+### Fixed
+- Unable to resolve download URL for '22-ea' (PR #9) on the GitHub Actions workflow
+- Replace deprecated `quarkus.hibernate-orm.database.generation` with `quarkus.hibernate-orm.schema-management.strategy`
+
 ## [1.2.13] - 2025-03-25
 ### Changed
 - Upgrade to Quarkus 3.19.4. See the migration guide at https://github.com/quarkusio/quarkus/wiki/Migration-Guide-3.19
