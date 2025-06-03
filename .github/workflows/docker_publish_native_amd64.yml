@@ -24,9 +24,9 @@ jobs:
       - name: Echo ref name trigger
         run: echo ${{ github.ref_name }}
 
-      - uses: graalvm/setup-graalvm@main
+      - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '22-ea'
+          java-version: '23.0.2'
           distribution: 'graalvm'
           github-token: ${{ secrets.TOKEN_GITHUB }}
           native-image-job-reports: 'true'
