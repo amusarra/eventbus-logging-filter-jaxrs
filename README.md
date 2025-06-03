@@ -4,8 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![code of conduct](https://img.shields.io/badge/Conduct-Contributor%20Covenant%202.1-purple.svg)](CODE_OF_CONDUCT.md)
 
-![Build with Maven](https://github.com/amusarra/eventbus-logging-filter-jaxrs/actions/workflows/build_via_maven.yml/badge.svg) 
-![CI Docker build](https://github.com/amusarra/eventbus-logging-filter-jaxrs/actions/workflows/docker_publish.yml/badge.svg) 
+![Build with Maven](https://github.com/amusarra/eventbus-logging-filter-jaxrs/actions/workflows/build_via_maven.yml/badge.svg)
+![CI Docker build](https://github.com/amusarra/eventbus-logging-filter-jaxrs/actions/workflows/docker_publish.yml/badge.svg)
 ![CI Docker build native amd64](https://github.com/amusarra/eventbus-logging-filter-jaxrs/actions/workflows/docker_publish_native_amd64.yml/badge.svg)
 
 ## Container Images
@@ -32,40 +32,40 @@ For more information about the tags available, please visit the Docker Hub repos
 
 For more information, visit the [SonarCloud Dashboard](https://sonarcloud.io/dashboard?id=amusarra_eventbus-logging-filter-jaxrs).
 
+## Introduction
 
-## Introduzione
-Questo progetto è un'applicazione Quarkus che mostra come realizzare un sistema che sia capace di
-tracciare le richieste JAX-RS in arrivo e in uscita dall'applicazione su diversi canali di
-storage, come ad esempio un database MongoDB, SQL o un broker AMQP sfruttando l'Event Bus 
-di Quarkus.
+This project is a Quarkus application that demonstrates how to create a system capable of
+tracking incoming and outgoing JAX-RS requests from the application across various storage
+channels, such as a MongoDB database, SQL, or an AMQP broker, by leveraging Quarkus's Event Bus.
 
-[![Flusso Applicazione Quarkus](src/doc/resources/images/flusso_applicazione_quarkus.jpeg)](src/doc/resources/images/flusso_applicazione_quarkus.jpeg)
+[![Quarkus Application Flow](src/doc/resources/images/flusso_applicazione_quarkus.jpeg)](src/doc/resources/images/flusso_applicazione_quarkus.jpeg)
 
-Figura 1 - Flusso dell'applicazione Quarkus
+Figure 1 - Quarkus Application Flow
 
-Se vuoi saperne di più su Quarkus, visita il sito ufficiale [quarkus.io](https://quarkus.io/).
-A seguire trovi le istruzioni per eseguire l'applicazione in modalità sviluppo e creare un eseguibile
-nativo.
+If you want to learn more about Quarkus, visit the official website [quarkus.io](https://quarkus.io/).
+Below are the instructions for running the application in development mode and creating a native
+executable.
 
-## Requisiti
-La tabella seguente elenca i requisiti necessari per l'implementazione ed esecuzione del progetto 
-Quarkus.
+## Requirements
 
-| Nome                     | Opzionale | Descrizione                                                  |
-| ------------------------ | --------- | ------------------------------------------------------------ |
-| Java JDK 17/21           | NO        | Implementazione di OpenJDK 17/21. È possibile usare qualunque delle [implementazioni disponibili](https://en.wikipedia.org/wiki/OpenJDK). Per questo articolo è stata usata la versione 21 di OpenJDK e l'implementazione di Amazon Corretto 21.0.2. |
-| Git                      | NO        | Tool di versioning.                                          |
-| Maven 3.9.6              | NO        | Tool di build per i progetti Java e di conseguenza Quarkus.  |
-| Quarkus 3.9.2            | NO        | Framework Quarkus 3.9.2 la cui release note è disponibile qui https://quarkus.io/blog/quarkus-3-9-2-released/. Per maggiori informazioni per le release LTS fare riferimento all'articolo [Long-Term Support (LTS) for Quarkus](https://quarkus.io/blog/lts-releases/). |
-| Quarkus CLI              | SI        | Tool a linea di comando che consente di creare progetti, gestire estensioni ed eseguire attività essenziali di creazione e sviluppo. Per ulteriori informazioni su come installare e utilizzare la CLI (Command Line Interface) di Quarkus, consulta la [guida della CLI di Quarkus](https://quarkus.io/guides/cli-tooling). |
-| Docker v26 o Podman v4/5 | NO        | Tool per la gestione delle immagini e l'esecuzione dell'applicazione in modalità container. La gestione delle immagini/container sarà necessaria nel momento in cui saranno sviluppati gli Event Handler che dovranno comunicare con i servizi esterni all'applicazione (vedi NoSQL, SQL, AMQP). La gestione delle immagini necessarie e container, sarà totalmente trasparente per noi sviluppatori in quanto a carico dei [Dev Services di Quarkus](https://quarkus.io/guides/dev-services). |
-| GraalVM                  | SI        | Per la build dell'applicazione in modalità nativa. Per maggiori informazioni fare riferimento alla documentazione [Building a Native Executable](https://quarkus.io/guides/building-native-image). |
-| Ambiente di sviluppo C   | SI        | Richiesto da GraalVM per la build dell'applicazione nativa. Per maggiori informazioni fare riferimento alla documentazione [Building a Native Executable](https://quarkus.io/guides/building-native-image). |
-| cURL 7.x/8.x             | SI        | Tool per il test dei Resource Endpoint (servizi REST)        |
+The following table lists the necessary requirements for implementing and running the Quarkus project.
 
-**Tabella 1** - Requisiti (anche opzionali) necessari per l'implementazione del progetto Quarkus
+| Name                     | Optional | Description                                                  |
+| ------------------------ | -------- | ------------------------------------------------------------ |
+| Java JDK 17/21           | NO       | OpenJDK 17/21 implementation. You can use any of the [available implementations](https://en.wikipedia.org/wiki/OpenJDK). For this article, OpenJDK version 21 and Amazon Corretto 21.0.2 implementation were used. |
+| Git                      | NO       | Versioning tool.                                           |
+| Maven 3.9.6              | NO       | Build tool for Java projects and consequently Quarkus.       |
+| Quarkus 3.9.2            | NO       | Quarkus Framework 3.9.2 whose release note is available here <https://quarkus.io/blog/quarkus-3-9-2-released/>. For more information on LTS releases, refer to the article [Long-Term Support (LTS) for Quarkus](https://quarkus.io/blog/lts-releases/). |
+| Quarkus CLI              | YES      | Command-line tool that allows creating projects, managing extensions, and performing essential build and development tasks. For more information on how to install and use the Quarkus CLI (Command Line Interface), consult the [Quarkus CLI guide](https://quarkus.io/guides/cli-tooling). |
+| Docker v26 or Podman v4/5 | NO       | Tool for managing images and running the application in container mode. Image/container management will be necessary when Event Handlers are developed to communicate with services external to the application (see NoSQL, SQL, AMQP). The management of necessary images and containers will be completely transparent to us developers as it is handled by [Quarkus Dev Services](https://quarkus.io/guides/dev-services). |
+| GraalVM                  | YES      | For building the application in native mode. For more information, refer to the [Building a Native Executable](https://quarkus.io/guides/building-native-image) documentation. |
+| C development environment | YES      | Required by GraalVM for native application build. For more information, refer to the [Building a Native Executable](https://quarkus.io/guides/building-native-image) documentation. |
+| cURL 7.x/8.x             | YES      | Tool for testing Resource Endpoints (REST services).         |
 
-Le estensioni Quarkus utilizzate per l'implementazione del progetto sono le seguenti:
+**Table 1** - Requirements (including optional) necessary for implementing the Quarkus project
+
+The Quarkus extensions used for the project implementation are as follows:
+
 - io.quarkus:quarkus-hibernate-validator ✔
 - io.quarkus:quarkus-mongodb-client ✔
 - io.quarkus:quarkus-openshift ✔
@@ -78,65 +78,65 @@ Le estensioni Quarkus utilizzate per l'implementazione del progetto sono le segu
 - io.quarkus:quarkus-jdbc-h2 ✔
 - io.quarkus:quarkus-jdbc-postgresql ✔
 
-> È importante che abbiate installato e configurato correttamente il vostro ambiente di container runtime (Docker o 
-> Podman) al fine di eseguire l'applicazione in dev mode ed eseguire i test, entrambe le operazioni richiedono l'uso
-> dei Dev Services di Quarkus (e di conseguenza del container runtime).
+> It is important that you’ve correctly installed and configured your container runtime environment (Docker or
+> Podman) to run the application in dev mode and execute tests, both operations require the use
+> of Quarkus Dev Services (and consequently the container runtime).
+>
+> Refer to CHANGELOG.md to check for any changes and/or updates to the Quarkus version and
+> any extensions used.
 
-> Fare riferimento al CHANGELOG.md per verificare eventuali modifiche e/o aggiornamenti della versione di Quarkus e
-> eventuali estensioni utilizzate.
+## Running the application in Docker
 
-## Esecuzione dell'applicazione in Docker
-Vorresti eseguire l'applicazione in un container e testare il funzionamento dell'applicazione fin da subito?
-All'interno del progetto è disponibile il file `src/main/docker/docker-compose.yml` che ti permette di eseguire 
-l'applicazione in un container utilizzando Docker Compose o Podman Compose.
+Would you like to run the application in a container and test its functionality right away?
+The project includes the `src/main/docker/docker-compose.yml` file, which allows you to run
+the application in a container using Docker Compose or Podman Compose.
 
-Ecco come fare utilizzando [Podman Compose](https://docs.podman.io/en/latest/markdown/podman-compose.1.html) (non cambia nel caso di [Docker Compose](https://docs.docker.com/compose/)):
+Here's how to do it using [Podman Compose](https://docs.podman.io/en/latest/markdown/podman-compose.1.html) (it's no different for [Docker Compose](https://docs.docker.com/compose/)):
 
-> Dalla release [1.2.3](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.3) del progetto, il file `docker-compose.yml` è stato aggiornato aggiungendo il servizio di PostgreSQL.
+> Since project release [1.2.3](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.3), the `docker-compose.yml` file has been updated by adding the PostgreSQL service.
 
-A seguire il comando per avviare l'applicazione Quarkus in un container (compresi i servizi di supporto come MongoDB, 
-AMQP, ecc.).
+Below is the command to start the Quarkus application in a container (including support services like MongoDB,
+AMQP, etc.).
 
-```shell script
-# Tramite Podman Compose (alternativa a Docker Compose)
+```shell
+# Via Podman Compose (alternative to Docker Compose)
 podman-compose -f src/main/docker/docker-compose.yml up -d
 ```
-Console 1 - Esegui l'applicazione Quarkus in un container (compresi i servizi di supporto come MongoDB, AMQP, ecc.)
 
-Tramite il comando `docker-compose` o `podman-compose` verranno avviati i seguenti servizi:
+Console 1 - Run the Quarkus application in a container (including support services like MongoDB, AMQP, etc.)
+
+The `docker-compose` or `podman-compose` command will start the following services:
+
 - MongoDB
 - AMQP (Apache ActiveMQ Artemis)
-- PostgreSQL (dalla release 1.2.3)
-- Applicazione Quarkus
+- PostgreSQL (from release 1.2.3)
+- Quarkus Application
 
-L'immagine dell'applicazione Quarkus è disponibile su [Docker Hub](https://hub.docker.com/r/amusarra/eventbus-logging-filter-jaxrs)
-e questa è pubblicata grazie alla GitHub Actions `.github/workflows/docker_publish.yml` e 
-`.github/workflows/docker_publish_native_amd64.yml` (per build e pubblicazione dell'immagine nativa x86-64).
- 
-Dopo aver eseguito il comando, puoi verificare che i servizi siano attivi tramite il comando `docker ps` o `podman ps`.
+The Quarkus application image is available on [Docker Hub](https://hub.docker.com/r/amusarra/eventbus-logging-filter-jaxrs) and it is published thanks to the GitHub Actions `.github/workflows/docker_publish.yml` and `.github/workflows/docker_publish_native_amd64.yml` (for building and publishing the native x86-64 image).
 
-```shell script
-# Verifica i container attivi
+After running the command, you can check if the services are active by using the `docker ps` or `podman ps` command.
+
+```shell
+# Check active containers
 podman ps
 ```
-Console 2 - Verifica i container attivi
 
-L'output del comando `podman ps` dovrebbe essere simile al seguente:
+Console 2 - Check active containers
 
-```shell script
+The output of the `podman ps` command should be similar to the following:
+
+```shell
 CONTAINER ID  IMAGE                                                    COMMAND               CREATED         STATUS                   PORTS                                                                                             NAMES
 d021a5f570bc  docker.io/library/mongo:4.4                              mongod                40 seconds ago  Up 40 seconds            0.0.0.0:27017->27017/tcp                                                                          mongodb
 4faee4a45565  quay.io/artemiscloud/activemq-artemis-broker:1.0.25      /opt/amq/bin/laun...  39 seconds ago  Up 39 seconds            0.0.0.0:5445->5445/tcp, 0.0.0.0:5672->5672/tcp, 0.0.0.0:8161->8161/tcp, 0.0.0.0:61616->61616/tcp  artemis
 7a3d8e2e709e  docker.io/amusarra/eventbus-logging-filter-jaxrs:latest                        38 seconds ago  Up 38 seconds (healthy)  0.0.0.0:8080->8080/tcp, 0.0.0.0:8443->8443/tcp                                                    logging-filter
 ```
-Console 3 - Output del comando `podman ps`
 
-Il servizio `logging-filter` è l'applicazione Quarkus che è stata avviata in un container e che è pronta per essere 
-utilizzata per testare i servizi REST esposti (fai attenzione che il servizio sia in stato `healthy`).
+Console 3 - Output of the `podman ps` command
 
-Sul docker-compose, per il servizio `logging-filter`, è stato abilitato il servizio di Health Check di Quarkus che
-verifica la salute dell'applicazione. Il servizio di Health Check è disponibile all'indirizzo
-http://localhost:8080/q/health.
+The `logging-filter` service is the Quarkus application that has been started in a container and is ready to be used to test the exposed REST services (make sure the service is in `healthy` state).
+
+In the docker-compose, for the `logging-filter` service, the Quarkus health check service is enabled, which verifies the application's health. The health check service is available at the address <http://localhost:8080/q/health>.
 
 ```yaml
   # The environment variables are used to configure the connection to the
@@ -179,19 +179,20 @@ http://localhost:8080/q/health.
       - mongodb
       - postgres
 ```
-Source 1 - Estratto del docker-compose.yml per il servizio `logging-filter`
 
-Per testare il servizio REST esposto dall'applicazione Quarkus, puoi utilizzare il comando `curl` per inviare una
-richiesta HTTP al servizio REST.
+Source 1 - Extract from docker-compose.yml for the `logging-filter` service
 
-```shell script
-# Invia una richiesta HTTP al servizio REST
+To test the REST service exposed by the Quarkus application, you can use the `curl` command to send an
+HTTP request to the REST service.
+
+```shell
+# Send an HTTP request to the REST service
 curl -v --http2 \
   -H "Content-Type: application/json" \
   -d '{"message": "Test di tracking richiesta JAX-RS"}' \
   http://localhost:8080/api/rest/echo
   
-# Risposta attesa
+# Expected response
 *   Trying [::1]:8080...
 * Connected to localhost (::1) port 8080
 > POST /api/rest/echo HTTP/1.1
@@ -219,12 +220,12 @@ curl -v --http2 \
 * Connection #0 to host localhost left intact
 {"message": "Test di tracking richiesta JAX-RS"}%
 ```
-Console 4 - Esempio di richiesta HTTP al servizio REST
 
-Utilizzando il comando `podman logs <container-id>`, puoi verificare i log dell'applicazione Quarkus dove sono presenti
-le informazioni relative al tracciamento delle richieste JAX-RS. A seguire un esempio di output dei log dell'applicazione.
+Console 4 - Example of HTTP request to the REST service
 
-```shell script
+Using the `podman logs <container-id>` command, you can check the logs of the Quarkus application where the information related to the tracking of JAX-RS requests is present. Below is an example of the application's log output.
+
+```shell
 2024-04-23 11:57:43,965 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (executor-thread-35) La Request URI /api/rest/echo è tra quelle che devono essere filtrate
 2024-04-23 11:57:43,966 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (executor-thread-35) Pubblicazione del messaggio della richiesta HTTP su Event Bus
 2024-04-23 11:57:43,967 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Received event message from source virtual address: http-request and source component: it.dontesta.eventbus.consumers.http.HttpRequestConsumer for the target virtual addresses: sql-trace,nosql-trace,queue-trace
@@ -244,37 +245,38 @@ le informazioni relative al tracciamento delle richieste JAX-RS. A seguire un es
 2024-04-23 11:57:43,984 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Received response from target virtual address: queue-trace with result: Message sent to AMQP queue successfully!
 2024-04-23 11:57:43,984 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Received response from target virtual address: queue-trace with result: Message sent to AMQP queue successfully!
 ```
-Log 1 - Esempio di log dell'applicazione Quarkus
 
-A questo punto puoi eseguire lo shutdown dell'applicazione Quarkus e dei servizi di supporto utilizzando il comando
-`podman-compose -f src/main/docker/docker-compose.yml down` o il relativo docker-compose.
+Log 1 - Example of Quarkus application log
 
-Su asciinema.org è disponibile un video che mostra come eseguire l'applicazione Quarkus in un container utilizzando 
-Podman.
+At this point, you can shut down the Quarkus application and support services using the command
+`podman-compose -f src/main/docker/docker-compose.yml down` or the respective docker-compose.
+
+A video showing how to run the Quarkus application in a container using Podman is available on asciinema.org.
 
 [![asciicast](https://asciinema.org/a/655929.svg)](https://asciinema.org/a/655929)
 
-Potresti anche essere curioso a fare un semplice benchmark dell'applicazione Quarkus in un container. Per fare ciò,
-puoi utilizzare il comando [h2load](https://github.com/nghttp2/nghttp2?tab=readme-ov-file#benchmarking-tool) che è un benchmarking tool per HTTP/2 e HTTP/1.1. Ecco un esempio di come fare.
+You might also be curious to perform a simple benchmark of the Quarkus application in a container. To do this,
+you can use the [h2load](https://github.com/nghttp2/nghttp2?tab=readme-ov-file#benchmarking-tool) command, which is a benchmarking tool for HTTP/2 and HTTP/1.1. Here's an example of how to do it.
 
-```shell script
-# Esegui il benchmark dell'applicazione Quarkus utilizzando il protocollo HTTP/2
-# -n 100 indica il numero di richieste da inviare
-# -c 5 indica il numero di connessioni da mantenere aperte
-# -H "Content-Type: application/json" indica l'header Content-Type
-# -H 'Accept-Encoding: gzip, deflate, br, zstd' indica l'header Accept-Encoding
-# -d src/test/resources/payload-1.json indica il payload da inviare
+```shell
+# Run the benchmark of the Quarkus application using HTTP/2
+# -n 100 indicates the number of requests to send
+# -c 5 indicates the number of connections to keep open
+# -H "Content-Type: application/json" indicates the Content-Type header
+# -H 'Accept-Encoding: gzip, deflate, br, zstd' indicates the Accept-Encoding header
+# -d src/test/resources/payload-1.json indicates the payload to send
 h2load -n 100 -c 5 \
         -H "Content-Type: application/json" \
         -H 'Accept-Encoding: gzip, deflate, br, zstd' \
         -d src/test/resources/payload-1.json \
         https://0.0.0.0:8443/api/rest/echo
 ```
-Console 5 - Esempio di benchmark dell'applicazione Quarkus
 
-A seguire un esempio di output del comando h2load.
+Console 5 - Example of benchmarking the Quarkus application
 
-```shell script
+Below is an example of the output of the h2load command.
+
+```shell
 starting benchmark...
 spawning thread #0: 5 total client(s). 100 total requests
 TLS Protocol: TLSv1.3
@@ -302,10 +304,12 @@ time for connect:    62.28ms    165.11ms    103.21ms     42.95ms    80.00%
 time to 1st byte:   115.42ms    169.90ms    148.03ms     29.64ms    60.00%
 req/s           :      95.02      131.20      109.66       19.40    60.00%
 ```
-Log 2 - Esempio di output del comando h2load
 
-### Qualche nota sulla configurazione di Podman
-Nel caso in cui abbiate Podman al posto di Docker, potreste incontrare il problema mostrato seguire quanto avvierete l'applicazione.
+Log 2 - Example of output of the h2load command
+
+### Some notes on Podman configuration
+
+In case you have Podman instead of Docker, you might encounter the following problem when you start the application.
 
 ```text
 ...
@@ -314,125 +318,140 @@ Nel caso in cui abbiate Podman al posto di Docker, potreste incontrare il proble
 	DockerDesktopClientProviderStrategy: failed with exception NullPointerException (Cannot invoke "java.nio.file.Path.toString()" because the return value of "org.testcontainers.dockerclient.DockerDesktopClientProviderStrategy.getSocketPath()" is null)As no valid configuration was found, execution cannot continue.
 ...
 ```
-Log 3 - Esempio di errore di configurazione di Podman
 
-In questo caso, dovreste attivare il servizio `podman.socket` per le [API service](https://github.com/containers/podman/blob/main/docs/tutorials/socket_activation.md) e in modo che il socket sia accessibile a tutti gli utenti. Per fare ciò, eseguire i seguenti comandi.
-    
-```shell script
-# I comandi seguenti devono essere eseguiti come utente normale (!= root)
-# Abilita il servizio podman.socket per le API service in modalità user
+Log 3 - Example of Podman configuration error
+
+In this case,
+you should activate the `podman.socket` service for the [API service](https://github.com/containers/podman/blob/main/docs/tutorials/socket_activation.md)
+and make the socket accessible to all users.
+To do this, run the following commands.
+
+```shell
+# The following commands must be run as a normal user (!= root)
+# Enable the podman.socket service for API service in user mode
 systemctl --user start podman.socket
 
-# Verifica che il socket sia stato creato
+# Check that the socket has been created
 ls -l $XDG_RUNTIME_DIR/podman/podman.sock
 
-# Verifica che il servizio podman.socket sia attivo
+# Check that the podman.socket service is active
 systemctl --user status podman.socket
 
-# Export della variabile d'ambiente DOCKER_HOST
+# Export the DOCKER_HOST environment variable
 export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
 ```
-Console 6 - Abilita il servizio podman.socket per le API service
 
- 
-## Esecuzione dell'applicazione in dev mode
+Console 6 - Enable the podman.socket service for API service
 
-Puoi eseguire l'applicazione in modalità sviluppo che abilita il live coding utilizzando:
-```shell script
+## Running the application in dev mode
+
+You can run the application in development mode, which enables live coding, using:
+
+```shell
 ./mvnw compile quarkus:dev
 ```
-Console 7 - Esecuzione dell'applicazione in modalità sviluppo
 
-> **_NOTE:_** Quarkus ora include una UI di sviluppo, disponibile solo in modalità sviluppo all'indirizzo http://localhost:8080/q/dev/.
+Console 7 - Running the application in development mode
+
+> **_NOTE:_** Quarkus now includes a development UI, available only in development mode at the address http://localhost:8080/q/dev/.
 
 ![Quarkus Dev UI](src/doc/resources/images/quarkus_dev_ui_home_page.jpg)
 
-Figura 2 - Quarkus Dev UI
+Figure 2 - Quarkus Dev UI
 
-## Packaging e avvio dell'applicazione
+## Packaging and starting the application
 
-L'applicazione può essere preparata utilizzando:
-```shell script
+The application can be packaged using:
+
+```shell
 ./mvnw package
 ```
-Console 8 - Packaging dell'applicazione
 
-Il processo produrrà il file `quarkus-run.jar` in `target/quarkus-app/`.
-Questo non è un _über-jar_ in quanto le dipendenze sono copiate nella 
-directory `target/quarkus-app/lib/`.
+Console 8 - Packaging the application
 
-L'applicazione è ora eseguibile utilizzando `java -jar target/quarkus-app/quarkus-run.jar`.
+The process will produce the `quarkus-run.jar` file in `target/quarkus-app/`.
+This is not an _über-jar_ as the dependencies are copied to the directory `target/quarkus-app/lib/`.
 
-Se vuoi creare un _über-jar_, esegui il seguente comando:
-```shell script
+The application is now executable using `java -jar target/quarkus-app/quarkus-run.jar`.
+
+If you want to create an _über-jar_, run the following command:
+
+```shell
 ./mvnw package -Dquarkus.package.type=uber-jar
 ```
-Console 9 - Impacchettamento dell'applicazione come _über-jar_
 
-L'applicazione, impacchettata come un _über-jar_, è ora eseguibile utilizzando `java -jar target/*-runner.jar`.
+Console 9 - Packaging the application as an _über-jar_
 
-## Creazione di un eseguibile nativo
+The application, packaged as an _über-jar_, is now executable using `java -jar target/*-runner.jar`.
 
-Puoi creare un eseguibile nativo utilizzando: 
-```shell script
+## Creating a native executable
+
+You can create a native executable using:
+
+```shell
 ./mvnw package -Dnative
 ```
-Console 9 - Creazione di un eseguibile nativo
 
-Nel caso in cui tu non avessi GraalVM installato, puoi eseguire la build dell'eseguibile nativo in un container 
-utilizzando:
+Console 9 - Creating a native executable
 
-```shell script
+If you don’t have GraalVM installed, you can build the native executable in a container using:
+
+```shell
 ./mvnw package -Dnative -Dquarkus.native.container-build=true
 ```
-Console 11 - Creazione di un eseguibile nativo in un container
 
-Puoi eseguire l'eseguibile nativo con: `./target/eventbus-logging-filter-jaxrs-1.0.0-SNAPSHOT-runner`
+Console 11 - Creating a native executable in a container
 
-Se vuoi saperne di più sulla creazione di eseguibili nativi, consulta https://quarkus.io/guides/maven-tooling.
+You can run the native executable with: `./target/eventbus-logging-filter-jaxrs-1.0.0-SNAPSHOT-runner`
 
-## Scenari di Load Testing con JMeter e Taurus
-All'interno del progetto è disponibile il file jmx `src/test/jmeter/scenario_1.jmx` che consente di eseguire un semplice
-di Load Testing con JMeter.
+If you want to learn more about creating native executables, consult <https://quarkus.io/guides/maven-tooling>.
 
-Lo scopo di questo semplice scenario è quello di testare il servizio REST `api/rest/echo` esposto dall'applicazione 
-Quarkus e di verificare il comportamento del sistema sotto stress in termini di performance e scalabilità ma in particolare
-per mostrare la differenza tra le richieste HTTP/1.1 e HTTP/2 over TLS con e senza compressione GZIP.
+## Load Testing Scenarios with JMeter and Taurus
 
-Il Test Plan creato, prevede una serie di [Thread Group](https://jmeter.apache.org/usermanual/test_plan.html#thread_group) che includono un sampler HTTP
-configurato opportunamente per il servizio REST `api/rest/echo`. I Thread Group sono:
+The project includes the jmx file `src/test/jmeter/scenario_1.jmx`, which allows you to perform a simple
+Load Testing with JMeter.
+
+The purpose of this simple scenario is to test the REST service `api/rest/echo` exposed by the Quarkus application and to verify the system's behavior under stress in terms of performance and scalability, but especially
+to demonstrate the difference between HTTP/1.1 and HTTP/2 over TLS requests with and without GZIP compression.
+
+The created Test Plan includes a series of [Thread Groups](https://jmeter.apache.org/usermanual/test_plan.html#thread_group), each containing a sampler HTTP
+appropriately configured for the REST service `api/rest/echo`. The Thread Groups are:
+
 1. test in HTTPS/1.1
 2. test in HTTPS/2 over TLS
-3. test in HTTP/2 over TLS con compressione GZIP
+3. test in HTTP/2 over TLS with GZIP compression
 
-La figura seguente mostra la configurazione del Test Plan con JMeter.
+The following figure shows the Test Plan configuration with JMeter.
 
 ![Configurazione Test Plan di JMeter](src/doc/resources/images/jmeter_configurazione_piano_test_1.jpg)
 
-Figura 3 - Configurazione del Test Plan di JMeter
+Figure 3 - Configurazione del Test Plan di JMeter
 
-Ognuno dei tre test è quindi un Thread Group di JMeter che può essere configurato attraverso le [User Defined Variables](https://jmeter.apache.org/usermanual/component_reference.html#User_Defined_Variables) (vedi Figura 3) del Test Plan e in particolare:
-1. **numberOfThreads**: questo parametro indica il numero totale di thread (utenti virtuali) che saranno avviati durante l'esecuzione del test. Ogni thread simula un utente che interagisce con il sistema sotto test;
-2. **rampUpPeriod**: il periodo di ramp-up (in secondi) specifica quanto tempo JMeter deve impiegare per far partire tutti i thread specificati nel "Number of Threads". Ad esempio, se hai 100 thread e imposti un periodo di ramp-up di 10 secondi, JMeter inizierà un nuovo thread ogni 0.1 secondo (10 secondi/100 thread);
-3. **loopCount**: questo parametro definisce quante volte ogni thread eseguirà il set di campioni (richieste HTTP o altre operazioni) all'interno del Thread Group. Se imposti il Loop Count su 0, i thread continueranno a eseguire i campioni all'infinito finché il test non viene interrotto manualmente.
+Each of the three tests is a JMeter Thread Group
+that can be configured through the [User Defined Variables](https://jmeter.apache.org/usermanual/component_reference.html#User_Defined_Variables)
+(see Figure 3) of the Test Plan and in particular:
 
-La figura seguente mostra come questi valori sono stati impostati sul Thread Group di JMeter.
+1. **numberOfThreads**: this parameter indicates the total number of threads (virtual users) that will be started during the test execution. Each thread simulates a user interacting with the system under test;
+2. **rampUpPeriod**: the ramp-up period (in seconds) specifies how long JMeter should take to start all the threads specified in the "Number of Threads". For example, if you have 100 threads and set a ramp-up period of 10 seconds, JMeter will start a new thread every 0.1 seconds (10 seconds/100 threads);
+3. **loopCount**: this parameter defines how many times each thread will execute the set of samplers (HTTP requests or other operations) within the Thread Group. If you set the Loop Count to 0, the threads will continue to execute the samplers indefinitely until the test is manually stopped.
+
+The following figure shows how these values are set in the JMeter Thread Group.
 
 ![Configurazione Thread Group JMeter](src/doc/resources/images/jmeter_configurazione_piano_test_thread_group_1.jpg)
 
-Figura 4 - Configurazione del Thread Group di JMeter
+Figure 4 - Configurazione del Thread Group di JMeter
 
-Per eseguire questo scenario di Load Testing è possibile utilizzare [Taurus](https://gettaurus.org/), un framework 
-open source che automatizza i test di carico e le operazioni di test di performance. Taurus supporta JMeter, 
-Gatling, Locust, Selenium e altri strumenti di test di carico.
+To execute this Load Testing scenario, you can use [Taurus](https://gettaurus.org/), an open-source framework 
+that automates load testing and performance testing operations.
+Taurus supports JMeter, 
+Gatling, Locust, Selenium, and other load testing tools.
 
-Per l'installazione di Taurus, puoi seguire la [guida ufficiale](https://gettaurus.org/install/Installation/).
+For Taurus installation, you can follow the [official guide](https://gettaurus.org/install/Installation/).
 
-Il file di configurazione di Taurus `src/test/jmeter/taurus/config.yml` è stato creato per eseguire il Test Plan di 
-JMeter. Ecco un esempio di come eseguire il Test Plan di JMeter con Taurus.
+The Taurus configuration file `src/test/jmeter/taurus/config.yml` has been created to execute the JMeter Test Plan. Here's an example of how to run the JMeter Test Plan with Taurus.
 
-```shell script
-# Esegui il Test Plan di JMeter con Taurus
+```shell
+# Run the JMeter Test Plan with Taurus
 bzt -o modules.jmeter.properties.numberOfThreads=100 \
   -o modules.jmeter.properties.rampUpPeriod=0.5 \
   -o modules.jmeter.properties.loopCount=300 \
@@ -442,74 +461,73 @@ bzt -o modules.jmeter.properties.numberOfThreads=100 \
   src/test/jmeter/taurus/config.yml \
   src/test/jmeter/scenario_1.jmx
 ```
-Console 12 - Esecuzione del Test Plan di JMeter con Taurus
 
-Il comando `bzt` esegue il Test Plan di JMeter con Taurus e i parametri `-o` sono utilizzati per sovrascrivere i valori
-delle variabili definite nel file di configurazione di Taurus `src/test/jmeter/taurus/config.yml` che in questo caso
-agiscono sulle User Defined Variables del Test Plan di JMeter. Dal valore di `ipOrFQDN` si può notare che il test sarà
-eseguito in locale, per cui abbiate cura di avere l'applicazione Quarkus in esecuzione.
+Console 12 - Running the JMeter Test Plan with Taurus
 
-I Thread Group in questo caso sono stati configurati per simulare 100 utenti virtuali che inviano 300 richieste al
-servizio REST `api/rest/echo` esposto dall'applicazione Quarkus con un periodo di ramp-up di 0.5 secondi.
+The `bzt` command runs the JMeter Test Plan with Taurus, and the `-o` parameters are used to overwrite the values
+of the variables defined in the Taurus configuration file `src/test/jmeter/taurus/config.yml`, which in this case
+act on the User Defined Variables of the JMeter Test Plan. From the value of `ipOrFQDN`, it can be seen that the test will
+be executed locally, so make sure you have the Quarkus application running.
 
-> **_NOTA:_** I dati mostrati a seguire fanno riferimento all'esecuzione del Test Plan sull'ambiente Developer 
-> Sandbox di Red Hat OpenShift, con attivi tre pod dell'applicazione Quarkus, un pod per il servizio MongoDB e un pod
-> per il servizio AMQP (Apache ActiveMQ Artemis).
+The Thread Groups in this case are configured to simulate 100 virtual users sending 300 requests to
+the REST service `api/rest/echo` exposed by the Quarkus application with a ramp-up period of 0.5 seconds.
 
-Le due figure a seguire mostrano Taurus in esecuzione, rispettivamente all'inizio (dov'è mostrato lo stato di
-avanzamento) e alla fine del test (dov'è mostrato il report).
+> **_NOTE:_** The data shown below refers to the execution of the Test Plan in the Developer
+> Sandbox environment of Red Hat OpenShift, with three Quarkus application pods active, one pod for the MongoDB service, and one pod
+> for the AMQP (Apache ActiveMQ Artemis) service.
+
+The two figures below show Taurus in action,
+respectively at the beginning (showing the progress status) and at the end of the test
+(showing the report).
 
 ![Taurus in esecuzione](src/doc/resources/images/esecuzione_taurus_gui_ocp_1.jpg)
 
-Figura 5 - Taurus in esecuzione
+Figure 5 - Taurus in action
 
-Dal report di Taurus è possibile vedere i risultati del test di carico eseguito con JMeter. Dalla durata del test, al
-numero di richieste HTTP inviate, al tempo di risposta medio, etc. Da questo report è già possibile vedere come il tempo
-di risposta sia influenzato dal protocollo utilizzato (HTTP/1.1, HTTP/2) e dalla compressione GZIP. 
+From the Taurus report, you can see the results of the load test performed with JMeter.
+From the test duration, the number of HTTP requests sent, the average response time, etc. From this report,
+you can already see how the response time is influenced by the protocol used (HTTP/1.1, HTTP/2) and by GZIP compression.
 
 ![Taurus Report](src/doc/resources/images/esecuzione_taurus_report_console_ocp_1.jpg)
 
-Figura 6 - Taurus Report
+Figure 6 - Taurus Report
 
-L'esecuzione del Test Plan di JMeter con Taurus produce all'interno della directory `target/taurus/%Y-%m-%d_%H-%M-%S.%f` 
-i file di log più il jtl dei kpi da poter analizzare con JMeter.
+The execution of the JMeter Test Plan with Taurus produces the log files and jtl of the kpi that can be analyzed with JMeter inside the directory `target/taurus/%Y-%m-%d_%H-%M-%S.%f`.
 
-Per esempio, la figura seguente, attraverso [jp@gc - Transactions per Second](https://jmeter-plugins.org/wiki/TransactionsPerSecond/), mostra il throughput del sistema durante il
-test di carico (dai dati letti dal file jtl `kpi.jtl` locato in `target/taurus/%Y-%m-%d_%H-%M-%S.%f`).
+For example, the following figure, through [jp@gc - Transactions per Second](https://jmeter-plugins.org/wiki/TransactionsPerSecond/), shows the system throughput during the load test (from the data read from the jtl file `kpi.jtl` located in `target/taurus/%Y-%m-%d_%H-%M-%S.%f`).
 
 ![Throughput del sistema](src/doc/resources/images/jmeter_jtl_transazioni_secondo_1.jpg)
 
-Figura 7 - Throughput del sistema
+Figure 7 - System throughput
 
-Anche da questo grafico è possibile vedere come il throughput del sistema sia influenzato dal protocollo utilizzato
-e il protocollo HTTP/2 over TLS con compressione GZIP sia quello che offre le migliori performance.
+It can also be seen from this graph how the system throughput is influenced by the protocol used,
+and the HTTP/2 over TLS protocol with GZIP compression offers the best performance.
 
-Dalla release [1.2.2](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.2) del progetto, è disponibile lo scenario di Load Testing per testare i servizi JAX-RS collegati alle
-due entità ORM (Object Relational Mapping) che sono state implementate nel progetto e introdotte dalla release [1.2.0](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.0).
+Since project release [1.2.2](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.2), the Load Testing scenario is available to test the JAX-RS services connected to
+the two ORM (Object Relational Mapping) entities that have been implemented in the project and introduced by the release [1.2.0](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.0).
 
-Per eseguire lo scenario di Load Testing, è possibile utilizzare il file jmx `src/test/jmeter/scenario_2.jmx`, di cui 
-potete vedere la struttura aprendolo con JMeter. A seguire è mostrata la struttura del Test Plan di JMeter.
+To execute the Load Testing scenario, you can use the jmx file `src/test/jmeter/scenario_2.jmx`, which structure can be seen by opening it with JMeter. Below is shown the structure of the JMeter Test Plan.
 
 ![Configurazione Test Plan di JMeter Scenario 2](src/doc/resources/images/jmeter_configurazione_piano_test_scenario_2.jpg)
 
-Figura 8 - Configurazione del Test Plan di JMeter (scenario 2 `src/test/jmeter/scenario_2.jmx`)
+Figure 8 - Configurazione del Test Plan di JMeter (scenario 2 `src/test/jmeter/scenario_2.jmx`)
 
-I thread group sono stati configurati con lo stesso principio del primo scenario di Load Testing, di conseguenza sono
-stati creati per versione di protocollo HTTP (HTTPS/1.1, HTTP/2 over TLS e compressed); per ognuno di essi è stato
-creato un flusso di richieste verso i servizi JAX-RS dell'entità ORM `Owner` e `Horse` (introdotte dalla versione 
-[1.2.0](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.0) del progetto).
+The thread groups are configured with the same principle as the first Load Testing scenario, so they are
+created for each version of the HTTP protocol (HTTPS/1.1, HTTP/2 over TLS, and compressed); for each of them, a
+request flow is created for the JAX-RS services of the ORM entities `Owner` and `Horse` (introduced by the version 
+[1.2.0](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.0) of the project).
 
-Per questo scenario, attraverso l'elemento di configurazione [HTTP Header Manager](https://jmeter.apache.org/usermanual/component_reference.html#HTTP_Header_Manager), sono stati configurati un set di header HTTP custom e che
-riguardano nello specifico delle informazioni su JMeter; questi sono:
-1. X-TestCaseId: un identificativo univoco del test case
-2. X-TestPlanName: il nome del test plan
-3. X-TestThreadGroupName: il nome del thread group
-4. X-TestThreadNumber: il numero del thread
+For this scenario, through the configuration element [HTTP Header Manager](https://jmeter.apache.org/usermanual/component_reference.html#HTTP_Header_Manager), a set of custom HTTP headers has been configured, specifically concerning information about JMeter; these are:
 
-Queste informazioni possono essere utili per tracciare le richieste HTTP inviate da JMeter e per identificare il test.
-A seguire un esempio di una richiesta eseguita da JMeter e tracciata su MongoDB dove sono evidenti gli header HTTP custom.
+1. X-TestCaseId: a unique identifier for the test case
+2. X-TestPlanName: the name of the test plan
+3. X-TestThreadGroupName: the name of the thread group
+4. X-TestThreadNumber: the thread number
 
-```bson
+This information can be useful for tracking the HTTP requests sent by JMeter and for identifying the test.
+Below is an example of a request executed by JMeter and tracked in MongoDB where the custom HTTP headers are evident.
+
+```json
 {
   "_id" : ObjectId("66425a820d65f7240e2ba113"),
   "X-Correlation-ID" : "bc187f1f-9c6c-499b-9d13-0b87b31d2abb",
@@ -555,13 +573,14 @@ A seguire un esempio di una richiesta eseguita da JMeter e tracciata su MongoDB 
   "acceptable-media-types" : "[*/*]"
 }
 ```
-Log 4 - Esempio di richiesta HTTP tracciata su MongoDB
 
-È possibile eseguire questo scenario sempre con Taurus utilizzando comando `bzt` come mostrato in precedenza. A seguire
-è riportato il comando per eseguire lo scenario di Load Testing con Taurus.
+Log 4 - Example of HTTP request tracked in MongoDB
 
-```shell script
-# Esegui lo scenario di Load Testing con Taurus
+This scenario can also be executed with Taurus using the `bzt` command as shown earlier.
+Below is the command to execute the Load Testing scenario with Taurus.
+
+```shell
+# Run the Load Testing scenario with Taurus
 bzt -o modules.jmeter.properties.numberOfThreads=1 \
   -o modules.jmeter.properties.rampUpPeriod=5 \
   -o modules.jmeter.properties.loopCount=25 \
@@ -571,12 +590,15 @@ bzt -o modules.jmeter.properties.numberOfThreads=1 \
   src/test/jmeter/taurus/config.yml \
   src/test/jmeter/scenario_2.jmx
 ```
-Console 13 - Esecuzione dello scenario di Load Testing con Taurus
 
-## Accesso alla Java Management Extensions (JMX)
-Dalla versione [1.2.4](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.4) del progetto è possibile accedere alla Java Management Extensions (JMX) dell'applicazione Quarkus
-in esecuzione quando questa è avviata utilizzando il docker-compose. Questo è possibile grazie alla configurazione 
-mostrata a seguire e in particolare i parametri `JAVA_OPTS` che abilitano la JMX.
+Console 13 - Running the Load Testing scenario with Taurus
+
+## Accessing Java Management Extensions (JMX)
+
+From project version [1.2.4](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.4),
+it is possible to access the Java Management Extensions (JMX)
+of the Quarkus application when it is started using docker-compose.
+This is made possible by the configuration shown below, particularly the `JAVA_OPTS` parameters that enable JMX.
 
 ```yaml
   logging-filter:
@@ -595,30 +617,28 @@ mostrata a seguire e in particolare i parametri `JAVA_OPTS` che abilitano la JMX
         -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false
         -Djava.rmi.server.hostname=127.0.0.1
 ```
-Source 2 - Estratto del docker-compose.yml per il servizio `logging-filter` con JMX abilitato
 
-Una volta che il container è in esecuzione, è possibile accedere alla JMX dell'applicazione Quarkus utilizzando un
-client JMX come [JConsole](https://openjdk.org/tools/svc/jconsole/), [VisualVM](https://visualvm.github.io/) o 
-[Java Mission Control](https://www.oracle.com/java/technologies/jdk-mission-control.html). In questo caso, la stringa 
-di connessione JMX è `service:jmx:rmi:///jndi/rmi://localhost:9091/jmxrmi`. A seguire un esempio di connessione tramite
-VisualVM.
+Source 2 - Extract from docker-compose.yml for the `logging-filter` service with JMX enabled
+
+Once the container is running, you can access the JMX of the Quarkus application using a
+JMX client such as [JConsole](https://openjdk.org/tools/svc/jconsole/), [VisualVM](https://visualvm.github.io/) or
+[Java Mission Control](https://www.oracle.com/java/technologies/jdk-mission-control.html). In this case, the JMX connection string is `service:jmx:rmi:///jndi/rmi://localhost:9091/jmxrmi`. Below is an example of connecting via VisualVM.
 
 ![Connessione JMX con VisualVM](src/doc/resources/images/jmx_visualvm_1.jpg)
 
-Figura 9 - Connessione JMX con VisualVM
+Figure 9 - JMX Connection with VisualVM
 
-La figura a seguire mostra invece il monitoraggio dell'applicazione, dove sono presenti le informazioni relative alla
-memoria, al garbage collector, al class loader, al thread, ecc.
+The following figure shows the monitoring of the application, where information about
+memory, garbage collector, class loader, thread, etc. can be found.
 
 ![Monitoraggio JMX con VisualVM](src/doc/resources/images/jmx_visualvm_2.jpg)
 
-Figura 10 - Monitoraggio JMX con VisualVM
+Figure 10 - JMX Monitoring with VisualVM
 
-In ambiente OpenShift, è possibile accedere alla JMX dell'applicazione Quarkus utilizzando per esempio il progetto
-[Cryostat](https://cryostat.io/) (JFR for Containerized Java Applications).
+In an OpenShift environment, you can access the JMX of the Quarkus application using,
+for example, the [Cryostat](https://cryostat.io/) project (JFR for Containerized Java Applications).
 
-
-## Guida ai servizi e alle estensioni utilizzate
+## Guide to the services and extensions used
 
 - MongoDB client ([guide](https://quarkus.io/guides/mongodb)): Connect to MongoDB in either imperative or reactive style
 - Eclipse Vert.x ([guide](https://quarkus.io/guides/vertx)): Write reactive applications with the Vert.x API
@@ -638,12 +658,11 @@ In ambiente OpenShift, è possibile accedere alla JMX dell'applicazione Quarkus 
 
 [![alt tag](http://pylonsproject.org/img/logo-jetbrains.png)](https://www.jetbrains.com/?from=LiferayPortalSecurityAudit)
 
-Antonio Musarra's Blog Team would like inform that JetBrains is helping by
-provided IDE to develop the application. Thanks to its support program for
-an Open Source projects!
-
+Antonio Musarra's Blog Team would like to inform that JetBrains is helping by
+provide IDE to develop the application. Thanks to its support program for
+ Open Source projects!
 
 [![alt tag](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/project/overview?id=amusarra_eventbus-logging-filter-jaxrs)
 
 This project is using SonarCloud for code quality.
-Thanks to SonarQube Team for free analysis solution for open source projects.
+Thanks to SonarQube Team for a free analysis solution for open source projects.
