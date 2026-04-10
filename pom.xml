@@ -48,7 +48,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>3.23.0</quarkus.platform.version>
+    <quarkus.platform.version>3.34.3</quarkus.platform.version>
     <skipITs>true</skipITs>
     <sonar.coverage.jacoco.xmlReportPaths>target/jacoco-report/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -118,7 +118,7 @@
     <dependency>
       <groupId>io.quarkiverse.micrometer.registry</groupId>
       <artifactId>quarkus-micrometer-registry-jmx</artifactId>
-      <version>3.3.1</version>
+      <version>3.5.0</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -127,12 +127,12 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-junit5</artifactId>
+      <artifactId>quarkus-junit</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-junit5-mockito</artifactId>
+      <artifactId>quarkus-junit-mockito</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -175,6 +175,7 @@
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
             <maven.home>${maven.home}</maven.home>
           </systemPropertyVariables>
+          <argLine>@{argLine}</argLine>
         </configuration>
       </plugin>
       <plugin>
@@ -194,6 +195,7 @@
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
             <maven.home>${maven.home}</maven.home>
           </systemPropertyVariables>
+          <argLine>@{argLine}</argLine>
         </configuration>
       </plugin>
       <plugin>
