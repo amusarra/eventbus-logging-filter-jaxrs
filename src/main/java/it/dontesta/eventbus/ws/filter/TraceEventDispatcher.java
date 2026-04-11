@@ -1,6 +1,5 @@
 package it.dontesta.eventbus.ws.filter;
 
-import io.quarkus.scheduler.Scheduled;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import jakarta.annotation.PostConstruct;
@@ -19,9 +18,21 @@ import org.jboss.logging.Logger;
  *
  * <p>Questo componente è completamente <b>esterno al lifecycle HTTP</b>: il
  * {@link TraceJaxRsRequestResponseFilter filtro} si limita a depositare dati grezzi in due code
- * bounded ({@link ArrayBlockingQueue}), mentre questo bean drena le code a intervalli
- * regolari tramite un {@link Scheduled task schedulato}, costruisce i {@link JsonObject} e li
- * pubblica sull'Event Bus.
+ * bounded ({@link ArrayBlockingQueue}), mentre un <b>daemon thread dedicato</b> drena le code,
+ * costruisce i {@link JsonObject} e li pubblica sull'Event Bus.
+ *
+ * <p><b>Drain thread dedicato</b>: a differenza di {@code @Scheduled} (che condivide il worker
+ * thread pool con i thread HTTP e può essere starved sotto carico), il drain thread è un
+ * {@link Thread#ofPlatform() platform thread} daemon schedulato direttamente dall'OS. Non compete
+ * mai con i thread HTTP e supporta qualsiasi intervallo di sleep (anche &lt;1 ms). Funziona in
+ * due modalità:
+ * <ul>
+ *   <li><b>Burst</b>: se le code contengono elementi, drena immediatamente senza sleep fino a
+ *       svuotarle completamente.</li>
+ *   <li><b>Idle</b>: quando entrambe le code sono vuote, il thread dorme per
+ *       {@code app.filter.dispatcher.interval.ms} ms prima di controllare di nuovo,
+ *       evitando busy-waiting.</li>
+ * </ul>
  *
  * <p><b>Backpressure</b>: le code sono <em>bounded</em>. Se una coda è piena il thread HTTP
  * non viene mai bloccato: l'evento viene scartato immediatamente (drop-on-full) con un warning
@@ -40,7 +51,8 @@ import org.jboss.logging.Logger;
  *
  * <p>Proprietà di configurazione rilevanti:
  * <ul>
- *   <li>{@code app.filter.dispatcher.interval} — intervallo di drain (default: {@code 100ms})</li>
+ *   <li>{@code app.filter.dispatcher.interval.ms} — intervallo di idle sleep in ms
+ *       (default: {@code 20})</li>
  *   <li>{@code app.filter.dispatcher.queue.capacity} — capacità massima di ciascuna coda
  *       (default: {@value #DEFAULT_QUEUE_CAPACITY})</li>
  * </ul>
@@ -51,8 +63,11 @@ import org.jboss.logging.Logger;
 @ApplicationScoped
 public class TraceEventDispatcher {
 
-  /** Capacità di default di ciascuna coda (request e response). */
-  static final int DEFAULT_QUEUE_CAPACITY = 1000;
+  /**
+   * Capacità di default di ciascuna coda (request e response).
+   * Dimensionata per gestire benchmark da 5000+ richieste senza drop anche sotto carico pesante.
+   */
+  static final int DEFAULT_QUEUE_CAPACITY = 5000;
 
   /**
    * Soglia percentuale oltre la quale viene emesso un warning di pressione.
@@ -90,7 +105,7 @@ public class TraceEventDispatcher {
       String body) {
   }
 
-  // Code bounded (produttori: thread HTTP; consumatore: scheduler)
+  // Code bounded (produttori: thread HTTP; consumatore: drain thread dedicato)
   // Inizializzate in @PostConstruct dopo l'injection della configurazione.
   private ArrayBlockingQueue<RequestTrace>  requestQueue;
   private ArrayBlockingQueue<ResponseTrace> responseQueue;
@@ -98,6 +113,10 @@ public class TraceEventDispatcher {
   // Contatori di drop (visibili a sistemi di monitoring)
   private final AtomicLong droppedRequests  = new AtomicLong(0);
   private final AtomicLong droppedResponses = new AtomicLong(0);
+
+  // Stato del drain thread dedicato
+  private volatile boolean running = true;
+  private Thread drainThread;
 
   @Inject
   EventBus eventBus;
@@ -112,37 +131,62 @@ public class TraceEventDispatcher {
   String httpResponseVirtualAddress;
 
   /**
+   * Intervallo di sleep in millisecondi quando entrambe le code sono vuote (modalità idle).
+   * In modalità burst (code non vuote) il drain avviene senza sleep.
+   * Configurabile tramite {@code app.filter.dispatcher.interval.ms}.
+   */
+  @ConfigProperty(name = "app.filter.dispatcher.interval.ms", defaultValue = "20")
+  long drainIntervalMs;
+
+  /**
    * Capacità massima di ciascuna coda. Configurabile tramite
    * {@code app.filter.dispatcher.queue.capacity}.
    */
   @ConfigProperty(name = "app.filter.dispatcher.queue.capacity",
       defaultValue = "" + DEFAULT_QUEUE_CAPACITY)
   int queueCapacity;
-
-  // Costanti JSON (mirror di quelle nel filtro)
   private static final String CORRELATION_ID_HEADER = "X-Correlation-ID";
   private static final String LOCAL_DATE_TIME_IN    = "local-date-time-in";
   private static final String LOCAL_DATE_TIME_OUT   = "local-date-time-out";
 
   /**
-   * Inizializza le code bounded dopo l'injection dei valori di configurazione.
-   * Non può essere fatto a livello di campo perché {@code queueCapacity} è iniettato da CDI.
+   * Inizializza le code bounded e avvia il drain thread dedicato.
+   *
+   * <p>Il drain thread è un daemon thread completamente separato dal worker thread pool di Quarkus:
+   * non compete con i thread HTTP durante i picchi di carico e supporta qualsiasi intervallo
+   * di sleep (inclusi valori inferiori a 1000ms, non supportati da {@code SimpleScheduler}).
    */
   @PostConstruct
   void init() {
     requestQueue  = new ArrayBlockingQueue<>(queueCapacity);
     responseQueue = new ArrayBlockingQueue<>(queueCapacity);
+
+    drainThread = Thread.ofPlatform()
+        .name("trace-event-dispatcher")
+        .daemon(true)
+        .start(this::drainLoop);
+
     log.infof(
-        "TraceEventDispatcher: code inizializzate — capacity=%d, warn_threshold=%d%%",
-        queueCapacity, QUEUE_WARN_THRESHOLD_PCT);
+        "TraceEventDispatcher: avviato — capacity=%d, warn_threshold=%d%%, drain_interval_ms=%d",
+        queueCapacity, QUEUE_WARN_THRESHOLD_PCT, drainIntervalMs);
   }
 
   /**
-   * Svuota le code al momento dello shutdown per non perdere gli ultimi eventi accodati.
+   * Ferma il drain thread e svuota le code al momento dello shutdown per non perdere gli ultimi
+   * eventi accodati.
    */
   @PreDestroy
   void onShutdown() {
-    log.debug("Shutdown: flush finale delle code di trace HTTP");
+    log.debug("Shutdown: interruzione del drain thread e flush finale delle code di trace HTTP");
+    running = false;
+    if (drainThread != null) {
+      drainThread.interrupt();
+      try {
+        drainThread.join(2_000);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
+    }
     drainQueues();
   }
 
@@ -206,22 +250,37 @@ public class TraceEventDispatcher {
   }
 
   /**
-   * Drena entrambe le code e pubblica gli eventi sull'Event Bus.
+   * Loop eseguito dal drain thread dedicato.
    *
-   * <p>Eseguito periodicamente fuori da qualsiasi ciclo HTTP. L'intervallo è configurabile
-   * tramite {@code app.filter.dispatcher.interval} (default: {@code 100ms}).
-   * Se le code sono vuote il metodo termina in O(1) senza overhead.
+   * <p><b>Modalità burst</b>: quando le code contengono elementi il drain avviene in continuo
+   * senza sleep, massimizzando il throughput durante i picchi di carico.
+   *
+   * <p><b>Modalità idle</b>: quando entrambe le code sono vuote il thread dorme per
+   * {@link #drainIntervalMs} ms prima di controllare di nuovo, evitando busy-waiting a CPU piena.
    */
-  @Scheduled(every = "${app.filter.dispatcher.interval:100ms}")
-  void drain() {
-    drainQueues();
+  private void drainLoop() {
+    while (running && !Thread.currentThread().isInterrupted()) {
+      try {
+        int total = drainQueues();
+        if (total == 0) {
+          // Code vuote: sleep configurabile prima del prossimo controllo
+          Thread.sleep(drainIntervalMs);
+        }
+        // Se c'era qualcosa da drenare, reitera immediatamente senza sleep
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        break;
+      }
+    }
   }
 
   /**
    * Implementazione del drain: svuota entrambe le code e pubblica sull'Event Bus.
-   * Condiviso tra {@link #drain()} e {@link #onShutdown()}.
+   * Condiviso tra {@link #drainLoop()} e {@link #onShutdown()}.
+   *
+   * @return numero totale di eventi pubblicati in questa invocazione
    */
-  private void drainQueues() {
+  private int drainQueues() {
     int reqCount = 0;
     RequestTrace req;
     while ((req = requestQueue.poll()) != null) {
@@ -240,6 +299,7 @@ public class TraceEventDispatcher {
       log.debugf("Dispatcher: pubblicati %d request e %d response su Event Bus",
           reqCount, resCount);
     }
+    return reqCount + resCount;
   }
 
   /**

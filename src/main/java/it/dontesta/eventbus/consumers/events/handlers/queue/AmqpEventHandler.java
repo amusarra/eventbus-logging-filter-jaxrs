@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
+import org.eclipse.microprofile.reactive.messaging.OnOverflow;
 import org.jboss.logging.Logger;
 
 /**
@@ -41,9 +42,11 @@ import org.jboss.logging.Logger;
 public class AmqpEventHandler {
 
   @Channel("http-request-out")
+  @OnOverflow(value = OnOverflow.Strategy.BUFFER, bufferSize = 5000)
   Emitter<JsonObject> requestEmitter;
 
   @Channel("http-response-out")
+  @OnOverflow(value = OnOverflow.Strategy.BUFFER, bufferSize = 5000)
   Emitter<JsonObject> responseEmitter;
 
   @Inject
