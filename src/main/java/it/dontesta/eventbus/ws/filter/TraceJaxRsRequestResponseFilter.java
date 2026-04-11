@@ -1,21 +1,13 @@
 package it.dontesta.eventbus.ws.filter;
 
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.mutiny.core.eventbus.EventBus;
-import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
-import jakarta.ws.rs.container.ContainerResponseFilter;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.UriInfo;
-import jakarta.ws.rs.ext.Provider;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,46 +21,52 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.reactive.server.ServerRequestFilter;
+import org.jboss.resteasy.reactive.server.ServerResponseFilter;
 
 /**
- * Questo filtro JAX-RS è un esempio di come implementare un filtro per le richieste e le risposte
- * HTTP in un'applicazione che utilizza Jakarta EE e MicroProfile.
- *
- * <p>Gli extension point sono rappresentati dalle interfacce {@link ContainerRequestFilter} e
- * {@link ContainerResponseFilter} e questa classe implementa entrambe le interfacce.
- *
- * <p>Il filtro è annotato con {@link Provider} per essere riconosciuto come filtro JAX-RS.
- *
- * <p>La priorità del filtro è impostata a {@link Priorities#USER} per garantire che venga eseguito
- * dopo i filtri predefiniti (ad esempio, {@link Priorities#AUTHENTICATION}).
+ * Filtro HTTP basato sulle annotazioni di RESTEasy Reactive ({@link ServerRequestFilter} /
+ * {@link ServerResponseFilter}) che implementa il pattern
+ * <b>capture-only + external dispatcher</b> per il tracciamento delle richieste e risposte HTTP.
  *
  * <p>I messaggi di request e response sono elaborati solo se il parametro di configurazione
- * {@code app.filter.enabled} e impostato a {@code true}, per default è {@code false}.
+ * {@code app.filter.enabled} è impostato a {@code true}, per default è {@code false}.
  *
  * <p>L'elenco delle URI da filtrare è definito nel parametro di configurazione
  * {@code app.filter.uris}.
  *
- * <p>Per ulteriori informazioni sui filtri JAX-RS, vedere la specifica Jakarta EE: <a href="https://jakarta.ee/specifications/restful-ws/3.1/jakarta-restful-ws-spec-3.1.html#filters">JAX-RS Filter</a>
+ * <p><b>Strategia di performance — capture-only</b>:
+ * <p>Il filtro è <em>solo produttore</em>: l'unica operazione non banale che esegue è la
+ * lettura del body (inevitabile perché deve avvenire prima che l'endpoint lo consumi).
+ * Tutto il resto — costruzione dei {@link io.vertx.core.json.JsonObject}, serializzazione
+ * e publish sull'Event Bus — è delegato al {@link TraceEventDispatcher}, un task schedulato
+ * che gira <em>completamente fuori dal lifecycle HTTP</em>.
+ *
+ * <ol>
+ *   <li><b>Request filter</b>: legge il body, costruisce un {@link TraceEventDispatcher.RequestTrace}
+ *       (record leggero, solo campi stringa/primitivi) e lo deposita nella coda lock-free del
+ *       dispatcher con un'operazione O(1).</li>
+ *   <li><b>Response filter</b>: aggiunge gli header obbligatori alla risposta, costruisce un
+ *       {@link TraceEventDispatcher.ResponseTrace} e lo deposita nella coda del dispatcher.</li>
+ *   <li><b>Dispatcher schedulato</b>: drena le code a intervalli configurabili, costruisce i
+ *       {@link io.vertx.core.json.JsonObject} e pubblica sull'Event Bus — senza alcun impatto
+ *       sul throughput HTTP.</li>
+ * </ol>
+ *
+ * <p>Per ulteriori informazioni sui filtri Quarkus REST, vedere la guida:
+ * <a href="https://quarkus.io/guides/rest#via-annotations">Quarkus REST – Filters via annotations</a>
  *
  * @author Antonio Musarra
+ * @see TraceEventDispatcher
  */
-@Provider
-@Priority(Priorities.USER)
 @ApplicationScoped
-public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
-    ContainerResponseFilter {
+public class TraceJaxRsRequestResponseFilter {
 
   @Inject
-  EventBus eventBus;
+  TraceEventDispatcher dispatcher;
 
   @Inject
   Logger log;
-
-  @Context
-  UriInfo uriInfo;
-
-  @Context
-  RoutingContext routingContext;
 
   @ConfigProperty(name = "app.filter.enabled", defaultValue = "false")
   boolean filterEnabled;
@@ -76,103 +74,153 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
   @ConfigProperty(name = "app.filter.uris")
   List<String> uris;
 
-  @ConfigProperty(name = "app.eventbus.consumer.http.request.address")
-  String httpRequestVirtualAddress;
-
-  @ConfigProperty(name = "app.eventbus.consumer.http.response.address")
-  String httpResponseVirtualAddress;
-
-  private static final String CORRELATION_ID_HEADER = "X-Correlation-ID";
-
-  private static final String LOCAL_DATE_TIME_IN = "local-date-time-in";
-
-  private static final String LOCAL_DATE_TIME_OUT = "local-date-time-out";
-
+  private static final String CORRELATION_ID_HEADER     = "X-Correlation-ID";
   private static final String COOKIE_USER_TRACKING_NAME = "user_tracking_id";
+  private static final String POD_NAME_HEADER           = "X-Pod-Name";
 
-  private static final String POD_NAME_HEADER = "X-Pod-Name";
-
-  @Override
-  public void filter(ContainerRequestContext requestContext) {
-    // Se il filtro non è abilitato, esci
+  /**
+   * Filtro di richiesta HTTP — <em>solo capture + enqueue</em>.
+   *
+   * <p>Legge il body (da {@link RoutingContext#body()} se già bufferizzato dal framework,
+   * oppure dall'EntityStream come fallback), costruisce un {@link TraceEventDispatcher.RequestTrace}
+   * e lo deposita nella coda del {@link TraceEventDispatcher} con un'operazione O(1).
+   * Nessuna costruzione di {@link io.vertx.core.json.JsonObject} avviene qui.
+   *
+   * @param requestContext contesto JAX-RS della richiesta
+   * @param routingContext contesto Vert.x della richiesta
+   * @param uriInfo        informazioni sull'URI della richiesta
+   */
+  @ServerRequestFilter
+  public void requestFilter(ContainerRequestContext requestContext,
+                             RoutingContext routingContext,
+                             UriInfo uriInfo) {
     if (!filterEnabled) {
       return;
     }
 
-    // Ottieni l'URI della richiesta
     String requestUri = uriInfo.getRequestUri().getPath();
-
-    // Genera l'ID di correlazione dalla richiesta
     String correlationId = getCorrelationId(requestContext.getHeaderString(CORRELATION_ID_HEADER));
-
-    // Aggiungi l'ID di correlazione alla richiesta
     requestContext.setProperty(CORRELATION_ID_HEADER, correlationId);
 
-    // Applica la logica del filtro in base all'URI
     if (requestUriIsFiltered(requestUri)) {
-      // Aggiungi la data ora di quando la richiesta arriva al filtro
-      requestContext.setProperty(LOCAL_DATE_TIME_IN, Instant.now());
+      String mediaType = requestContext.getMediaType() == null ? null :
+          "%s/%s".formatted(requestContext.getMediaType().getType(),
+              requestContext.getMediaType().getSubtype());
 
-      /*
-       * Se l'URI richiesto è presente nell'elenco delle URI da filtrare
-       * prepara e invia il messaggio della richiesta verso la destinazione
-       * dell\'Event Bus.
-       */
-      eventBus.publish(httpRequestVirtualAddress, prepareMessage(requestContext));
+      // Enqueue O(1): l'unica operazione "costosa" è la lettura del body (inevitabile)
+      dispatcher.enqueueRequest(new TraceEventDispatcher.RequestTrace(
+          correlationId,
+          routingContext.request().remoteAddress().host(),
+          new HashMap<>(requestContext.getHeaders()),           // copia headers prima che scadano
+          readBody(requestContext, routingContext),             // lettura body con fast-path
+          requestContext.getUriInfo().getRequestUri().toString(),
+          Instant.now().toString(),
+          requestContext.getMethod(),
+          mediaType,
+          requestContext.getAcceptableLanguages().toString(),
+          requestContext.getAcceptableMediaTypes().toString()
+      ));
 
-      log.debug("Pubblicazione del messaggio della richiesta HTTP su Event Bus");
-    }
-  }
-
-  @Override
-  public void filter(ContainerRequestContext requestContext,
-                     ContainerResponseContext responseContext) {
-    // Se il filtro non è abilitato, esci
-    if (!filterEnabled) {
-      return;
-    }
-
-
-    // Recupera l'ID di correlazione dalla richiesta
-    String correlationId =
-        getCorrelationId((String) requestContext.getProperty(CORRELATION_ID_HEADER));
-
-    // Aggiungi l'ID di correlazione alla risposta
-    responseContext.getHeaders().add(CORRELATION_ID_HEADER, correlationId);
-
-    // Aggiungi il cookie alla risposta HTTP
-    setCookieUserTracing(requestContext, responseContext);
-
-    // Ottieni l'URI della richiesta
-    String requestUri = uriInfo.getRequestUri().getPath();
-
-    // Aggiungi l'header X-Pod-Name alla risposta
-    responseContext.getHeaders().add(POD_NAME_HEADER, System.getenv("HOSTNAME"));
-
-    // Applica la logica del filtro in base all'URI
-    if (requestUriIsFiltered(requestUri)) {
-      /*
-       * Se l'URI richiesto è presente nell'elenco delle URI da filtrare
-       * prepara e invia il messaggio della richiesta verso la destinazione
-       * dell\'Event Bus.
-       */
-      eventBus.publish(httpResponseVirtualAddress, prepareMessage(responseContext));
-
-      log.debug("Pubblicazione del messaggio della risposta HTTP su Event Bus");
+      log.debug("RequestTrace accodata nel dispatcher");
     }
   }
 
   /**
-   * Ottiene l'ID di correlazione.
-   * Se l'ID di correlazione è nullo, genera un nuovo ID di correlazione.
-   * Questo metodo è utilizzato per garantire che l'ID di correlazione sia sempre presente,
-   * sia nella richiesta che nella risposta. Il formato dell'ID di correlazione è un UUID.
+   * Filtro di risposta HTTP — aggiunge gli header obbligatori e <em>solo enqueue</em>.
    *
-   * @param correlationId L'ID di correlazione
-   * @return L'ID di correlazione
+   * <p>Aggiunge gli header {@code X-Correlation-ID}, {@code X-Pod-Name} e il cookie di
+   * tracciamento (operazioni che devono essere nel filtro perché fanno parte della risposta
+   * HTTP), poi costruisce un {@link TraceEventDispatcher.ResponseTrace} e lo deposita nella
+   * coda del {@link TraceEventDispatcher} con un'operazione O(1).
+   *
+   * @param requestContext  contesto JAX-RS della richiesta
+   * @param responseContext contesto JAX-RS della risposta
+   * @param routingContext  contesto Vert.x della richiesta (non usato, richiesto dalla firma)
+   * @param uriInfo         informazioni sull'URI della richiesta
+   */
+  @ServerResponseFilter
+  public void responseFilter(ContainerRequestContext requestContext,
+                              ContainerResponseContext responseContext,
+                              RoutingContext routingContext,
+                              UriInfo uriInfo) {
+    if (!filterEnabled) {
+      return;
+    }
+
+    // Header obbligatori - devono stare nel filtro perché fanno parte della risposta HTTP
+    String correlationId =
+        getCorrelationId((String) requestContext.getProperty(CORRELATION_ID_HEADER));
+    responseContext.getHeaders().add(CORRELATION_ID_HEADER, correlationId);
+    setCookieUserTracing(requestContext, responseContext);
+    responseContext.getHeaders().add(POD_NAME_HEADER, System.getenv("HOSTNAME"));
+
+    String requestUri = uriInfo.getRequestUri().getPath();
+    if (requestUriIsFiltered(requestUri)) {
+      // Enqueue O(1): snapshot dei dati della risposta (solo primitive/stringhe)
+      dispatcher.enqueueResponse(new TraceEventDispatcher.ResponseTrace(
+          correlationId,
+          Instant.now().toString(),
+          responseContext.getStatus(),
+          responseContext.getStatusInfo().getFamily().name(),
+          responseContext.getStatusInfo().getReasonPhrase(),
+          getResponseHeaders(responseContext),
+          responseContext.getEntity() == null ? null : responseContext.getEntity().toString()
+      ));
+
+      log.debug("ResponseTrace accodata nel dispatcher");
+    }
+  }
+
+  /**
+   * Legge il body della richiesta con strategia a due livelli:
+   * <ol>
+   *   <li><b>Fast path</b>: {@link RoutingContext#body()} — accesso O(1) al buffer già
+   *       presente in memoria (zero I/O), usato quando il framework ha già bufferizzato
+   *       il body prima che il filtro venisse invocato.</li>
+   *   <li><b>Fallback</b>: lettura dall'EntityStream con ripristino automatico dello stream
+   *       affinché l'endpoint possa rileggerlo.</li>
+   * </ol>
+   *
+   * @param requestContext contesto JAX-RS
+   * @param routingContext contesto Vert.x
+   * @return Il corpo della richiesta come stringa UTF-8, mai {@code null}
+   */
+  private String readBody(ContainerRequestContext requestContext, RoutingContext routingContext) {
+    // Fast path: body già bufferizzato nel RoutingContext (zero I/O)
+    io.vertx.ext.web.RequestBody rb = routingContext.body();
+    if (rb != null) {
+      io.vertx.core.buffer.Buffer buf = rb.buffer();
+      if (buf != null && buf.length() > 0) {
+        return buf.toString(StandardCharsets.UTF_8.name());
+      }
+    }
+
+    // Fallback: legge dall'EntityStream (bloccante — accettabile sul worker thread)
+    try {
+      ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+      try (InputStream in = requestContext.getEntityStream()) {
+        byte[] data = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = in.read(data)) != -1) {
+          buffer.write(data, 0, bytesRead);
+        }
+      }
+      byte[] bodyBytes = buffer.toByteArray();
+      requestContext.setEntityStream(new ByteArrayInputStream(bodyBytes)); // ripristina per l'endpoint
+      return buffer.toString(StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      log.warnf("Impossibile leggere il body della richiesta per il tracing: %s", e.getMessage());
+      return "";
+    }
+  }
+
+  /**
+   * Ottiene l'ID di correlazione. Se {@code null}, genera un nuovo UUID.
+   *
+   * @param correlationId l'ID di correlazione da validare
+   * @return L'ID di correlazione non nullo
    */
   private String getCorrelationId(String correlationId) {
-    // Genera un nuovo ID di correlazione se quello attuale è nullo
     if (correlationId == null) {
       correlationId = UUID.randomUUID().toString();
     }
@@ -180,8 +228,8 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
   }
 
   /**
-   * Conversione degli header della risposta in una mappa di stringhe
-   * rispetto all'oggetto {@link jakarta.ws.rs.core.MultivaluedHashMap}  restituito da getHeaders().
+   * Converte gli header della risposta in una {@link Map} di stringhe piatte
+   * (più valori per lo stesso header uniti con {@code ", "}).
    *
    * @param responseContext Il contesto della risposta
    * @return La mappa degli header della risposta
@@ -191,138 +239,43 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
     for (Map.Entry<String, List<Object>> entry : responseContext.getHeaders().entrySet()) {
       String key = entry.getKey();
       List<Object> values = entry.getValue();
-      StringBuilder valueBuilder = new StringBuilder();
+      StringBuilder sb = new StringBuilder();
       for (Object value : values) {
         if (value != null) {
-          if (!valueBuilder.isEmpty()) {
-            valueBuilder.append(", ");
+          if (!sb.isEmpty()) {
+            sb.append(", ");
           }
-          valueBuilder.append(value);
+          sb.append(value);
         }
       }
-      stringMap.put(key, valueBuilder.toString());
+      stringMap.put(key, sb.toString());
     }
     return stringMap;
   }
 
   /**
-   * Ottieni il corpo della richiesta.
-   * Questo metodo legge il corpo della richiesta e lo memorizza in un contenitore appropriato.
-   * Il corpo della richiesta viene memorizzato in un oggetto appropriato per l'accesso successivo
-   * e l'entità della richiesta viene ricollegata all'input stream originale.
-   * Questo è necessario perché una volta che il corpo della richiesta è letto, l'input stream
-   * non può essere letto nuovamente.
-   *
-   * @param requestContext Il contesto della richiesta
-   * @return Il corpo della richiesta
-   * @throws IOException Se si verifica un errore durante la lettura del corpo della richiesta
-   */
-  private String getRequestBody(ContainerRequestContext requestContext) throws IOException {
-    // Leggi il corpo della richiesta e memorizzalo in un contenitore appropriato
-    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-    try (InputStream in = requestContext.getEntityStream()) {
-      int bytesRead;
-      byte[] data = new byte[1024];
-      while ((bytesRead = in.read(data)) != -1) {
-        buffer.write(data, 0, bytesRead);
-      }
-    }
-
-    // Memorizza il corpo della richiesta in un oggetto appropriato per l'accesso successivo
-    requestContext.setProperty("requestBody", buffer.toByteArray());
-
-    // Ricollega l'entità della richiesta all'input stream originale
-    ByteArrayInputStream input = new ByteArrayInputStream(buffer.toByteArray());
-    requestContext.setEntityStream(input);
-
-    return buffer.toString(StandardCharsets.UTF_8);
-  }
-
-  /**
-   * Prepara il messaggio della richiesta in formato JSON per l'invio all'Event Bus.
-   *
-   * <p>Il messaggio restituito contiene le informazioni relative alla richiesta HTTP
-   * come URI, headers, corpo, metodo, media-type, lingua accettata, ecc.
-   *
-   * <p>È in formato {@link JsonObject} per essere inviato direttamente all'Event Bus.
-   *
-   * @param requestContext Il contesto della richiesta
-   * @return JsonObject Il messaggio della richiesta in formato JSON
-   */
-  private JsonObject prepareMessage(ContainerRequestContext requestContext) {
-    JsonObject jsonObject;
-    try {
-      String mediaType = requestContext.getMediaType() == null ? null :
-          "%s/%s".formatted(requestContext.getMediaType().getType(),
-              requestContext.getMediaType().getSubtype());
-
-      jsonObject = new JsonObject()
-          .put(CORRELATION_ID_HEADER, requestContext.getProperty(CORRELATION_ID_HEADER))
-          .put("remote-ip-address", routingContext.request().remoteAddress().host())
-          .put("headers", requestContext.getHeaders())
-          .put("body", getRequestBody(requestContext))
-          .put("uri-info", requestContext.getUriInfo().getRequestUri().toString())
-          .put(LOCAL_DATE_TIME_IN, requestContext.getProperty(LOCAL_DATE_TIME_IN).toString())
-          .put("method", requestContext.getMethod())
-          .put("media-type", mediaType)
-          .put("acceptable-language", requestContext.getAcceptableLanguages().toString())
-          .put("acceptable-media-types", requestContext.getAcceptableMediaTypes().toString());
-    } catch (IOException ioException) {
-      log.error("Errore nella generazione del JSON dal requestContext object");
-      throw new RuntimeException(ioException);
-    }
-
-    return jsonObject;
-  }
-
-  /**
-   * Prepara il messaggio della risposta in formato JSON per l'invio all'Event Bus.
-   *
-   * <p>Il messaggio restituito contiene le informazioni relative alla risposta HTTP
-   * come status, headers, corpo, ecc.
-   *
-   * <p>È in formato {@link JsonObject} per essere inviato direttamente all'Event Bus.
-   *
-   * @param responseContext Il contesto della risposta
-   * @return JsonObject Il messaggio della risposta in formato JSON
-   */
-  private JsonObject prepareMessage(ContainerResponseContext responseContext) {
-    return new JsonObject()
-        .put(CORRELATION_ID_HEADER,
-            responseContext.getHeaders().get(CORRELATION_ID_HEADER).getFirst())
-        .put(LOCAL_DATE_TIME_OUT, Instant.now())
-        .put("status", responseContext.getStatus())
-        .put("status-info-family-name", responseContext.getStatusInfo().getFamily().name())
-        .put("status-info-reason", responseContext.getStatusInfo().getReasonPhrase())
-        .put("headers", getResponseHeaders(responseContext))
-        .put("body",
-            responseContext.getEntity() == null ? null : responseContext.getEntity().toString());
-  }
-
-  /**
    * Verifica se la Request URI è tra quelle che devono essere filtrate.
-   * Il parametro di configurazione app.filter.uris contiene l'elenco delle URI.
    *
    * @param requestUri La Request URI da verificare
-   * @return true se la Request URI è tra quelle che devono essere filtrate, false altrimenti
+   * @return {@code true} se la Request URI deve essere filtrata
    */
   private boolean requestUriIsFiltered(String requestUri) {
-    log.debugf("La Request URI %s è tra quelle che devono essere filtrate", requestUri);
-
+    log.debugf("Verifica URI filtrata: %s", requestUri);
     return uris.stream().anyMatch(requestUri::startsWith);
   }
 
+  /**
+   * Imposta il cookie di tracciamento utente sulla risposta se non è già presente.
+   *
+   * @param requestContext  Il contesto della richiesta
+   * @param responseContext Il contesto della risposta
+   */
   private void setCookieUserTracing(ContainerRequestContext requestContext,
                                     ContainerResponseContext responseContext) {
-    String trackingCode = UUID.randomUUID().toString();
-
-    // Verifica se esiste già un cookie di tracciamento nella richiesta
     Cookie trackingCookie = requestContext.getCookies().get(COOKIE_USER_TRACKING_NAME);
     if (trackingCookie == null) {
-
-      // Imposta il cookie di tracciamento utente sulla risposta
       NewCookie newTrackingCookie = new NewCookie.Builder(COOKIE_USER_TRACKING_NAME)
-          .value(trackingCode)
+          .value(UUID.randomUUID().toString())
           .domain(null)
           .path("/")
           .comment("Cookie di tracciamento dell'utente")
@@ -330,7 +283,6 @@ public class TraceJaxRsRequestResponseFilter implements ContainerRequestFilter,
           .secure(false)
           .httpOnly(true)
           .build();
-
       responseContext.getHeaders().add("Set-Cookie", newTrackingCookie);
     }
   }
