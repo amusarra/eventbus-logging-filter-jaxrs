@@ -1,3 +1,7 @@
+/*
+ * SPDX-FileCopyrightText: 2024 Antonio Musarra's Blog <https://www.dontesta.it>
+ * SPDX-License-Identifier: MIT
+ */
 package it.dontesta.eventbus.orm.panache.repository;
 
 import java.time.LocalDate;

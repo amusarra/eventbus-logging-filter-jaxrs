@@ -1,3 +1,7 @@
+/*
+ * SPDX-FileCopyrightText: 2024 Antonio Musarra's Blog <https://www.dontesta.it>
+ * SPDX-License-Identifier: MIT
+ */
 package it.dontesta.eventbus.ws.resources.endpoint.repository.v1;
 
 import java.util.List;

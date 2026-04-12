@@ -1,3 +1,7 @@
+/*
+ * SPDX-FileCopyrightText: 2024 Antonio Musarra's Blog <https://www.dontesta.it>
+ * SPDX-License-Identifier: MIT
+ */
 package it.dontesta.eventbus.application.configuration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

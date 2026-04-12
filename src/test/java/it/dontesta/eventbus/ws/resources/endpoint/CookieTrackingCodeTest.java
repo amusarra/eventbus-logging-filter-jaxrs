@@ -1,3 +1,7 @@
+/*
+ * SPDX-FileCopyrightText: 2024 Antonio Musarra's Blog <https://www.dontesta.it>
+ * SPDX-License-Identifier: MIT
+ */
 package it.dontesta.eventbus.ws.resources.endpoint;
 
 import static io.restassured.RestAssured.given;

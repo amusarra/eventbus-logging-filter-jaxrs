@@ -6,6 +6,7 @@
   <version>1.3.1-SNAPSHOT</version>
   <name>eventbus-logging-filter-jaxrs</name>
   <description>Event Bus Logging Filter JAX-RS</description>
+  <inceptionYear>2024</inceptionYear>
   <url>https://amusarra.github.io/eventbus-logging-filter-jaxrs-docs</url>
   <organization>
     <name>Antonio Musarra's Blog</name>
@@ -51,8 +52,10 @@
     <quarkus.platform.version>3.34.3</quarkus.platform.version>
     <skipITs>true</skipITs>
     <format.skip>false</format.skip>
+    <license.skip>false</license.skip>
     <impsort-maven-plugin.version>1.12.0</impsort-maven-plugin.version>
     <formatter-maven-plugin.version>2.24.1</formatter-maven-plugin.version>
+    <license-maven-plugin.version>4.6</license-maven-plugin.version>
     <sonar.coverage.jacoco.xmlReportPaths>target/jacoco-report/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>amusarra-github</sonar.organization>
@@ -291,13 +294,11 @@
         </configuration>
       </plugin>
       <!--
-        ══════════════════════════════════════════════════════════════════════
         Formattazione del codice — stile Quarkus
         Eseguire con:  ./mvnw process-sources
         Saltare in CI: ./mvnw verify -Dformat.skip=true
         Verificare (senza modificare) con:
           ./mvnw formatter:validate impsort:check
-        ══════════════════════════════════════════════════════════════════════
       -->
       <plugin>
         <groupId>net.revelc.code.formatter</groupId>
@@ -344,6 +345,55 @@
             <!-- process-sources è la fase di default di impsort:sort -->
             <goals>
               <goal>sort</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!--
+        Header SPDX di licenza — stile REUSE (https://reuse.software)
+        Aggiunge/aggiorna l'header SPDX in tutti i file sorgenti Java.
+
+        Eseguire con:  ./mvnw process-sources
+        Saltare in CI: ./mvnw verify -Dlicense.skip=true
+        Verificare (senza modificare) con:
+          ./mvnw license:check
+      -->
+      <plugin>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>${license-maven-plugin.version}</version>
+        <configuration>
+          <licenseSets>
+            <licenseSet>
+              <!-- Template SPDX: src/license/header.txt -->
+              <header>src/license/header.txt</header>
+              <includes>
+                <include>src/main/java/**/*.java</include>
+                <include>src/test/java/**/*.java</include>
+              </includes>
+              <excludes>
+                <!-- Esclude file generati e package-info senza corpo -->
+                <exclude>**/package-info.java</exclude>
+              </excludes>
+            </licenseSet>
+          </licenseSets>
+          <!-- Usa lo stile /* … */ per i file Java -->
+          <mapping>
+            <java>SLASHSTAR_STYLE</java>
+          </mapping>
+          <!-- Proprietà interpolate nel template header.txt -->
+          <properties>
+            <owner>${project.organization.name}</owner>
+            <url>${project.organization.url}</url>
+          </properties>
+          <skip>${license.skip}</skip>
+        </configuration>
+        <executions>
+          <execution>
+            <id>add-license-header</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>format</goal>
             </goals>
           </execution>
         </executions>
