@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.core.Cookie;
@@ -103,7 +104,7 @@ public class TraceJaxRsRequestResponseFilter {
      * @param routingContext contesto Vert.x della richiesta
      * @param uriInfo informazioni sull'URI della richiesta
      */
-    @ServerRequestFilter
+    @ServerRequestFilter(priority = Priorities.AUTHENTICATION)
     public void requestFilter(ContainerRequestContext requestContext,
             RoutingContext routingContext,
             UriInfo uriInfo) {
@@ -151,7 +152,7 @@ public class TraceJaxRsRequestResponseFilter {
      * @param routingContext contesto Vert.x della richiesta (non usato, richiesto dalla firma)
      * @param uriInfo informazioni sull'URI della richiesta
      */
-    @ServerResponseFilter
+    @ServerResponseFilter(priority = Priorities.AUTHENTICATION - 1)
     public void responseFilter(ContainerRequestContext requestContext,
             ContainerResponseContext responseContext,
             RoutingContext routingContext,
