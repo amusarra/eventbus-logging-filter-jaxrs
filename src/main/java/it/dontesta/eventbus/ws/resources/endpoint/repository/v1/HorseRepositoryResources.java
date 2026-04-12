@@ -1,10 +1,9 @@
 package it.dontesta.eventbus.ws.resources.endpoint.repository.v1;
 
-import io.quarkus.panache.common.Page;
-import it.dontesta.eventbus.orm.panache.entity.Horse;
-import it.dontesta.eventbus.orm.panache.entity.Owner;
-import it.dontesta.eventbus.orm.panache.repository.HorseRepository;
-import it.dontesta.eventbus.ws.input.wrapper.HorseListWrapper;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -20,10 +19,14 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 import org.jboss.logging.Logger;
+
+import io.quarkus.panache.common.Page;
+import it.dontesta.eventbus.orm.panache.entity.Horse;
+import it.dontesta.eventbus.orm.panache.entity.Owner;
+import it.dontesta.eventbus.orm.panache.repository.HorseRepository;
+import it.dontesta.eventbus.ws.input.wrapper.HorseListWrapper;
 
 /**
  * This class represents the REST endpoint for the Horse repository.
@@ -33,170 +36,170 @@ import org.jboss.logging.Logger;
 @Consumes(MediaType.APPLICATION_JSON)
 public class HorseRepositoryResources {
 
-  @Inject
-  HorseRepository horseRepository;
+    @Inject
+    HorseRepository horseRepository;
 
-  @Inject
-  Logger log;
+    @Inject
+    Logger log;
 
-  /**
-   * Retrieves all horses from the repository.
-   *
-   * @return A list of horses.
-   */
-  @GET
-  public List<Horse> getAllHorses(@QueryParam("limit") Integer limit) {
-    if (limit != null) {
-      return horseRepository.findAll().page(Page.ofSize(limit)).list();
-    }
-    return horseRepository.findAll().list();
-  }
-
-  /**
-   * Retrieves horse by ID from the repository.
-   *
-   * @param id The ID of the horse.
-   * @return The horse.
-   */
-  @GET
-  @Path("{id}")
-  public Horse getHorseById(@NotNull Long id) {
-    Horse horse = horseRepository.findById(id);
-
-    if (horse == null) {
-      throw new WebApplicationException("Horse with id of " + id + " not found",
-          Response.Status.NOT_FOUND);
+    /**
+     * Retrieves all horses from the repository.
+     *
+     * @return A list of horses.
+     */
+    @GET
+    public List<Horse> getAllHorses(@QueryParam("limit") Integer limit) {
+        if (limit != null) {
+            return horseRepository.findAll().page(Page.ofSize(limit)).list();
+        }
+        return horseRepository.findAll().list();
     }
 
-    return horse;
-  }
+    /**
+     * Retrieves horse by ID from the repository.
+     *
+     * @param id The ID of the horse.
+     * @return The horse.
+     */
+    @GET
+    @Path("{id}")
+    public Horse getHorseById(@NotNull Long id) {
+        Horse horse = horseRepository.findById(id);
 
-  /**
-   * Retrieves the number of horses in the repository.
-   *
-   * @return The number of horses.
-   */
-  @GET
-  @Path("count")
-  public long countHorses() {
-    return horseRepository.count();
-  }
+        if (horse == null) {
+            throw new WebApplicationException("Horse with id of " + id + " not found",
+                    Response.Status.NOT_FOUND);
+        }
 
-  /**
-   * This method creates a new horse.
-   *
-   * @param horse The horse to create.
-   * @return The created horse.
-   */
-  @POST
-  @Transactional
-  public Response createHorse(@NotNull Horse horse) {
-    // Return a 422 Unprocessable Entity if an ID was provided
-    // Not used the constant Response.Status.UNPROCESSABLE_ENTITY because it is not available in the
-    // version of the Jakarta EE API used by Quarkus
-    if (horse.id != null) {
-      throw new WebApplicationException("Id was invalidly set on request.", 422);
+        return horse;
     }
 
-    horseRepository.persist(horse);
-    return Response.ok(horse).status(Response.Status.CREATED).build();
-  }
-
-  /**
-   * This method creates a horses from a list of horses.
-   *
-   * @param horseListWrapper The list of horses to create.
-   * @return The created horses.
-   */
-  @POST
-  @Path("list")
-  @Transactional
-  public Response createHorses(@Valid HorseListWrapper horseListWrapper) {
-    // Return a 422 Unprocessable Entity if an ID was provided
-    horseListWrapper.getHorses().forEach(horse -> {
-      if (horse.id != null) {
-        throw new WebApplicationException("Id was invalidly set on request.", 422);
-      }
-      horseRepository.persist(horse);
-    });
-    return Response.ok(horseListWrapper).status(Response.Status.CREATED).build();
-  }
-
-  /**
-   * This method updates a horse.
-   *
-   * @param id The ID of the horse.
-   * @param horse The horse to update.
-   * @return The updated horse.
-   */
-  @PUT
-  @Path("{id}")
-  @Transactional
-  public Horse updateHorse(@NotNull Long id, @NotNull Horse horse) {
-    Horse entity = horseRepository.findById(id);
-
-    if (entity == null) {
-      throw new WebApplicationException("Horse with id of %d not found".formatted(id),
-          Response.Status.NOT_FOUND);
+    /**
+     * Retrieves the number of horses in the repository.
+     *
+     * @return The number of horses.
+     */
+    @GET
+    @Path("count")
+    public long countHorses() {
+        return horseRepository.count();
     }
 
-    entity.name = horse.name;
-    entity.sex = horse.sex;
-    entity.coat = horse.coat;
-    entity.breed = horse.breed;
-    entity.dateOfBirth = horse.dateOfBirth;
+    /**
+     * This method creates a new horse.
+     *
+     * @param horse The horse to create.
+     * @return The created horse.
+     */
+    @POST
+    @Transactional
+    public Response createHorse(@NotNull Horse horse) {
+        // Return a 422 Unprocessable Entity if an ID was provided
+        // Not used the constant Response.Status.UNPROCESSABLE_ENTITY because it is not available in the
+        // version of the Jakarta EE API used by Quarkus
+        if (horse.id != null) {
+            throw new WebApplicationException("Id was invalidly set on request.", 422);
+        }
 
-    entity.owners.forEach(owner -> log.debug("Existing owner: %s".formatted(owner.name)));
-
-    // Create a Set of owner IDs from entity.owners
-    Set<Long> entityOwnerIds = entity.owners.stream().map(owner -> owner.id).collect(Collectors.toSet());
-
-    // Filter the owners of horse.owners that are not present in entity.owners
-    List<Owner> newOwners = horse.owners.stream()
-        .filter(horseOwner -> !entityOwnerIds.contains(horseOwner.id))
-        .toList();
-
-    // Create the new owners with the IDs and add them to entity.owners
-    newOwners.forEach(horseOwner -> {
-      Owner owner = new Owner();
-      owner.id = horseOwner.id;
-      entity.owners.add(owner);
-    });
-
-    return entity;
-  }
-
-  /**
-   * This method deletes a horse by its ID.
-   *
-   * @param id The ID of the horse.
-   * @return The response.
-   */
-  @DELETE
-  @Path("{id}")
-  @Transactional
-  public Response deleteHorse(@NotNull Long id) {
-    Horse horse = horseRepository.findById(id);
-
-    if (horse == null) {
-      throw new WebApplicationException("Horse with id of " + id + " not found",
-          Response.Status.NOT_FOUND);
+        horseRepository.persist(horse);
+        return Response.ok(horse).status(Response.Status.CREATED).build();
     }
 
-    horseRepository.delete(horse);
-    return Response.status(Response.Status.NO_CONTENT).build();
-  }
+    /**
+     * This method creates a horses from a list of horses.
+     *
+     * @param horseListWrapper The list of horses to create.
+     * @return The created horses.
+     */
+    @POST
+    @Path("list")
+    @Transactional
+    public Response createHorses(@Valid HorseListWrapper horseListWrapper) {
+        // Return a 422 Unprocessable Entity if an ID was provided
+        horseListWrapper.getHorses().forEach(horse -> {
+            if (horse.id != null) {
+                throw new WebApplicationException("Id was invalidly set on request.", 422);
+            }
+            horseRepository.persist(horse);
+        });
+        return Response.ok(horseListWrapper).status(Response.Status.CREATED).build();
+    }
 
-  /**
-   * This method deletes all horses.
-   *
-   * @return The response.
-   */
-  @DELETE
-  @Path("all")
-  @Transactional
-  public Response deleteAllHorses() {
-    horseRepository.deleteAll();
-    return Response.status(Response.Status.NO_CONTENT).build();
-  }
+    /**
+     * This method updates a horse.
+     *
+     * @param id The ID of the horse.
+     * @param horse The horse to update.
+     * @return The updated horse.
+     */
+    @PUT
+    @Path("{id}")
+    @Transactional
+    public Horse updateHorse(@NotNull Long id, @NotNull Horse horse) {
+        Horse entity = horseRepository.findById(id);
+
+        if (entity == null) {
+            throw new WebApplicationException("Horse with id of %d not found".formatted(id),
+                    Response.Status.NOT_FOUND);
+        }
+
+        entity.name = horse.name;
+        entity.sex = horse.sex;
+        entity.coat = horse.coat;
+        entity.breed = horse.breed;
+        entity.dateOfBirth = horse.dateOfBirth;
+
+        entity.owners.forEach(owner -> log.debug("Existing owner: %s".formatted(owner.name)));
+
+        // Create a Set of owner IDs from entity.owners
+        Set<Long> entityOwnerIds = entity.owners.stream().map(owner -> owner.id).collect(Collectors.toSet());
+
+        // Filter the owners of horse.owners that are not present in entity.owners
+        List<Owner> newOwners = horse.owners.stream()
+                .filter(horseOwner -> !entityOwnerIds.contains(horseOwner.id))
+                .toList();
+
+        // Create the new owners with the IDs and add them to entity.owners
+        newOwners.forEach(horseOwner -> {
+            Owner owner = new Owner();
+            owner.id = horseOwner.id;
+            entity.owners.add(owner);
+        });
+
+        return entity;
+    }
+
+    /**
+     * This method deletes a horse by its ID.
+     *
+     * @param id The ID of the horse.
+     * @return The response.
+     */
+    @DELETE
+    @Path("{id}")
+    @Transactional
+    public Response deleteHorse(@NotNull Long id) {
+        Horse horse = horseRepository.findById(id);
+
+        if (horse == null) {
+            throw new WebApplicationException("Horse with id of " + id + " not found",
+                    Response.Status.NOT_FOUND);
+        }
+
+        horseRepository.delete(horse);
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    /**
+     * This method deletes all horses.
+     *
+     * @return The response.
+     */
+    @DELETE
+    @Path("all")
+    @Transactional
+    public Response deleteAllHorses() {
+        horseRepository.deleteAll();
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
 }

@@ -16,19 +16,17 @@ import jakarta.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 public class EchoResourceEndPoint {
 
-  /**
-   * This method echoes the input parameter.
-   *
-   * @param input the input parameter
-   *
-   * @return the response
-   */
-  @Path("echo")
-  @POST
-  public Response echo(
-      @Size(min = 32, max = 4096,
-          message = "Il parametro di input deve essere compreso tra 32 byte e 4 KB")
-      String input) {
-    return Response.ok(input).build();
-  }
+    /**
+     * This method echoes the input parameter.
+     *
+     * @param input the input parameter
+     *
+     * @return the response
+     */
+    @Path("echo")
+    @POST
+    public Response echo(
+            @Size(min = 32, max = 4096, message = "Il parametro di input deve essere compreso tra 32 byte e 4 KB") String input) {
+        return Response.ok(input).build();
+    }
 }
