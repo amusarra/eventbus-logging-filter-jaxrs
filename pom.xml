@@ -381,11 +381,11 @@
           <mapping>
             <java>SLASHSTAR_STYLE</java>
           </mapping>
-          <!-- Proprietà interpolate nel template header.txt -->
-          <properties>
-            <owner>${project.organization.name}</owner>
-            <organizationUrl>${project.organization.url}</organizationUrl>
-          </properties>
+          <!--
+            Le espressioni ${project.*} nel template header.txt sono risolte
+            direttamente dal modello Maven (non da custom <properties>) e
+            funzionano in qualsiasi contesto: mvn, quarkus:dev, ecc.
+          -->
           <skip>${license.skip}</skip>
         </configuration>
         <executions>
