@@ -46,12 +46,12 @@ import io.vertx.ext.web.RoutingContext;
  * {@code app.filter.uris}.
  *
  * <p>
- * <b>Strategia di performance — capture-only</b>:
+ * <b>Strategia di performance - capture-only</b>:
  * <p>
  * Il filtro è <em>solo produttore</em>: l'unica operazione non banale che esegue è la
  * lettura del body (inevitabile perché deve avvenire prima che l'endpoint lo consumi).
- * Tutto il resto — costruzione dei {@link io.vertx.core.json.JsonObject}, serializzazione
- * e publish sull'Event Bus — è delegato al {@link TraceEventDispatcher}, un task schedulato
+ * Tutto il resto - costruzione dei {@link io.vertx.core.json.JsonObject}, serializzazione
+ * e publish sull'Event Bus - è delegato al {@link TraceEventDispatcher}, un task schedulato
  * che gira <em>completamente fuori dal lifecycle HTTP</em>.
  *
  * <ol>
@@ -61,7 +61,7 @@ import io.vertx.ext.web.RoutingContext;
  * <li><b>Response filter</b>: aggiunge gli header obbligatori alla risposta, costruisce un
  * {@link TraceEventDispatcher.ResponseTrace} e lo deposita nella coda del dispatcher.</li>
  * <li><b>Dispatcher schedulato</b>: drena le code a intervalli configurabili, costruisce i
- * {@link io.vertx.core.json.JsonObject} e pubblica sull'Event Bus — senza alcun impatto
+ * {@link io.vertx.core.json.JsonObject} e pubblica sull'Event Bus - senza alcun impatto
  * sul throughput HTTP.</li>
  * </ol>
  *
@@ -92,7 +92,7 @@ public class TraceJaxRsRequestResponseFilter {
     private static final String POD_NAME_HEADER = "X-Pod-Name";
 
     /**
-     * Filtro di richiesta HTTP — <em>solo capture + enqueue</em>.
+     * Filtro di richiesta HTTP - <em>solo capture + enqueue</em>.
      *
      * <p>
      * Legge il body (da {@link RoutingContext#body()} se già bufferizzato dal framework,
@@ -139,7 +139,7 @@ public class TraceJaxRsRequestResponseFilter {
     }
 
     /**
-     * Filtro di risposta HTTP — aggiunge gli header obbligatori e <em>solo enqueue</em>.
+     * Filtro di risposta HTTP - aggiunge gli header obbligatori e <em>solo enqueue</em>.
      *
      * <p>
      * Aggiunge gli header {@code X-Correlation-ID}, {@code X-Pod-Name} e il cookie di
@@ -186,7 +186,7 @@ public class TraceJaxRsRequestResponseFilter {
     /**
      * Legge il body della richiesta con strategia a due livelli:
      * <ol>
-     * <li><b>Fast path</b>: {@link RoutingContext#body()} — accesso O(1) al buffer già
+     * <li><b>Fast path</b>: {@link RoutingContext#body()} - accesso O(1) al buffer già
      * presente in memoria (zero I/O), usato quando il framework ha già bufferizzato
      * il body prima che il filtro venisse invocato.</li>
      * <li><b>Fallback</b>: lettura dall'EntityStream con ripristino automatico dello stream
@@ -207,7 +207,7 @@ public class TraceJaxRsRequestResponseFilter {
             }
         }
 
-        // Fallback: legge dall'EntityStream (bloccante — accettabile sul worker thread)
+        // Fallback: legge dall'EntityStream (bloccante - accettabile sul worker thread)
         try {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             try (InputStream in = requestContext.getEntityStream()) {

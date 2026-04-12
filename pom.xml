@@ -294,7 +294,7 @@
         </configuration>
       </plugin>
       <!--
-        Formattazione del codice — stile Quarkus
+        Formattazione del codice - stile Quarkus
         Eseguire con:  ./mvnw process-sources
         Saltare in CI: ./mvnw verify -Dformat.skip=true
         Verificare (senza modificare) con:
@@ -350,7 +350,7 @@
         </executions>
       </plugin>
       <!--
-        Header SPDX di licenza — stile REUSE (https://reuse.software)
+        Header SPDX di licenza - stile REUSE (https://reuse.software)
         Aggiunge/aggiorna l'header SPDX in tutti i file sorgenti Java.
 
         Eseguire con:  ./mvnw process-sources

@@ -64,9 +64,9 @@ import io.vertx.mutiny.core.eventbus.EventBus;
  * <p>
  * Proprietà di configurazione rilevanti:
  * <ul>
- * <li>{@code app.filter.dispatcher.interval.ms} — intervallo di idle sleep in ms
+ * <li>{@code app.filter.dispatcher.interval.ms} - intervallo di idle sleep in ms
  * (default: {@code 20})</li>
- * <li>{@code app.filter.dispatcher.queue.capacity} — capacità massima di ciascuna coda
+ * <li>{@code app.filter.dispatcher.queue.capacity} - capacità massima di ciascuna coda
  * (default: {@value #DEFAULT_QUEUE_CAPACITY})</li>
  * </ul>
  *
@@ -180,7 +180,7 @@ public class TraceEventDispatcher {
                 .start(this::drainLoop);
 
         log.infof(
-                "TraceEventDispatcher: avviato — capacity=%d, warn_threshold=%d%%, drain_interval_ms=%d",
+                "TraceEventDispatcher: avviato - capacity=%d, warn_threshold=%d%%, drain_interval_ms=%d",
                 queueCapacity, QUEUE_WARN_THRESHOLD_PCT, drainIntervalMs);
     }
 
@@ -217,7 +217,7 @@ public class TraceEventDispatcher {
         if (!requestQueue.offer(trace)) {
             long dropped = droppedRequests.incrementAndGet();
             log.warnf(
-                    "Backpressure [request]: evento scartato — queue piena (capacity=%d, dropped_total=%d)",
+                    "Backpressure [request]: evento scartato - queue piena (capacity=%d, dropped_total=%d)",
                     queueCapacity, dropped);
         } else {
             checkPressure(requestQueue.size(), "request");
@@ -238,7 +238,7 @@ public class TraceEventDispatcher {
         if (!responseQueue.offer(trace)) {
             long dropped = droppedResponses.incrementAndGet();
             log.warnf(
-                    "Backpressure [response]: evento scartato — queue piena (capacity=%d, dropped_total=%d)",
+                    "Backpressure [response]: evento scartato - queue piena (capacity=%d, dropped_total=%d)",
                     queueCapacity, dropped);
         } else {
             checkPressure(responseQueue.size(), "response");
@@ -329,7 +329,7 @@ public class TraceEventDispatcher {
     private void checkPressure(int currentSize, String queueName) {
         if (currentSize * 100 > queueCapacity * QUEUE_WARN_THRESHOLD_PCT) {
             log.warnf(
-                    "Backpressure [%s]: coda in pressione — %d/%d elementi (>%d%% della capacità)",
+                    "Backpressure [%s]: coda in pressione - %d/%d elementi (>%d%% della capacità)",
                     queueName, currentSize, queueCapacity, QUEUE_WARN_THRESHOLD_PCT);
         }
     }
