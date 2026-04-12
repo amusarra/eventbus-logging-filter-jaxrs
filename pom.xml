@@ -384,7 +384,7 @@
           <!-- Proprietà interpolate nel template header.txt -->
           <properties>
             <owner>${project.organization.name}</owner>
-            <url>${project.organization.url}</url>
+            <organizationUrl>${project.organization.url}</organizationUrl>
           </properties>
           <skip>${license.skip}</skip>
         </configuration>
