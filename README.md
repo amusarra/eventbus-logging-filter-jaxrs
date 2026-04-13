@@ -53,63 +53,8 @@ to eliminate any impact on HTTP throughput.
 
 ### How it works
 
-```plantuml
-@startuml
-' ===== Layout =====
-left to right direction
-skinparam shadowing false
-skinparam packageStyle rectangle
-skinparam roundcorner 8
-skinparam defaultFontName Arial
-skinparam ArrowColor Black
+![Architecture diagram](src/doc/resources/diagrams/architecture_v1_4_0.png)
 
-' ===== HTTP Worker =====
-package "HTTP Worker Thread (Vert.x)" #DDEBFF {
-
-rectangle "HTTP Request" as HTTP_REQ
-rectangle "requestFilter()\n capture O(1)" as REQ_FILTER
-
-rectangle "HTTP Response" as HTTP_RES
-rectangle "responseFilter()\n capture O(1)" as RES_FILTER
-
-HTTP_REQ --> REQ_FILTER
-HTTP_RES --> RES_FILTER
-}
-
-' ===== Queue =====
-package "ArrayBlockingQueue\n(bounded · capacity = 5000)" #FFF9C4 {
-
-database "RequestTrace\nqueue" as RQ
-database "ResponseTrace\nqueue" as SQ
-}
-
-REQ_FILTER --> RQ
-RES_FILTER --> SQ
-
-' ===== Daemon =====
-package "trace-event-dispatcher\n(dedicated daemon thread)" #E6F7E6 {
-
-rectangle "drainQueues()\n burst mode" as DRAIN
-rectangle "EventBus.publish()" as PUB
-
-DRAIN --> PUB
-}
-
-RQ --> DRAIN
-SQ --> DRAIN
-
-' ===== Consumers =====
-package "Event Bus Consumers" #F3E8FF {
-
-database "MongoDB" as MONGO
-database "AMQP Broker" as AMQP
-}
-
-PUB --> MONGO
-PUB --> AMQP
-
-@enduml
-```
 
 | Component                         | Role                                                                                                                                                                                                                                                                 | Thread                     |
 |-----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
