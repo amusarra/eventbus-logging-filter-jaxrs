@@ -53,41 +53,62 @@ to eliminate any impact on HTTP throughput.
 
 ### How it works
 
-```mermaid
-flowchart LR
-    subgraph HTTP["HTTP Worker Thread (Vert.x)"]
-        REQ["HTTP Request"]
-        RES["HTTP Response"]
-        RF["requestFilter()\ncapture O(1)"]
-        SF["responseFilter()\ncapture O(1)"]
-    end
+```plantuml
+@startuml
+' ===== Layout =====
+left to right direction
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor Black
 
-    subgraph QUEUE["ArrayBlockingQueue (bounded · capacity=5000)"]
-        RQ[("RequestTrace\nqueue")]
-        SQ[("ResponseTrace\nqueue")]
-    end
+' ===== HTTP Worker =====
+package "HTTP Worker Thread (Vert.x)" #DDEBFF {
 
-    subgraph DAEMON["trace-event-dispatcher\n(dedicated daemon thread)"]
-        DRAIN["drainQueues()\nburst mode"]
-        PUB["EventBus.publish()"]
-    end
+rectangle "HTTP Request" as HTTP_REQ
+rectangle "requestFilter()\n capture O(1)" as REQ_FILTER
 
-    subgraph CONSUMERS["Event Bus Consumers"]
-        MONGO[("MongoDB")]
-        AMQP[("AMQP Broker")]
-    end
+rectangle "HTTP Response" as HTTP_RES
+rectangle "responseFilter()\n capture O(1)" as RES_FILTER
 
-    REQ --> RF --> RQ
-    RES --> SF --> SQ
-    RQ --> DRAIN
-    SQ --> DRAIN
-    DRAIN --> PUB --> MONGO
-    PUB --> AMQP
+HTTP_REQ --> REQ_FILTER
+HTTP_RES --> RES_FILTER
+}
 
-    style HTTP fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
-    style QUEUE fill:#fef9c3,stroke:#eab308,color:#713f12
-    style DAEMON fill:#dcfce7,stroke:#22c55e,color:#14532d
-    style CONSUMERS fill:#f3e8ff,stroke:#a855f7,color:#581c87
+' ===== Queue =====
+package "ArrayBlockingQueue\n(bounded · capacity = 5000)" #FFF9C4 {
+
+database "RequestTrace\nqueue" as RQ
+database "ResponseTrace\nqueue" as SQ
+}
+
+REQ_FILTER --> RQ
+RES_FILTER --> SQ
+
+' ===== Daemon =====
+package "trace-event-dispatcher\n(dedicated daemon thread)" #E6F7E6 {
+
+rectangle "drainQueues()\n burst mode" as DRAIN
+rectangle "EventBus.publish()" as PUB
+
+DRAIN --> PUB
+}
+
+RQ --> DRAIN
+SQ --> DRAIN
+
+' ===== Consumers =====
+package "Event Bus Consumers" #F3E8FF {
+
+database "MongoDB" as MONGO
+database "AMQP Broker" as AMQP
+}
+
+PUB --> MONGO
+PUB --> AMQP
+
+@enduml
 ```
 
 | Component                         | Role                                                                                                                                                                                                                                                                 | Thread                     |
