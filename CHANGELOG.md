@@ -12,6 +12,86 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
+## [1.4.0] - 2026-04-14
+
+### Added
+- **`TraceEventDispatcher`**: new `@ApplicationScoped` bean implementing the
+  *capture-only + external dispatcher* pattern. Features a dedicated OS-scheduled
+  daemon thread (`trace-event-dispatcher`) that drains event queues in burst mode,
+  bounded `ArrayBlockingQueue` queues (capacity 5,000) with drop-on-full backpressure,
+  `AtomicLong` dropped-event counters, and graceful flush on `@PreDestroy`.
+- **`@ServerRequestFilter` / `@ServerResponseFilter`** annotation-based filter replacing
+  the old `ContainerRequestFilter` / `ContainerResponseFilter` interfaces - enables
+  direct injection of `RoutingContext`, `UriInfo` and other Vert.x/RESTEasy Reactive
+  parameters without `@Provider` registration.
+- **SPDX license headers** on all 31 Java source files (main + test) via
+  `license-maven-plugin` 4.6 (Mycila). Template at `src/license/header.txt`:
+  `SPDX-FileCopyrightText` + `SPDX-License-Identifier: MIT`.
+- **`formatter-maven-plugin` 2.24.1** with `quarkus-ide-config` dependency: Eclipse
+  Quarkus-style Java formatter bound to `process-sources`. Skip with `-Dformat.skip=true`.
+  Verify without modifying: `./mvnw formatter:validate impsort:check`.
+- **`impsort-maven-plugin` 1.12.0** for import ordering (Quarkus group order:
+  `java. → javax. → jakarta. → org. → com.`) bound to `process-sources`.
+- **`license-maven-plugin` 4.6** bound to `process-sources`. Verify: `./mvnw license:check`.
+  Skip with `-Dlicense.skip=true`.
+- New configuration properties:
+  - `app.filter.dispatcher.interval.ms` (integer, default `20`) - idle sleep of the drain
+    thread when both queues are empty.
+  - `app.filter.dispatcher.queue.capacity` (default `5000`) - maximum capacity of each
+    bounded queue; events are dropped (with WARN log) when full.
+- New Maven properties: `format.skip`, `license.skip`, `formatter-maven-plugin.version`,
+  `impsort-maven-plugin.version`, `license-maven-plugin.version`.
+- `<inceptionYear>2024</inceptionYear>` added to `pom.xml`.
+- README: *High-Performance Tracing Architecture* section with Mermaid flowchart diagram,
+  component table, configuration properties table, and filter execution order table.
+- README: *Code Quality & Development Tools* section documenting formatter and license commands.
+- README: *Performance Comparison: v1.3.0 vs v1.4.0* section with real benchmark data
+  (JMeter/Taurus on Red Hat Developer Sandbox - OpenShift 4.21.7 / k8s v1.34.5, 1 Pod,
+  15,000 total requests): throughput +10–15%, avg latency −11–14%, p95 −17–22%, zero errors.
+
+### Changed
+- `TraceJaxRsRequestResponseFilter` rewritten with **capture-only pattern**: the filter now
+  only reads the body and enqueues lightweight `RequestTrace` / `ResponseTrace` records (pure
+  strings/primitives) in O(1). All JSON construction, serialization and `EventBus.publish()`
+  calls are delegated to `TraceEventDispatcher` - zero impact on the HTTP lifecycle.
+- `@Scheduled` drain replaced by a **dedicated daemon thread**
+  (`Thread.ofPlatform().daemon(true).start(this::drainLoop)`) to eliminate worker thread pool
+  starvation under high HTTP load. The thread drains continuously in burst mode when queues
+  contain items, and sleeps for `app.filter.dispatcher.interval.ms` ms when idle.
+- Unbounded `ConcurrentLinkedQueue` replaced by bounded **`ArrayBlockingQueue`** (capacity
+  5,000): eliminates OOM risk and `SRMSG00034: Insufficient downstream requests to emit item`
+  reactive streams backpressure errors.
+- `quarkus.jacoco.excludes` prefixed with `%test.` to avoid *"Unrecognized configuration key"*
+  warning in dev/prod profiles where `quarkus-jacoco` (test-scoped) is not on the classpath.
+- `app.filter.dispatcher.interval` renamed to `app.filter.dispatcher.interval.ms` (integer in
+  ms; the old ISO-8601 / `@Scheduled`-style string is no longer used).
+- Queue capacity increased from 1,000 to 5,000.
+- Upgraded Quarkus platform to **3.34.3**.
+- Updated README: Quarkus version reference, extensions list (added `quarkus-hibernate-orm-panache`,
+  `quarkus-micrometer-registry-jmx`), application log examples, and guide links.
+- SPDX license header template migrated from custom plugin `<properties>` to direct
+  `${project.*}` expressions so it resolves correctly in all Maven invocation contexts
+  (including `quarkus:dev` embedded Maven).
+
+### Removed
+- `quarkus-scheduler` dependency - no longer needed after replacing `@Scheduled` with the
+  dedicated daemon thread.
+- Direct `EventBus.publish()` calls from JAX-RS filter methods - publishing is now exclusively
+  handled by `TraceEventDispatcher`.
+
+### Fixed
+- **Scheduler starvation**: `@Scheduled` drain shared the Quarkus worker thread pool with HTTP
+  request handlers; under heavy load the drain received no CPU time, causing queues to grow
+  across benchmark runs and events to be dropped or delayed.
+- **`SRMSG00034`**: unbounded queue accumulation under high load caused SmallRye Reactive
+  Messaging to throw *"Insufficient downstream requests to emit item"* - resolved by the
+  bounded `ArrayBlockingQueue` with drop-on-full policy.
+- **"Unrecognized configuration key" warning** for `quarkus.jacoco.excludes` in non-test
+  profiles - resolved by adding the `%test.` profile prefix.
+- **SPDX `${url}` not expanded** in license header - `url` is a reserved Maven POM element
+  name that prevented the custom plugin property from being injected; fixed by using
+  `${project.organization.url}` directly in the template.
+
 ## [1.3.0] - 2025-06-03
 ### Changed
 - Upgrade to Quarkus 3.23.0. See the migration guide at https://github.com/quarkusio/quarkus/wiki/Migration-Guide-3.23 (PR #8)
