@@ -21,8 +21,8 @@ For more information about the tags available, please visit the Docker Hub repos
 
 ## SonarQube Report (cloud)
 
-| Metric          | Value                                                                                                                                         |
-|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| Metric          | Value                                                                                                                                            |
+|-----------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
 | Quality Gate    | ![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=amusarra_eventbus-logging-filter-jaxrs&metric=alert_status)             |
 | Security        | ![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=amusarra_eventbus-logging-filter-jaxrs&metric=security_rating)       |
 | Reliability     | ![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=amusarra_eventbus-logging-filter-jaxrs&metric=reliability_rating) |
@@ -90,30 +90,30 @@ flowchart LR
     style CONSUMERS fill:#f3e8ff,stroke:#a855f7,color:#581c87
 ```
 
-| Component | Role | Thread |
-|-----------|------|--------|
-| `TraceJaxRsRequestResponseFilter` | Captures raw data (strings/primitives) and enqueues in O(1). **No JSON, no I/O, no blocking.** | HTTP worker thread |
-| `ArrayBlockingQueue` (×2) | Bounded FIFO queue (request + response). Drop-on-full backpressure: events are silently dropped with a WARN log rather than blocking the HTTP thread. | lock-free |
-| `TraceEventDispatcher` | Dedicated daemon thread (`trace-event-dispatcher`) that drains queues in **burst mode** (no sleep when items are present) and builds `JsonObject` + publishes to the Event Bus. Completely independent of the Quarkus worker thread pool - never starved under load. | OS-scheduled daemon thread |
+| Component                         | Role                                                                                                                                                                                                                                                                 | Thread                     |
+|-----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
+| `TraceJaxRsRequestResponseFilter` | Captures raw data (strings/primitives) and enqueues in O(1). **No JSON, no I/O, no blocking.**                                                                                                                                                                       | HTTP worker thread         |
+| `ArrayBlockingQueue` (×2)         | Bounded FIFO queue (request + response). Drop-on-full backpressure: events are silently dropped with a WARN log rather than blocking the HTTP thread.                                                                                                                | lock-free                  |
+| `TraceEventDispatcher`            | Dedicated daemon thread (`trace-event-dispatcher`) that drains queues in **burst mode** (no sleep when items are present) and builds `JsonObject` + publishes to the Event Bus. Completely independent of the Quarkus worker thread pool - never starved under load. | OS-scheduled daemon thread |
 
 ### Configuration properties
 
-| Property | Default | Description |
-|----------|---------|-------------|
-| `app.filter.enabled` | `false` | Enable/disable the filter globally |
-| `app.filter.uris[0]` | `/api/rest` | URI prefix to trace |
-| `app.filter.dispatcher.interval.ms` | `20` | Idle sleep (ms) when both queues are empty |
-| `app.filter.dispatcher.queue.capacity` | `5000` | Maximum capacity of each queue (request + response). Drop-on-full. |
+| Property                               | Default     | Description                                                        |
+|----------------------------------------|-------------|--------------------------------------------------------------------|
+| `app.filter.enabled`                   | `false`     | Enable/disable the filter globally                                 |
+| `app.filter.uris[0]`                   | `/api/rest` | URI prefix to trace                                                |
+| `app.filter.dispatcher.interval.ms`    | `20`        | Idle sleep (ms) when both queues are empty                         |
+| `app.filter.dispatcher.queue.capacity` | `5000`      | Maximum capacity of each queue (request + response). Drop-on-full. |
 
 ### Filter execution order
 
 `@ServerRequestFilter` and `@ServerResponseFilter` (from RESTEasy Reactive) participate in the
 standard JAX-RS priority chain alongside any `@Provider`-based filters:
 
-| Direction | Priority order | Position of `TraceJaxRsRequestResponseFilter` |
-|-----------|---------------|-----------------------------------------------|
-| Request   | ascending (low → high) - `AUTHENTICATION(1000)` → `USER(5000)` | **Last** (default `USER = 5000`) |
-| Response  | descending (high → low) - `USER(5000)` → `AUTHENTICATION(1000)` | **First** among user filters |
+| Direction | Priority order                                                  | Position of `TraceJaxRsRequestResponseFilter` |
+|-----------|-----------------------------------------------------------------|-----------------------------------------------|
+| Request   | ascending (low → high) - `AUTHENTICATION(1000)` → `USER(5000)`  | **Last** (default `USER = 5000`)              |
+| Response  | descending (high → low) - `USER(5000)` → `AUTHENTICATION(1000)` | **First** among user filters                  |
 
 ## Code Quality & Development Tools
 
@@ -160,17 +160,17 @@ managed by `license-maven-plugin`:
 
 The following table lists the necessary requirements for implementing and running the Quarkus project.
 
-| Name                     | Optional | Description                                                  |
-| ------------------------ | -------- | ------------------------------------------------------------ |
-| Java JDK 17/21           | NO       | OpenJDK 17/21 implementation. You can use any of the [available implementations](https://en.wikipedia.org/wiki/OpenJDK). For this article, OpenJDK version 21 and Amazon Corretto 21.0.2 implementation were used. |
-| Git                      | NO       | Versioning tool.                                           |
-| Maven 3.9.6              | NO       | Build tool for Java projects and consequently Quarkus.       |
-| Quarkus 3.34.3           | NO       | Quarkus Framework 3.34.3 whose release note is available here <https://quarkus.io/blog/quarkus-3-34-3-released/>. For more information on LTS releases, refer to the article [Long-Term Support (LTS) for Quarkus](https://quarkus.io/blog/lts-releases/). |
-| Quarkus CLI              | YES      | Command-line tool that allows creating projects, managing extensions, and performing essential build and development tasks. For more information on how to install and use the Quarkus CLI (Command Line Interface), consult the [Quarkus CLI guide](https://quarkus.io/guides/cli-tooling). |
+| Name                      | Optional | Description                                                                                                                                                                                                                                                                                                                                                                                                                   |
+|---------------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Java JDK 17/21            | NO       | OpenJDK 17/21 implementation. You can use any of the [available implementations](https://en.wikipedia.org/wiki/OpenJDK). For this article, OpenJDK version 21 and Amazon Corretto 21.0.2 implementation were used.                                                                                                                                                                                                            |
+| Git                       | NO       | Versioning tool.                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Maven 3.9.6               | NO       | Build tool for Java projects and consequently Quarkus.                                                                                                                                                                                                                                                                                                                                                                        |
+| Quarkus 3.34.3            | NO       | Quarkus Framework 3.34.3 whose release note is available here <https://quarkus.io/blog/quarkus-3-34-3-released/>. For more information on LTS releases, refer to the article [Long-Term Support (LTS) for Quarkus](https://quarkus.io/blog/lts-releases/).                                                                                                                                                                    |
+| Quarkus CLI               | YES      | Command-line tool that allows creating projects, managing extensions, and performing essential build and development tasks. For more information on how to install and use the Quarkus CLI (Command Line Interface), consult the [Quarkus CLI guide](https://quarkus.io/guides/cli-tooling).                                                                                                                                  |
 | Docker v26 or Podman v4/5 | NO       | Tool for managing images and running the application in container mode. Image/container management will be necessary when Event Handlers are developed to communicate with services external to the application (see NoSQL, SQL, AMQP). The management of necessary images and containers will be completely transparent to us developers as it is handled by [Quarkus Dev Services](https://quarkus.io/guides/dev-services). |
-| GraalVM                  | YES      | For building the application in native mode. For more information, refer to the [Building a Native Executable](https://quarkus.io/guides/building-native-image) documentation. |
-| C development environment | YES      | Required by GraalVM for native application build. For more information, refer to the [Building a Native Executable](https://quarkus.io/guides/building-native-image) documentation. |
-| cURL 7.x/8.x             | YES      | Tool for testing Resource Endpoints (REST services).         |
+| GraalVM                   | YES      | For building the application in native mode. For more information, refer to the [Building a Native Executable](https://quarkus.io/guides/building-native-image) documentation.                                                                                                                                                                                                                                                |
+| C development environment | YES      | Required by GraalVM for native application build. For more information, refer to the [Building a Native Executable](https://quarkus.io/guides/building-native-image) documentation.                                                                                                                                                                                                                                           |
+| cURL 7.x/8.x              | YES      | Tool for testing Resource Endpoints (REST services).                                                                                                                                                                                                                                                                                                                                                                          |
 
 **Table 1** - Requirements (including optional) necessary for implementing the Quarkus project
 
@@ -725,69 +725,69 @@ bzt -o modules.jmeter.properties.numberOfThreads=20 \
   src/test/jmeter/scenario_1.jmx
 ```
 
-| Parameter | Value                                                  |
-|-----------|--------------------------------------------------------|
-| Virtual users (threads) | 20                                                     |
-| Ramp-up period | 10 s                                                   |
-| Loop count per thread | 250                                                    |
+| Parameter                       | Value                                                  |
+|---------------------------------|--------------------------------------------------------|
+| Virtual users (threads)         | 20                                                     |
+| Ramp-up period                  | 10 s                                                   |
+| Loop count per thread           | 250                                                    |
 | Total requests per thread group | 5,000                                                  |
-| Total requests (all 3 groups) | 15,000                                                 |
-| Target environment | OpenShift 4.21.7 · k8s v1.34.5 · 1 Pod                 |
-| JTL source - v1.4.0 | `src/doc/resources/taurus/2026-04-13_12-18-33.955655/` |
-| JTL source - v1.3.0 | `src/doc/resources/taurus/2026-04-13_15-08-12.710239/` |
+| Total requests (all 3 groups)   | 15,000                                                 |
+| Target environment              | OpenShift 4.21.7 · k8s v1.34.5 · 1 Pod                 |
+| JTL source - v1.4.0             | `src/doc/resources/taurus/2026-04-13_12-18-33.955655/` |
+| JTL source - v1.3.0             | `src/doc/resources/taurus/2026-04-13_15-08-12.710239/` |
 
 ### Results - HTTPS/1.1
 
-| Metric | v1.3.0 | v1.4.0 | Δ |
-|--------|--------|--------|---|
-| Samples | 5,000 | 5,000 | - |
-| **Errors** | **0 (0.0%)** | **0 (0.0%)** | - |
-| Avg response time | 232.1 ms | 206.6 ms | **−11.0%** ✅ |
-| p50 | 232 ms | 207 ms | −10.8% ✅ |
-| p90 | 276 ms | 234 ms | **−15.2%** ✅ |
-| p95 | 291 ms | 242 ms | −16.8% ✅ |
-| p99 | 326 ms | 260 ms | **−20.2%** ✅ |
-| Max | 687 ms | 617 ms | −10.2% ✅ |
-| **Throughput** | **73.7 req/s** | **81.1 req/s** | **+10.1%** ✅ |
-| TTFB avg | 232.0 ms | 206.6 ms | −11.0% ✅ |
+| Metric            | v1.3.0         | v1.4.0         | Δ            |
+|-------------------|----------------|----------------|--------------|
+| Samples           | 5,000          | 5,000          | -            |
+| **Errors**        | **0 (0.0%)**   | **0 (0.0%)**   | -            |
+| Avg response time | 232.1 ms       | 206.6 ms       | **-11.0%** ✅ |
+| p50               | 232 ms         | 207 ms         | -10.8% ✅     |
+| p90               | 276 ms         | 234 ms         | **-15.2%** ✅ |
+| p95               | 291 ms         | 242 ms         | -16.8% ✅     |
+| p99               | 326 ms         | 260 ms         | **-20.2%** ✅ |
+| Max               | 687 ms         | 617 ms         | -10.2% ✅     |
+| **Throughput**    | **73.7 req/s** | **81.1 req/s** | **+10.1%** ✅ |
+| TTFB avg          | 232.0 ms       | 206.6 ms       | -11.0% ✅     |
 
 ### Results - HTTP/2 over TLS
 
-| Metric | v1.3.0 | v1.4.0 | Δ |
-|--------|--------|--------|---|
-| Samples | 5,000 | 5,000 | - |
-| **Errors** | **0 (0.0%)** | **0 (0.0%)** | - |
-| Avg response time | 222.4 ms | 194.2 ms | **−12.7%** ✅ |
-| p50 | 214 ms | 190 ms | −11.2% ✅ |
-| p90 | 274 ms | 223 ms | **−18.6%** ✅ |
-| p95 | 301 ms | 236 ms | **−21.6%** ✅ |
-| p99 | 593 ms | 571 ms | −3.7% ✅ |
-| Max | 772 ms | 676 ms | −12.4% ✅ |
-| **Throughput** | **75.1 req/s** | **83.1 req/s** | **+10.7%** ✅ |
-| TTFB avg | 228.6 ms | 200.1 ms | −12.5% ✅ |
+| Metric            | v1.3.0         | v1.4.0         | Δ            |
+|-------------------|----------------|----------------|--------------|
+| Samples           | 5,000          | 5,000          | -            |
+| **Errors**        | **0 (0.0%)**   | **0 (0.0%)**   | -            |
+| Avg response time | 222.4 ms       | 194.2 ms       | **-12.7%** ✅ |
+| p50               | 214 ms         | 190 ms         | -11.2% ✅     |
+| p90               | 274 ms         | 223 ms         | **-18.6%** ✅ |
+| p95               | 301 ms         | 236 ms         | **-21.6%** ✅ |
+| p99               | 593 ms         | 571 ms         | -3.7% ✅      |
+| Max               | 772 ms         | 676 ms         | -12.4% ✅     |
+| **Throughput**    | **75.1 req/s** | **83.1 req/s** | **+10.7%** ✅ |
+| TTFB avg          | 228.6 ms       | 200.1 ms       | -12.5% ✅     |
 
 ### Results - HTTP/2 over TLS + GZIP compression
 
-| Metric | v1.3.0 | v1.4.0 | Δ |
-|--------|--------|--------|---|
-| Samples | 5,000 | 5,000 | - |
-| **Errors** | **0 (0.0%)** | **0 (0.0%)** | - |
-| Avg response time | 200.7 ms | 171.9 ms | **−14.3%** ✅ |
-| p50 | 190 ms | 166 ms | −12.6% ✅ |
-| p90 | 223 ms | 184 ms | **−17.5%** ✅ |
-| p95 | 244 ms | 192 ms | **−21.3%** ✅ |
-| p99 | 668 ms | 575 ms | **−13.9%** ✅ |
-| **Max** | **1,548 ms** | **693 ms** | **−55.2%** 🚀 |
-| **Throughput** | **83.8 req/s** | **96.5 req/s** | **+15.2%** ✅ |
-| TTFB avg | 201.0 ms | 172.4 ms | −14.2% ✅ |
+| Metric            | v1.3.0         | v1.4.0         | Δ             |
+|-------------------|----------------|----------------|---------------|
+| Samples           | 5,000          | 5,000          | -             |
+| **Errors**        | **0 (0.0%)**   | **0 (0.0%)**   | -             |
+| Avg response time | 200.7 ms       | 171.9 ms       | **-14.3%** ✅  |
+| p50               | 190 ms         | 166 ms         | -12.6% ✅      |
+| p90               | 223 ms         | 184 ms         | **-17.5%** ✅  |
+| p95               | 244 ms         | 192 ms         | **-21.3%** ✅  |
+| p99               | 668 ms         | 575 ms         | **-13.9%** ✅  |
+| **Max**           | **1,548 ms**   | **693 ms**     | **-55.2%** 🚀 |
+| **Throughput**    | **83.8 req/s** | **96.5 req/s** | **+15.2%** ✅  |
+| TTFB avg          | 201.0 ms       | 172.4 ms       | -14.2% ✅      |
 
 ### Summary
 
-| Protocol | Throughput gain | Avg latency gain | p90 gain | p95 gain | p99 gain | Errors |
-|----------|-----------------|------------------|----------|----------|----------|--------|
-| HTTPS/1.1 | +10.1% | −11.0% | −15.2% | −16.8% | −20.2% | 0 → 0 |
-| HTTP/2 over TLS | +10.7% | −12.7% | −18.6% | **−21.6%** | −3.7% | 0 → 0 |
-| HTTP/2 + GZIP | **+15.2%** | **−14.3%** | **−17.5%** | **−21.3%** | **−13.9%** | 0 → 0 |
+| Protocol        | Throughput gain | Avg latency gain | p90 gain   | p95 gain   | p99 gain   | Errors |
+|-----------------|-----------------|------------------|------------|------------|------------|--------|
+| HTTPS/1.1       | +10.1%          | -11.0%           | -15.2%     | -16.8%     | -20.2%     | 0 → 0  |
+| HTTP/2 over TLS | +10.7%          | -12.7%           | -18.6%     | **-21.6%** | -3.7%      | 0 → 0  |
+| HTTP/2 + GZIP   | **+15.2%**      | **-14.3%**       | **-17.5%** | **-21.3%** | **-13.9%** | 0 → 0  |
 
 The improvements are consistent across all three protocols and directly attributable to the
 **capture-only + external dispatcher** architecture introduced in v1.4.0:
@@ -799,7 +799,7 @@ The improvements are consistent across all three protocols and directly attribut
   (15,000 total requests across both versions) **zero events were dropped in either run**.
 - **O(1) capture** in the filter - building `RequestTrace`/`ResponseTrace` records involves no
   JSON serialization, no Event Bus publish and no blocking on the HTTP thread, freeing worker
-  threads faster and reducing tail latency (p95 −17 to −22%, Max −10 to −55%).
+  threads faster and reducing tail latency (p95 -17 to -22%, Max -10 to -55%).
 
 ## Accessing Java Management Extensions (JMX)
 
