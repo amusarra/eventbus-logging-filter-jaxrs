@@ -55,6 +55,7 @@ to eliminate any impact on HTTP throughput.
 
 ![Architecture diagram](src/doc/resources/diagrams/architecture_v1_4_0.png)
 
+Figure 2 - High-Performance Tracing Architecture
 
 | Component                         | Role                                                                                                                                                                                                                                                                 | Thread                     |
 |-----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
@@ -436,7 +437,7 @@ Console 7 - Running the application in development mode
 
 ![Quarkus Dev UI](src/doc/resources/images/quarkus_dev_ui_home_page.jpg)
 
-Figure 2 - Quarkus Dev UI
+Figure 3 - Quarkus Dev UI
 
 ## Packaging and starting the application
 
@@ -504,7 +505,7 @@ The following figure shows the Test Plan configuration with JMeter.
 
 ![Configurazione Test Plan di JMeter](src/doc/resources/images/jmeter_configurazione_piano_test_1.jpg)
 
-Figure 3 - Configurazione del Test Plan di JMeter
+Figure 4 - Configurazione del Test Plan di JMeter
 
 Each of the three tests is a JMeter Thread Group
 that can be configured through the [User Defined Variables](https://jmeter.apache.org/usermanual/component_reference.html#User_Defined_Variables)
@@ -518,7 +519,7 @@ The following figure shows how these values are set in the JMeter Thread Group.
 
 ![Configurazione Thread Group JMeter](src/doc/resources/images/jmeter_configurazione_piano_test_thread_group_1.jpg)
 
-Figure 4 - Configurazione del Thread Group di JMeter
+Figure 5 - Configurazione del Thread Group di JMeter
 
 To execute this Load Testing scenario, you can use [Taurus](https://gettaurus.org/), an open-source framework 
 that automates load testing and performance testing operations.
@@ -561,7 +562,7 @@ respectively at the beginning (showing the progress status) and at the end of th
 
 ![Taurus in esecuzione](src/doc/resources/images/esecuzione_taurus_gui_ocp_1.jpg)
 
-Figure 5 - Taurus in action
+Figure 6 - Taurus in action
 
 From the Taurus report, you can see the results of the load test performed with JMeter.
 From the test duration, the number of HTTP requests sent, the average response time, etc. From this report,
@@ -569,7 +570,7 @@ you can already see how the response time is influenced by the protocol used (HT
 
 ![Taurus Report](src/doc/resources/images/esecuzione_taurus_report_console_ocp_1.jpg)
 
-Figure 6 - Taurus Report
+Figure 7 - Taurus Report
 
 The execution of the JMeter Test Plan with Taurus produces the log files and jtl of the kpi that can be analyzed with JMeter inside the directory `target/taurus/%Y-%m-%d_%H-%M-%S.%f`.
 
@@ -577,7 +578,7 @@ For example, the following figure, through [jp@gc - Transactions per Second](htt
 
 ![Throughput del sistema](src/doc/resources/images/jmeter_jtl_transazioni_secondo_1.jpg)
 
-Figure 7 - System throughput
+Figure 8 - System throughput
 
 It can also be seen from this graph how the system throughput is influenced by the protocol used,
 and the HTTP/2 over TLS protocol with GZIP compression offers the best performance.
@@ -589,7 +590,7 @@ To execute the Load Testing scenario, you can use the jmx file `src/test/jmeter/
 
 ![Configurazione Test Plan di JMeter Scenario 2](src/doc/resources/images/jmeter_configurazione_piano_test_scenario_2.jpg)
 
-Figure 8 - Configuration of the Test Plan (scenario 2 `src/test/jmeter/scenario_2.jmx`)
+Figure 9 - Configuration of the Test Plan (scenario 2 `src/test/jmeter/scenario_2.jmx`)
 
 The thread groups are configured with the same principle as the first Load Testing scenario, so they are
 created for each version of the HTTP protocol (HTTPS/1.1, HTTP/2 over TLS, and compressed); for each of them, a
@@ -801,14 +802,14 @@ JMX client such as [JConsole](https://openjdk.org/tools/svc/jconsole/), [VisualV
 
 ![Connessione JMX con VisualVM](src/doc/resources/images/jmx_visualvm_1.jpg)
 
-Figure 9 - JMX Connection with VisualVM
+Figure 10 - JMX Connection with VisualVM
 
 The following figure shows the monitoring of the application, where information about
 memory, garbage collector, class loader, thread, etc. can be found.
 
 ![Monitoraggio JMX con VisualVM](src/doc/resources/images/jmx_visualvm_2.jpg)
 
-Figure 10 - JMX Monitoring with VisualVM
+Figure 11 - JMX Monitoring with VisualVM
 
 In an OpenShift environment, you can access the JMX of the Quarkus application using,
 for example, the [Cryostat](https://cryostat.io/) project (JFR for Containerized Java Applications).
