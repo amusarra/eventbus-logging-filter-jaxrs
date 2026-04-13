@@ -84,10 +84,11 @@ services:
       - DB_USERNAME=quarkus
       - DB_PASSWORD=quarkus
       - DB_URL=jdbc:postgresql://postgres:5432/quarkus_event_bus
-      - JAVA_OPTS=-Xms100M -Xmx500M -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions
-        -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=45 -XX:G1ReservePercent=10
-        -XX:ConcGCThreads=4 -XX:G1NewSizePercent=5 -XX:G1MaxNewSizePercent=60
-        -XX:ParallelGCThreads=4 -XX:+ExitOnOutOfMemoryError -Dcom.sun.management.jmxremote.port=9091
+      - JAVA_OPTS=-Xms256M -Xmx512M -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions
+        -XX:MaxGCPauseMillis=150 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1ReservePercent=15
+        -XX:ConcGCThreads=1 -XX:G1NewSizePercent=20 -XX:G1MaxNewSizePercent=40
+        -XX:+UseContainerSupport -XX:MaxRAMPercentage=70 -XX:ParallelGCThreads=1 -XX:+ExitOnOutOfMemoryError
+        -Dcom.sun.management.jmxremote.port=9091
         -Dcom.sun.management.jmxremote.rmi.port=9091 -Dcom.sun.management.jmxremote.authenticate=false
         -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false
         -Djava.rmi.server.hostname=127.0.0.1
