@@ -12,6 +12,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 ### Security
 
+## [1.4.1] - 2026-04-14
+
+### Added
+- **`EchoResourceEndPoint`**: new reactive endpoint `POST /api/rest/echo/reactive` returning
+  `Uni<Response>`, enabling non-blocking echo with the same body-size validation as the
+  blocking endpoint (`@Size(min = 32, max = 4096)`). Used also to verify the event-loop
+  code path in `TraceJaxRsRequestResponseFilter#readBodyAsync` (lines 304–316).
+- **Unit-test coverage ≥ 95 % on both target classes** (JaCoCo line coverage):
+  - `TraceEventDispatcher`: **97.6 %** (↑ from ~80 %)
+  - `TraceJaxRsRequestResponseFilter`: **95.0 %** (↑ from ~88 %)
+- New test classes:
+  - `TraceEventDispatcherTest` - covers backpressure drop paths (`enqueueRequest` /
+    `enqueueResponse` with full queue), `AtomicLong` dropped-event counters and pressure
+    warning (`checkPressure`). Uses reflection to replace the internal `ArrayBlockingQueue`
+    with a capacity-1 queue at runtime - no `@TestProfile` restart required, no impact on
+    Dev Services.
+  - `TraceJaxRsFilterDisabledTest` - covers the `filterEnabled = false` early-return branches
+    in both `requestFilter` (line 155–156) and `responseFilter` (line 224–225).
+  - `TraceJaxRsFilterUriNotMatchedTest` - covers the URI-not-filtered early-return branch
+    (lines 163–164) in `requestFilter` by invoking `GET /api/test-filter/ping`, a real
+    JAX-RS resource registered only in the test classpath.
+  - `TestNotFilteredResource` *(test-only JAX-RS resource)* - `GET /api/test-filter/ping`
+    returns `"pong"` (200). Its path does not start with `/api/rest` so the request filter
+    exits early at line 164 without processing the trace.
+  - `TestRestMultiHeaderResource` *(test-only JAX-RS resource)* - `GET /api/rest/test-multi-header`
+    returns a response containing `X-Test-Multi: value1` and `X-Test-Multi: value2`. The
+    response filter processes the multi-value header via `getResponseHeaders`, exercising the
+    `sb.append(", ")` join at line 386.
+- Updated `EchoResourceEndPointTest`: added `testEchoReactiveSuccess`,
+  `testEchoReactiveValidation`, `testEchoReactiveBodyEmpty` (reactive endpoint) and
+  `testResponseHeaderMultiValue` (multi-value response header). Total tests in the class: 8.
+- Updated `CookieTrackingCodeTest`: added `testCookieNotReplacedWhenAlreadyPresent` to cover
+  the `trackingCookie != null` branch in `setCookieUserTracing` (cookie already present in
+  the incoming request → filter must not override it with a new `Set-Cookie`).
+
 ## [1.4.0] - 2026-04-14
 
 ### Added
