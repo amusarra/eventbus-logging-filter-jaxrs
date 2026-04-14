@@ -858,6 +858,116 @@ The improvements are consistent across all three protocols and directly attribut
   JSON serialization, no Event Bus publish and no blocking on the HTTP thread, freeing worker
   threads faster and reducing tail latency (p95 -17 to -22%, Max -10 to -55%).
 
+## Performance: Blocking vs Reactive Endpoint
+
+The following benchmark compares the **blocking endpoint** (`POST /api/rest/echo`, returns `Response`,
+runs on `executor-thread-*`) against the **reactive endpoint** (`POST /api/rest/echo/reactive`,
+returns `Uni<Response>`, runs on `vert.x-eventloop-thread-*`) using the same infrastructure and
+test parameters as the v1.3.0 vs v1.4.0 comparison.
+
+### Test setup
+
+```shell
+# Reactive endpoint benchmark (2026-04-14)
+bzt -o modules.jmeter.properties.numberOfThreads=20 \
+  -o modules.jmeter.properties.rampUpPeriod=10 \
+  -o modules.jmeter.properties.loopCount=250 \
+  -o modules.jmeter.properties.httpProtocol=https \
+  -o modules.jmeter.properties.httpPort=443 \
+  -o modules.jmeter.properties.ipOrFQDN=eventbus-logging-filter-jaxrs-antonio-musarra-dev.apps.rm2.thpm.p1.openshiftapps.com \
+  -o modules.jmeter.properties.servicePath=/api/rest/echo/reactive \
+  src/test/jmeter/taurus/config.yml \
+  src/test/jmeter/scenario_1.jmx
+```
+
+| Parameter                       | Value                                                              |
+|---------------------------------|--------------------------------------------------------------------|
+| Virtual users (threads)         | 20                                                                 |
+| Ramp-up period                  | 10 s                                                               |
+| Loop count per thread           | 250                                                                |
+| Total requests per thread group | 5,000                                                              |
+| Total requests (all 3 groups)   | 15,000                                                             |
+| Target environment              | OpenShift 4.21.7 · k8s v1.34.5 · 1 Pod                            |
+| Blocking endpoint (baseline)    | `POST /api/rest/echo` - JTL: `src/doc/resources/taurus/2026-04-13_12-18-33.955655/` |
+| Reactive endpoint               | `POST /api/rest/echo/reactive` - JTL: `src/doc/resources/taurus/2026-04-14_18-39-10.356391/` |
+
+### Results - HTTPS/1.1
+
+| Metric            | Blocking (`/echo`) | Reactive (`/echo/reactive`) | Δ              |
+|-------------------|--------------------|-----------------------------|----------------|
+| Samples           | 5,000              | 5,000                       | -              |
+| **Errors**        | **0 (0.0%)**       | **0 (0.0%)**                | -              |
+| Avg response time | 206.6 ms           | 198.8 ms                    | **-3.8%** ✅   |
+| p50               | 207 ms             | 194 ms                      | -6.3% ✅        |
+| p90               | 234 ms             | 223 ms                      | -4.7% ✅        |
+| p95               | 242 ms             | 236 ms                      | -2.5% ✅        |
+| p99               | 260 ms             | 455 ms                      | **+75.0%** ⚠️  |
+| Max               | 617 ms             | 772 ms                      | +25.1% ⚠️      |
+| **Throughput**    | **81.1 req/s**     | **82.9 req/s**              | **+2.2%** ✅   |
+| TTFB avg          | 206.6 ms           | 198.8 ms                    | -3.8% ✅        |
+
+### Results - HTTP/2 over TLS
+
+| Metric            | Blocking (`/echo`) | Reactive (`/echo/reactive`) | Δ              |
+|-------------------|--------------------|-----------------------------|----------------|
+| Samples           | 5,000              | 5,000                       | -              |
+| **Errors**        | **0 (0.0%)**       | **0 (0.0%)**                | -              |
+| Avg response time | 194.2 ms           | 187.9 ms                    | **-3.2%** ✅   |
+| p50               | 190 ms             | 183 ms                      | -3.7% ✅        |
+| p90               | 223 ms             | 213 ms                      | -4.5% ✅        |
+| p95               | 236 ms             | 224 ms                      | -5.1% ✅        |
+| p99               | 571 ms             | 560 ms                      | -1.9% ✅        |
+| Max               | 676 ms             | 806 ms                      | +19.2% ⚠️      |
+| **Throughput**    | **83.1 req/s**     | **84.3 req/s**              | **+1.4%** ✅   |
+| TTFB avg          | 200.1 ms           | 194.1 ms                    | -3.0% ✅        |
+
+### Results - HTTP/2 over TLS + GZIP compression
+
+| Metric            | Blocking (`/echo`) | Reactive (`/echo/reactive`) | Δ              |
+|-------------------|--------------------|-----------------------------|----------------|
+| Samples           | 5,000              | 5,000                       | -              |
+| **Errors**        | **0 (0.0%)**       | **0 (0.0%)**                | -              |
+| Avg response time | 171.9 ms           | 161.8 ms                    | **-5.9%** ✅   |
+| p50               | 166 ms             | 157 ms                      | -5.4% ✅        |
+| p90               | 184 ms             | 170 ms                      | **-7.6%** ✅   |
+| p95               | 192 ms             | 176 ms                      | **-8.3%** ✅   |
+| p99               | 575 ms             | 559 ms                      | -2.8% ✅        |
+| Max               | 693 ms             | 671 ms                      | -3.2% ✅        |
+| **Throughput**    | **96.5 req/s**     | **100.0 req/s**             | **+3.6%** ✅   |
+| TTFB avg          | 172.4 ms           | 161.9 ms                    | **-6.1%** ✅   |
+
+### Summary
+
+| Protocol        | Throughput Δ | Avg latency Δ | p90 Δ   | p95 Δ   | p99 Δ       | Errors |
+|-----------------|--------------|---------------|---------|---------|-------------|--------|
+| HTTPS/1.1       | +2.2%        | -3.8%         | -4.7%   | -2.5%   | **+75.0%** ⚠️ | 0 → 0  |
+| HTTP/2 over TLS | +1.4%        | -3.2%         | -4.5%   | -5.1%   | -1.9% ✅     | 0 → 0  |
+| HTTP/2 + GZIP   | **+3.6%**    | **-5.9%**     | **-7.6%** | **-8.3%** | -2.8% ✅  | 0 → 0  |
+
+### Analysis
+
+The reactive endpoint (`Uni<Response>`) shows a consistent improvement in **average response time**
+(-3% to -6%) and **throughput** (+1% to +4%) across all three protocols compared to the blocking
+endpoint. The best gains are observed with **HTTP/2 + GZIP compression**, where the event loop
+model pairs well with multiplexed connections and non-blocking I/O.
+
+However, two important observations for **tail latency**:
+
+- **HTTPS/1.1 p99 (+75.0%) and Max (+25.1%)**: the reactive endpoint shows significantly higher
+  tail latency under HTTPS/1.1. This is expected: the event loop model uses a small number of
+  threads (typically 2× CPU cores). Under sustained concurrent load with HTTPS/1.1 (no connection
+  multiplexing), occasional queuing behind a single event loop thread produces latency spikes at the
+  tail. The `TraceJaxRsRequestResponseFilter` correctly delegates body reading to
+  `Vertx#executeBlocking()` in this case, but the scheduling overhead can amplify p99.
+- **HTTP/2 over TLS Max (+19.2%)**: the same effect is visible at the maximum, though less
+  pronounced thanks to HTTP/2 multiplexing distributing requests across fewer connections.
+- **HTTP/2 + GZIP** shows **no tail-latency regression**: p99 and Max both improve, confirming
+  that multiplexed, compressed HTTP/2 is the optimal protocol pairing for reactive endpoints.
+
+> **Recommendation**: prefer the **reactive endpoint with HTTP/2 + GZIP** (`Accept-Encoding: gzip`)
+> for maximum throughput and lowest latency. Avoid reactive endpoints on pure HTTPS/1.1 if p99
+> latency is a strict SLA target.
+
 ## Accessing Java Management Extensions (JMX)
 
 From project version [1.2.4](https://github.com/amusarra/eventbus-logging-filter-jaxrs/releases/tag/v1.2.4),
