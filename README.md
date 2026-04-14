@@ -612,7 +612,24 @@ bzt -o modules.jmeter.properties.numberOfThreads=20 \
   src/test/jmeter/scenario_1.jmx
 ```
 
-Console 12 - Running the JMeter Test Plan with Taurus
+Console 12 - Running the JMeter Test Plan with Taurus (blocking endpoint `/api/rest/echo`, default)
+
+To target the **reactive endpoint** (`/api/rest/echo/reactive`) pass `servicePath` via `-o`:
+
+```shell
+# Run the same scenario against the reactive endpoint
+bzt -o modules.jmeter.properties.numberOfThreads=20 \
+  -o modules.jmeter.properties.rampUpPeriod=10 \
+  -o modules.jmeter.properties.loopCount=250 \
+  -o modules.jmeter.properties.httpProtocol=https \
+  -o modules.jmeter.properties.httpPort=8443 \
+  -o modules.jmeter.properties.ipOrFQDN=localhost \
+  -o modules.jmeter.properties.servicePath=/api/rest/echo/reactive \
+  src/test/jmeter/taurus/config.yml \
+  src/test/jmeter/scenario_1.jmx
+```
+
+Console 12b - Running the JMeter Test Plan with Taurus (reactive endpoint `/api/rest/echo/reactive`)
 
 The `bzt` command runs the JMeter Test Plan with Taurus, and the `-o` parameters are used to overwrite the values
 of the variables defined in the Taurus configuration file `src/test/jmeter/taurus/config.yml`, which in this case
@@ -761,6 +778,9 @@ bzt -o modules.jmeter.properties.numberOfThreads=20 \
   src/test/jmeter/taurus/config.yml \
   src/test/jmeter/scenario_1.jmx
 ```
+
+> **Tip**: add `-o modules.jmeter.properties.servicePath=/api/rest/echo/reactive` to benchmark the
+> reactive endpoint with the same scenario. Omitting it defaults to `/api/rest/echo` (blocking).
 
 | Parameter                       | Value                                                  |
 |---------------------------------|--------------------------------------------------------|
