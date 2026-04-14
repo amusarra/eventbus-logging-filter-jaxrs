@@ -30,6 +30,7 @@ import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.server.ServerRequestFilter;
 import org.jboss.resteasy.reactive.server.ServerResponseFilter;
 
+import io.smallrye.mutiny.Uni;
 import io.vertx.ext.web.RoutingContext;
 
 /**
@@ -46,24 +47,54 @@ import io.vertx.ext.web.RoutingContext;
  * {@code app.filter.uris}.
  *
  * <p>
- * <b>Strategia di performance - capture-only</b>:
+ * <b>Strategia di performance - capture-only + non-blocking</b>:
  * <p>
- * Il filtro è <em>solo produttore</em>: l'unica operazione non banale che esegue è la
- * lettura del body (inevitabile perché deve avvenire prima che l'endpoint lo consumi).
+ * Entrambi i metodi filtro restituiscono {@link Uni}{@code <Void>}: RESTEasy Reactive interpreta
+ * questo tipo di ritorno come segnale che il filtro è non bloccante ed è in grado di eseguire
+ * operazioni asincrone. Il filtro è <em>solo produttore</em>: l'unica operazione non banale
+ * che esegue è la lettura del body (inevitabile perché deve avvenire prima che l'endpoint lo
+ * consumi, tramite fast-path non bloccante {@code RoutingContext#body()}).
  * Tutto il resto - costruzione dei {@link io.vertx.core.json.JsonObject}, serializzazione
- * e publish sull'Event Bus - è delegato al {@link TraceEventDispatcher}, un task schedulato
+ * e publish sull'Event Bus - è delegato al {@link TraceEventDispatcher}, un drain thread dedicato
  * che gira <em>completamente fuori dal lifecycle HTTP</em>.
  *
  * <ol>
- * <li><b>Request filter</b>: legge il body, costruisce un {@link TraceEventDispatcher.RequestTrace}
- * (record leggero, solo campi stringa/primitivi) e lo deposita nella coda lock-free del
- * dispatcher con un'operazione O(1).</li>
+ * <li><b>Request filter</b>: legge il body via fast-path non bloccante, costruisce un
+ * {@link TraceEventDispatcher.RequestTrace} (record leggero, solo campi stringa/primitivi) e lo
+ * deposita nella coda bounded del dispatcher con un'operazione O(1); restituisce immediatamente
+ * {@code Uni.createFrom().voidItem()} senza mai bloccare l'event loop.</li>
  * <li><b>Response filter</b>: aggiunge gli header obbligatori alla risposta, costruisce un
- * {@link TraceEventDispatcher.ResponseTrace} e lo deposita nella coda del dispatcher.</li>
- * <li><b>Dispatcher schedulato</b>: drena le code a intervalli configurabili, costruisce i
+ * {@link TraceEventDispatcher.ResponseTrace} e lo deposita nella coda del dispatcher con O(1);
+ * restituisce immediatamente {@code Uni.createFrom().voidItem()}.</li>
+ * <li><b>Dispatcher</b>: il drain thread dedicato drena le code a burst/idle, costruisce i
  * {@link io.vertx.core.json.JsonObject} e pubblica sull'Event Bus - senza alcun impatto
  * sul throughput HTTP.</li>
  * </ol>
+ *
+ * <p>
+ * <b>Perché {@code Uni<Void>}</b>: con la firma {@code void}, RESTEasy Reactive può schedulare
+ * il filtro su un worker thread se l'endpoint è {@code @Blocking}.
+ * Restituire {@code Uni<Void>} segnala al framework che il filtro è intrinsecamente non
+ * bloccante e che può completare la filter chain non appena il {@code Uni} emette.
+ * <b>Nota importante sul thread model</b>: per endpoint blocking (JAX-RS classico senza
+ * {@code @NonBlocking}), sia con firma {@code void} che con {@code Uni<Void>}, il filtro viene
+ * comunque eseguito su un worker thread ({@code executor-thread-*}). Il vantaggio di
+ * {@code Uni<Void>} non è cambiare il thread di esecuzione, ma segnalare al framework
+ * la natura non bloccante del filtro e abilitare l'integrazione con pipeline Mutiny future.
+ * <p>
+ * <b>Nota</b>: {@code @NonBlocking} <em>non</em> deve essere usato sui metodi
+ * {@code @ServerRequestFilter}/{@code @ServerResponseFilter}: Quarkus vieta esplicitamente
+ * le annotazioni di execution model su metodi che non sono "entrypoint" diretti del framework
+ * ({@code ExecutionModelAnnotationsProcessor} lancia {@code IllegalStateException} a build time).
+ * Il tipo di ritorno {@code Uni<Void>} è l'unico meccanismo corretto per questi filtri.
+ *
+ * <p>
+ * <b>Nota sul body reading</b>: il metodo {@code readBodyAsync()} applica una strategia a due
+ * livelli: (1) fast-path {@code RoutingContext#body()} O(1); (2) lettura bloccante via
+ * {@code EntityStream} JAX-RS ({@code VertxInputStream}) con ripristino dello stream.
+ * Per endpoint blocking (worker thread) la lettura è diretta; per endpoint reattivi
+ * (I/O event loop thread) è delegata a un Vert.x worker thread via
+ * {@code Vertx#executeBlocking()} — il body è catturato in entrambi i casi.
  *
  * <p>
  * Per ulteriori informazioni sui filtri Quarkus REST, vedere la guida:
@@ -92,73 +123,106 @@ public class TraceJaxRsRequestResponseFilter {
     private static final String POD_NAME_HEADER = "X-Pod-Name";
 
     /**
-     * Filtro di richiesta HTTP - <em>solo capture + enqueue</em>.
+     * Filtro di richiesta HTTP - <em>capture + enqueue con lettura body adattiva</em>.
      *
      * <p>
-     * Legge il body (da {@link RoutingContext#body()} se già bufferizzato dal framework,
-     * oppure dall'EntityStream come fallback), costruisce un {@link TraceEventDispatcher.RequestTrace}
-     * e lo deposita nella coda del {@link TraceEventDispatcher} con un'operazione O(1).
-     * Nessuna costruzione di {@link io.vertx.core.json.JsonObject} avviene qui.
+     * Restituisce {@code Uni<Void>}: RESTEasy Reactive interpreta questo tipo di ritorno come
+     * segnale che il filtro supporta operazioni asincrone. Il thread su cui viene eseguito
+     * dipende dall'endpoint:
+     * <ul>
+     * <li>Endpoint <b>blocking</b> (JAX-RS classico, privo di {@code @NonBlocking}): il filtro
+     * viene eseguito su un <b>worker thread</b> ({@code executor-thread-*}). La lettura del body
+     * avviene in modo bloccante via {@code EntityStream} direttamente sul thread corrente.</li>
+     * <li>Endpoint <b>reattivo</b> ({@code Uni<Response>} o simile): il filtro gira
+     * sull'<b>I/O event loop thread</b> ({@code vert.x-eventloop-thread-*}). La lettura del body
+     * viene delegata a un Vert.x worker thread tramite {@code Vertx#executeBlocking()}, così
+     * l'event loop non viene mai bloccato; {@code VertxInputStream.readBlocking()} coordina
+     * correttamente con l'event loop per ricevere i data frame.</li>
+     * </ul>
+     * In entrambi i casi il body viene ripristinato nell'EntityStream tramite
+     * {@code ByteArrayInputStream} affinché RESTEasy Reactive lo passi correttamente al parametro
+     * dell'endpoint.
      *
      * @param requestContext contesto JAX-RS della richiesta
      * @param routingContext contesto Vert.x della richiesta
      * @param uriInfo informazioni sull'URI della richiesta
+     * @return {@code Uni<Void>} che completa dopo l'enqueue del trace (sincrono o asincrono)
      */
     @ServerRequestFilter(priority = Priorities.AUTHENTICATION)
-    public void requestFilter(ContainerRequestContext requestContext,
+    public Uni<Void> requestFilter(ContainerRequestContext requestContext,
             RoutingContext routingContext,
             UriInfo uriInfo) {
         if (!filterEnabled) {
-            return;
+            return Uni.createFrom().voidItem();
         }
 
         String requestUri = uriInfo.getRequestUri().getPath();
         String correlationId = getCorrelationId(requestContext.getHeaderString(CORRELATION_ID_HEADER));
         requestContext.setProperty(CORRELATION_ID_HEADER, correlationId);
 
-        if (requestUriIsFiltered(requestUri)) {
-            String mediaType = requestContext.getMediaType() == null ? null
-                    : "%s/%s".formatted(requestContext.getMediaType().getType(),
-                            requestContext.getMediaType().getSubtype());
-
-            // Enqueue O(1): l'unica operazione "costosa" è la lettura del body (inevitabile)
-            dispatcher.enqueueRequest(new TraceEventDispatcher.RequestTrace(
-                    correlationId,
-                    routingContext.request().remoteAddress().host(),
-                    new HashMap<>(requestContext.getHeaders()), // copia headers prima che scadano
-                    readBody(requestContext, routingContext), // lettura body con fast-path
-                    requestContext.getUriInfo().getRequestUri().toString(),
-                    Instant.now().toString(),
-                    requestContext.getMethod(),
-                    mediaType,
-                    requestContext.getAcceptableLanguages().toString(),
-                    requestContext.getAcceptableMediaTypes().toString()));
-
-            log.debug("RequestTrace accodata nel dispatcher");
+        if (!requestUriIsFiltered(requestUri)) {
+            return Uni.createFrom().voidItem();
         }
+
+        // Snapshot dei campi del requestContext prima dell'eventuale catena asincrona:
+        // alcuni campi potrebbero non essere accessibili dopo il completamento del Uni.
+        final String mediaType = requestContext.getMediaType() == null ? null
+                : "%s/%s".formatted(requestContext.getMediaType().getType(),
+                        requestContext.getMediaType().getSubtype());
+        final String remoteHost = routingContext.request().remoteAddress().host();
+        final Map<String, List<String>> headersCopy = new HashMap<>(requestContext.getHeaders());
+        final String requestUriStr = requestContext.getUriInfo().getRequestUri().toString();
+        final String method = requestContext.getMethod();
+        final String acceptLang = requestContext.getAcceptableLanguages().toString();
+        final String acceptMedia = requestContext.getAcceptableMediaTypes().toString();
+        final String dateTimeIn = Instant.now().toString();
+
+        return readBodyAsync(requestContext, routingContext)
+                .invoke(body -> {
+                    // Enqueue O(1): avviene dopo che il body è stato letto (sync o async)
+                    dispatcher.enqueueRequest(new TraceEventDispatcher.RequestTrace(
+                            correlationId,
+                            remoteHost,
+                            headersCopy,
+                            body,
+                            requestUriStr,
+                            dateTimeIn,
+                            method,
+                            mediaType,
+                            acceptLang,
+                            acceptMedia));
+                    log.debug("RequestTrace accodata nel dispatcher");
+                })
+                .replaceWithVoid();
     }
 
     /**
-     * Filtro di risposta HTTP - aggiunge gli header obbligatori e <em>solo enqueue</em>.
+     * Filtro di risposta HTTP - <em>header injection + enqueue</em>.
      *
      * <p>
-     * Aggiunge gli header {@code X-Correlation-ID}, {@code X-Pod-Name} e il cookie di
-     * tracciamento (operazioni che devono essere nel filtro perché fanno parte della risposta
-     * HTTP), poi costruisce un {@link TraceEventDispatcher.ResponseTrace} e lo deposita nella
-     * coda del {@link TraceEventDispatcher} con un'operazione O(1).
+     * Restituisce {@code Uni<Void>}: il thread di esecuzione segue la stessa regola del
+     * request filter (worker thread per endpoint blocking, event loop per endpoint non-blocking).
+     * Aggiunge gli header obbligatori alla risposta (operazioni che devono stare nel filtro
+     * perché fanno parte della risposta HTTP), poi deposita un
+     * {@link TraceEventDispatcher.ResponseTrace} nella coda del dispatcher con O(1).
+     * Il metodo restituisce {@code Uni.createFrom().voidItem()} immediatamente.
+     *
+     * <p>
+     * <b>Nota su {@code @ServerResponseFilter}</b>: RESTEasy Reactive supporta {@code Uni<Void>}
+     * come tipo di ritorno anche per i response filter (non solo per i request filter),
+     * consentendo la stessa strategia su entrambi i lati del lifecycle HTTP.
      *
      * @param requestContext contesto JAX-RS della richiesta
      * @param responseContext contesto JAX-RS della risposta
-     * @param routingContext contesto Vert.x della richiesta (non usato, richiesto dalla firma)
      * @param uriInfo informazioni sull'URI della richiesta
+     * @return {@code Uni<Void>} che completa immediatamente segnalando il successo
      */
     @ServerResponseFilter(priority = Priorities.AUTHENTICATION - 1)
-    public void responseFilter(ContainerRequestContext requestContext,
+    public Uni<Void> responseFilter(ContainerRequestContext requestContext,
             ContainerResponseContext responseContext,
-            RoutingContext routingContext,
             UriInfo uriInfo) {
         if (!filterEnabled) {
-            return;
+            return Uni.createFrom().voidItem();
         }
 
         // Header obbligatori - devono stare nel filtro perché fanno parte della risposta HTTP
@@ -181,33 +245,95 @@ public class TraceJaxRsRequestResponseFilter {
 
             log.debug("ResponseTrace accodata nel dispatcher");
         }
+
+        return Uni.createFrom().voidItem();
     }
 
     /**
-     * Legge il body della richiesta con strategia a due livelli:
+     * Legge il body della richiesta con strategia adattiva a due livelli.
+     *
      * <ol>
-     * <li><b>Fast path</b>: {@link RoutingContext#body()} - accesso O(1) al buffer già
-     * presente in memoria (zero I/O), usato quando il framework ha già bufferizzato
-     * il body prima che il filtro venisse invocato.</li>
-     * <li><b>Fallback</b>: lettura dall'EntityStream con ripristino automatico dello stream
-     * affinché l'endpoint possa rileggerlo.</li>
+     * <li><b>Fast-path</b>: {@code RoutingContext#body()} – accesso O(1) al buffer Vert.x già
+     * presente in memoria (zero I/O). Disponibile se il framework ha bufferizzato il body
+     * prima dell'invocazione del filtro (es. tramite un {@code @RouteFilter} con
+     * {@code BodyHandler}).</li>
+     * <li><b>Lettura bloccante via EntityStream</b>: legge l'EntityStream JAX-RS
+     * ({@code requestContext.getEntityStream()}, backed da {@code VertxInputStream}) e ripristina
+     * lo stream tramite {@code ByteArrayInputStream} affinché l'endpoint riceva correttamente il
+     * parametro body. Il thread su cui avviene la lettura dipende dall'endpoint:
+     * <ul>
+     * <li><b>Endpoint blocking</b> ({@code executor-thread-*}): lettura diretta sul thread
+     * corrente (bloccante OK su worker thread).</li>
+     * <li><b>Endpoint reattivo</b> ({@code vert.x-eventloop-thread-*}): la lettura è delegata
+     * a un Vert.x worker thread tramite {@code Vertx#executeBlocking()} — il thread corrente
+     * non viene bloccato. {@code VertxInputStream.readBlocking()} funziona correttamente su
+     * Vert.x worker thread perché coordina con l'event loop per ricevere i dati.</li>
+     * </ul>
+     * </li>
      * </ol>
      *
-     * @param requestContext contesto JAX-RS
-     * @param routingContext contesto Vert.x
-     * @return Il corpo della richiesta come stringa UTF-8, mai {@code null}
+     * <p>
+     * <b>Perché NON usare {@code Vertx.currentContext().isEventLoopContext()}</b>: in Vert.x 4.x
+     * il contesto Vert.x viene propagato ai worker thread ({@code executor-thread-*}) mantenendo
+     * il tipo {@code EventLoopContext}. Di conseguenza {@code isEventLoopContext()} restituisce
+     * {@code true} anche su un worker thread fisico, rendendo il check inaffidabile. Il nome del
+     * thread fisico ({@code Thread.currentThread().getName()}) è il modo corretto per distinguere
+     * I/O event loop thread da worker thread.
+     *
+     * @param requestContext contesto JAX-RS (EntityStream e ripristino)
+     * @param routingContext contesto Vert.x (fast-path e accesso al worker thread pool)
+     * @return {@link Uni}{@code <String>} con il corpo della richiesta UTF-8, mai {@code null}
      */
-    private String readBody(ContainerRequestContext requestContext, RoutingContext routingContext) {
-        // Fast path: body già bufferizzato nel RoutingContext (zero I/O)
+    private Uni<String> readBodyAsync(ContainerRequestContext requestContext,
+            RoutingContext routingContext) {
+        // Fast-path: body già bufferizzato nel RoutingContext Vert.x (O(1), zero I/O)
         io.vertx.ext.web.RequestBody rb = routingContext.body();
         if (rb != null) {
             io.vertx.core.buffer.Buffer buf = rb.buffer();
             if (buf != null && buf.length() > 0) {
-                return buf.toString(StandardCharsets.UTF_8.name());
+                return Uni.createFrom().item(buf.toString(StandardCharsets.UTF_8.name()));
             }
         }
 
-        // Fallback: legge dall'EntityStream (bloccante - accettabile sul worker thread)
+        // Usa il nome del thread FISICO per determinare se siamo sull'I/O event loop.
+        // NON usare Vertx.currentContext().isEventLoopContext(): il contesto Vert.x è propagato
+        // anche ai worker thread (executor-thread-*) con tipo EventLoopContext, rendendo
+        // isEventLoopContext() sempre true anche su thread bloccanti.
+        boolean isOnEventLoopThread = Thread.currentThread().getName().startsWith("vert.x-eventloop");
+
+        if (isOnEventLoopThread) {
+            // I/O event loop thread (endpoint reattivo, es. Uni<Response>):
+            // Non possiamo bloccare il thread corrente. Deleghiamo la lettura dell'EntityStream
+            // a un Vert.x worker thread tramite executeBlocking(). VertxInputStream.readBlocking()
+            // funziona correttamente su Vert.x worker thread (WorkerContext.isEventLoopContext()
+            // == false): coordina con l'event loop per ricevere i data frame senza bloccarlo.
+            log.debugf(
+                    "I/O event loop thread (endpoint reattivo): lettura body delegata a worker thread (thread=%s)",
+                    Thread.currentThread().getName());
+            return Uni.createFrom().completionStage(
+                    routingContext.vertx().<String> executeBlocking(
+                            () -> readBodyBlocking(requestContext))
+                            .toCompletionStage());
+        }
+
+        // Worker thread (endpoint blocking, executor-thread-*): lettura bloccante diretta.
+        log.debugf("Worker thread (endpoint blocking): lettura body via EntityStream (thread=%s)",
+                Thread.currentThread().getName());
+        return Uni.createFrom().item(readBodyBlocking(requestContext));
+    }
+
+    /**
+     * Legge il body dalla EntityStream JAX-RS (bloccante) e ripristina lo stream.
+     *
+     * <p>
+     * Sicuro su Vert.x worker thread (sia {@code executor-thread-*} invocato direttamente,
+     * sia il thread di {@code executeBlocking()} per endpoint reattivi). Non deve mai essere
+     * chiamato sull'I/O event loop thread.
+     *
+     * @param requestContext contesto JAX-RS con l'EntityStream da leggere
+     * @return Il corpo della richiesta come stringa UTF-8, mai {@code null}
+     */
+    private String readBodyBlocking(ContainerRequestContext requestContext) {
         try {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             try (InputStream in = requestContext.getEntityStream()) {
@@ -218,10 +344,12 @@ public class TraceJaxRsRequestResponseFilter {
                 }
             }
             byte[] bodyBytes = buffer.toByteArray();
-            requestContext.setEntityStream(new ByteArrayInputStream(bodyBytes)); // ripristina per l'endpoint
+            // Ripristina l'EntityStream affinché l'endpoint possa leggere il body normalmente
+            requestContext.setEntityStream(new ByteArrayInputStream(bodyBytes));
             return buffer.toString(StandardCharsets.UTF_8);
         } catch (IOException e) {
-            log.warnf("Impossibile leggere il body della richiesta per il tracing: %s", e.getMessage());
+            log.warnf("Impossibile leggere il body della richiesta per il tracing: %s",
+                    e.getMessage());
             return "";
         }
     }
