@@ -36,10 +36,15 @@
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.value">${__P(loopCount,5)}</stringProp>
           </elementProp>
+          <elementProp name="servicePath" elementType="Argument">
+            <stringProp name="Argument.name">servicePath</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.value">${__P(servicePath,/api/rest/echo)}</stringProp>
+          </elementProp>
         </collectionProp>
       </elementProp>
       <boolProp name="TestPlan.tearDown_on_shutdown">false</boolProp>
-      <stringProp name="TestPlan.comments">Test plan for the Quarkus Event Bus Logging Filter JAX-RS project (https://github.com/amusarra/eventbus-logging-filter-jaxrs)</stringProp>
+      <stringProp name="TestPlan.comments">Test plan for the Quarkus Event Bus Logging Filter JAX-RS project (https://github.com/amusarra/eventbus-logging-filter-jaxrs). Use -Dservicepath=/api/rest/echo/reactive to target the reactive endpoint.</stringProp>
     </TestPlan>
     <hashTree>
       <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
@@ -230,7 +235,7 @@ Connect to 5s</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.path">/api/rest/echo</stringProp>
+          <stringProp name="HTTPSampler.path">${servicePath}</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -449,7 +454,7 @@ Connect to 5s</stringProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
-            <stringProp name="HTTPSampler.path">/api/rest/echo</stringProp>
+            <stringProp name="HTTPSampler.path">${servicePath}</stringProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -672,7 +677,7 @@ Connect to 5s</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.path">/api/rest/echo</stringProp>
+          <stringProp name="HTTPSampler.path">${servicePath}</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
