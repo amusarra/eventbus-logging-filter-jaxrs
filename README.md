@@ -57,11 +57,11 @@ to eliminate any impact on HTTP throughput.
 
 Figure 2 - High-Performance Tracing Architecture
 
-| Component                         | Role                                                                                                                                                                                                                                                                 | Thread                     |
-|-----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
-| `TraceJaxRsRequestResponseFilter` | Captures raw data (strings/primitives) and enqueues in O(1). **No JSON, no I/O, no blocking.**                                                                                                                                                                       | HTTP worker thread         |
-| `ArrayBlockingQueue` (×2)         | Bounded FIFO queue (request + response). Drop-on-full backpressure: events are silently dropped with a WARN log rather than blocking the HTTP thread.                                                                                                                | lock-free                  |
-| `TraceEventDispatcher`            | Dedicated daemon thread (`trace-event-dispatcher`) that drains queues in **burst mode** (no sleep when items are present) and builds `JsonObject` + publishes to the Event Bus. Completely independent of the Quarkus worker thread pool - never starved under load. | OS-scheduled daemon thread |
+| Component                         | Role                                                                                                                                                                                                                                                                                                         | Thread                                                                                                                                                         |
+|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `TraceJaxRsRequestResponseFilter` | Captures raw data (strings/primitives) and enqueues in O(1). **No JSON, no I/O, no blocking.** Body reading adapts automatically to the endpoint type via `readBodyAsync()`: direct blocking read on worker threads; `Vertx#executeBlocking()` delegation on the I/O event loop thread (reactive endpoints). | **Blocking endpoint**: HTTP worker thread (`executor-thread-*`) · **Reactive endpoint** (`Uni<Response>`): I/O event loop thread (`vert.x-eventloop-thread-*`) |
+| `ArrayBlockingQueue` (×2)         | Bounded FIFO queue (request + response). Drop-on-full backpressure: events are silently dropped with a WARN log rather than blocking the HTTP thread.                                                                                                                                                        | lock-free                                                                                                                                                      |
+| `TraceEventDispatcher`            | Dedicated daemon thread (`trace-event-dispatcher`) that drains queues in **burst mode** (no sleep when items are present) and builds `JsonObject` + publishes to the Event Bus. Completely independent of the Quarkus worker thread pool - never starved under load.                                         | OS-scheduled daemon thread                                                                                                                                     |
 
 ### Configuration properties
 
@@ -81,6 +81,76 @@ standard JAX-RS priority chain alongside any `@Provider`-based filters:
 |-----------|-----------------------------------------------------------------|-----------------------------------------------|
 | Request   | ascending (low → high) - `AUTHENTICATION(1000)` → `USER(5000)`  | **Last** (default `USER = 5000`)              |
 | Response  | descending (high → low) - `USER(5000)` → `AUTHENTICATION(1000)` | **First** among user filters                  |
+
+> **Thread model - blocking vs reactive endpoints**:
+> - **Blocking endpoints** (classic JAX-RS, `Response` return type): the filter runs on a
+>   **worker thread** (`executor-thread-*`). Body reading is performed directly in blocking mode.
+> - **Reactive endpoints** (`Uni<Response>`, `Multi<T>`): the filter runs on the
+>   **I/O event loop thread** (`vert.x-eventloop-thread-*`). Body reading is automatically delegated
+>   to a Vert.x worker thread via `Vertx#executeBlocking()` to avoid blocking the event loop.
+>
+> **Note**: `@NonBlocking` must **not** be placed on `@ServerRequestFilter`/`@ServerResponseFilter`
+> methods. Quarkus rejects it at build time (`ExecutionModelAnnotationsProcessor` throws
+> `IllegalStateException`). The `Uni<Void>` return type is the only correct non-blocking signal.
+
+### Reactive endpoint support
+
+The filter handles both **blocking** and **reactive** JAX-RS endpoints transparently via the
+`readBodyAsync()` method, which applies a two-level adaptive strategy:
+
+| Level | Trigger | Mechanism | Notes |
+|-------|---------|-----------|-------|
+| **1 – Fast-path** | Body already buffered by Vert.x (`RoutingContext#body() != null && buf.length() > 0`) | `buf.toString(UTF-8)` - O(1), zero I/O | Applies to all endpoint types when the framework pre-buffers the body |
+| **2a – Blocking read on worker thread** | Current thread name starts with `executor-thread-` | `EntityStream.read()` directly on the current thread | Safe: worker threads may always block |
+| **2b – Blocking read on event loop** | Current thread name starts with `vert.x-eventloop` | `Vertx#executeBlocking()` delegates to a Vert.x worker thread; body is restored via `ByteArrayInputStream` | Event loop is never blocked; `VertxInputStream.readBlocking()` coordinates correctly on the worker thread |
+
+> **Why not `Vertx.currentContext().isEventLoopContext()`?**
+> In Vert.x 4.x the Vert.x context is propagated to worker threads (`executor-thread-*`) keeping the
+> `EventLoopContext` type - so `isEventLoopContext()` returns `true` even on physical blocking threads,
+> making it an unreliable discriminator. The physical thread name (`Thread.currentThread().getName()`)
+> is the only reliable check.
+
+#### Reactive echo endpoint (`POST /api/rest/echo/reactive`)
+
+The project exposes a dedicated reactive endpoint that returns `Uni<Response>` and runs on the
+I/O event loop thread. It can be used to verify filter behavior with non-blocking endpoints:
+
+```shell
+# Call the reactive echo endpoint (runs on vert.x-eventloop-thread-*)
+curl -v --http2 \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Test di tracking richiesta JAX-RS - reactive endpoint"}' \
+  http://localhost:8080/api/rest/echo/reactive
+```
+
+Console 4b - Example of HTTP request to the reactive REST endpoint
+
+When `app.filter.enabled=true` and DEBUG logging is active, the log output for a **reactive** endpoint
+call shows the event loop thread and the `executeBlocking()` delegation:
+
+```shell
+2026-04-14 10:00:02,310 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (vert.x-eventloop-thread-0) Verifica URI filtrata: /api/rest/echo/reactive
+2026-04-14 10:00:02,311 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (vert.x-eventloop-thread-0) I/O event loop thread (endpoint reattivo): lettura body delegata a worker thread (thread=vert.x-eventloop-thread-0)
+2026-04-14 10:00:02,312 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (vert.x-eventloop-thread-0) RequestTrace accodata nel dispatcher
+2026-04-14 10:00:02,313 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (vert.x-eventloop-thread-0) Verifica URI filtrata: /api/rest/echo/reactive
+2026-04-14 10:00:02,313 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (vert.x-eventloop-thread-0) ResponseTrace accodata nel dispatcher
+2026-04-14 10:00:02,320 DEBUG [it.don.eve.ws.fil.TraceEventDispatcher] (trace-event-dispatcher) Dispatcher: pubblicati 1 request e 1 response su Event Bus
+```
+
+Log 1b - Example of Quarkus application log for the reactive endpoint (`vert.x-eventloop-thread-*`)
+
+Compare with the **blocking** endpoint (`POST /api/rest/echo`) where the thread is `executor-thread-*`:
+
+```shell
+2026-04-14 10:00:02,310 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (executor-thread-1) Verifica URI filtrata: /api/rest/echo
+2026-04-14 10:00:02,311 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (executor-thread-1) Worker thread (endpoint blocking): lettura body via EntityStream (thread=executor-thread-1)
+2026-04-14 10:00:02,312 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (executor-thread-1) RequestTrace accodata nel dispatcher
+2026-04-14 10:00:02,313 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (executor-thread-1) Verifica URI filtrata: /api/rest/echo
+2026-04-14 10:00:02,313 DEBUG [it.don.eve.ws.fil.TraceJaxRsRequestResponseFilter] (executor-thread-1) ResponseTrace accodata nel dispatcher
+2026-04-14 10:00:02,320 DEBUG [it.don.eve.ws.fil.TraceEventDispatcher] (trace-event-dispatcher) Dispatcher: pubblicati 1 request e 1 response su Event Bus
+```
+
+Log 1c - Example of Quarkus application log for the blocking endpoint (`executor-thread-*`)
 
 ## Code Quality & Development Tools
 
@@ -303,7 +373,7 @@ curl -v --http2 \
 {"message": "Test di tracking richiesta JAX-RS"}%
 ```
 
-Console 4 - Example of HTTP request to the REST service
+Console 4 - Example of HTTP request to the blocking REST endpoint (`POST /api/rest/echo`, runs on `executor-thread-*`)
 
 Using the `podman logs <container-id>` command, you can check the logs of the Quarkus application where the information related to the tracking of JAX-RS requests is present. Below is an example of the application's log output.
 
@@ -326,7 +396,7 @@ Using the `podman logs <container-id>` command, you can check the logs of the Qu
 2026-04-12 10:00:02,342 DEBUG [it.don.eve.con.eve.han.Dispatcher] (vert.x-eventloop-thread-0) Received response from target virtual address: queue-trace with result: Message sent to AMQP queue successfully!
 ```
 
-Log 1 - Example of Quarkus application log
+Log 1 - Example of Quarkus application log for the blocking endpoint `POST /api/rest/echo` (thread: `executor-thread-*`). For the reactive endpoint `POST /api/rest/echo/reactive` the thread shown is `vert.x-eventloop-thread-*` - see [Reactive endpoint support](#reactive-endpoint-support).
 
 At this point, you can shut down the Quarkus application and support services using the command
 `podman-compose -f src/main/docker/docker-compose.yml down` or the respective docker-compose.
@@ -829,7 +899,7 @@ for example, the [Cryostat](https://cryostat.io/) project (JFR for Containerized
   - Connect to a H2 database using JDBC
   - Connect to a PostgreSQL database using JDBC
 - Using Podman with Quarkus ([guide](https://quarkus.io/guides/podman))
-- Quarkus REST Filters via annotations ([guide](https://quarkus.io/guides/rest#via-annotations)): `@ServerRequestFilter` / `@ServerResponseFilter` used by `TraceJaxRsRequestResponseFilter`
+- Quarkus REST Filters via annotations ([guide](https://quarkus.io/guides/rest#via-annotations)): `@ServerRequestFilter` / `@ServerResponseFilter` used by `TraceJaxRsRequestResponseFilter` - supports both **blocking** (`Response`) and **reactive** (`Uni<Response>`) endpoints with adaptive body reading via `readBodyAsync()`
 
 ## Team Tools
 
